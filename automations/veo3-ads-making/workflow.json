@@ -1,0 +1,867 @@
+{
+  "name": "veo3 ads making",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "7f81885e-ba5b-40c9-9ba5-2a29d959fddf",
+      "name": "Telegram Trigger",
+      "webhookId": "928b31d3-44ed-4f6d-b7aa-522a92b9150f",
+      "credentials": {
+        "telegramApi": {
+          "id": "RA3wDOQoQjj6UVuu",
+          "name": "punit vfx ads bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "Got it ! i am now crafting your prompt.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        -16
+      ],
+      "id": "fca89fd6-4efe-459d-b7fd-e0939647bd8b",
+      "name": "Telegram",
+      "webhookId": "89f53a98-ef11-4ec8-973b-bb4c84a769aa",
+      "credentials": {
+        "telegramApi": {
+          "id": "RA3wDOQoQjj6UVuu",
+          "name": "punit vfx ads bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/bot8411151631:AAHU1Tr0cLvOhw_Niy8ryMJX7ukm7VpXt8I/getFile?file_id={{ $('Telegram Trigger').item.json.message.document.thumbnail.file_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        -16
+      ],
+      "id": "3b153147-c2da-4cc1-9bdd-b69c55bbf63a",
+      "name": "Get image path"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "text": "Describe the product and brand in this image in full detail. Fully ignore the background. Focus ONLY on the product.",
+        "imageUrls": "=https://api.telegram.org/file/bot8411151631:AAHU1Tr0cLvOhw_Niy8ryMJX7ukm7VpXt8I/{{ $json.result.file_path }}",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        656,
+        -16
+      ],
+      "id": "834d20ea-5c66-4ee5-b155-754de83939b4",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "8edJLwdyWGvS4gmb",
+          "name": "punit api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the initial creative brief:\n\n{{ $('Telegram Trigger').item.json.message.caption }}\n\nDescription of the product: {{ $json.choices[0].message.content }}\n\nUse the Think tool to double check your output\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "system_prompt: |\n  ## 🧠 SYSTEM PROMPT: Image + Video Prompt Generator for Product Creatives\n\n  A – Ask:\n    Generate an image prompt and a video prompt (both stringified as JSON), plus a short caption and a structured creative summary, based on a product reference image and the user’s creative intent.\n\n  G – Guidance:\n    role: Seasoned creative director with deep expertise in visual storytelling, branding, and advertising\n    output_count: 1\n    character_limit: No hard limit, but each output should remain focused and readable\n\n  constraints:\n    - Prioritise dynamic backgrounds and elements, with scenes that are fully detailed out\n    - Avoid vague, generic, or brand-inaccurate descriptions\n    - If the reference image contains background elements, ignore them unless essential—focus solely on the product as the visual centrepiece\n    - If the user’s brief lacks detail, creatively interpret their intent and propose a well-directed image and video concept. Be imaginative — act like a creative director, not a mirror\n    - When the brief is vague, choose from one of the provided inspirational examples below and adapt its style, tone, and structure to fit the specific product and context\n    - The video setting must align with the image setting\n\n  video_prompt_details:\n    - camera_movement (prioritise simple camera movement)\n    - action (what the product will do, if any)\n    - lighting\n    - other_details\n    - dialogue (optional, depending on user intent)\n    - music\n    - ending (optional)\n    - keywords (optional)"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -16
+      ],
+      "id": "d59ec87c-7bba-489d-8c81-db3d0e59c8ce",
+      "name": "Intial prompt AI agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        -304
+      ],
+      "id": "01dd8617-94d9-4996-9b35-11a3f02cf270",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"image_prompt\":\n\n\"string\",\n\n\"video_prompt\":\n\n\"stringified JSON\",\n\n\"caption\": \"short caption\",\n\n\"creative_summary\": \"summary of the combined visual concept\",\n\n\"aspect_ratio\": \"vertica or horizontal\",\n\n\"video_model\": \"veo3 or veo3_fast\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1600,
+        -304
+      ],
+      "id": "81421ca4-ea35-4954-bbed-e4c45d168c26",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "842ab644-eb1a-47ea-b455-49167c4470d0",
+              "name": "image_prompt",
+              "value": "={{ $json.output.image_prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "fd491d8c-aa64-4cfa-99eb-8b15a5612a64",
+              "name": "video_prompt",
+              "value": "={{ $json.output.video_prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "5f96ac97-cd0a-4cc2-9d34-1a535e06283b",
+              "name": "caption",
+              "value": "={{ $json.output.caption }}",
+              "type": "string"
+            },
+            {
+              "id": "1c507d82-e97b-424f-bcea-15b73ca4b184",
+              "name": "creative_summary",
+              "value": "={{ $json.output.creative_summary }}",
+              "type": "string"
+            },
+            {
+              "id": "4528889c-1c6b-4c01-aef9-05055615f8b0",
+              "name": "aspect_ratio",
+              "value": "={{ $json.output.aspect_ratio }}",
+              "type": "string"
+            },
+            {
+              "id": "799da782-dbb3-4e22-8253-e90e8c1d1f4d",
+              "name": "video_model",
+              "value": "={{ $json.output.video_model }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1232,
+        -16
+      ],
+      "id": "caae2cef-502d-4b45-b8d7-253622919161",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "message": "=CAPTION\n\n{{ $json.caption.replace(/[*_]/g,'') }}\n\nCREATIVE SUMMARY**\n\n{{ $json.creative_summary.replace(/[*_']/g,'') }}",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Approve",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  },
+                  {
+                    "option": "no"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Comments",
+              "placeholder": "Types comments here",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1424,
+        -16
+      ],
+      "id": "610866df-58a7-48a9-94c4-2488f8b5b798",
+      "name": "get approval",
+      "webhookId": "08ea7557-877f-4021-8f40-8700d194d14a",
+      "credentials": {
+        "telegramApi": {
+          "id": "RA3wDOQoQjj6UVuu",
+          "name": "punit vfx ads bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c8f944ee-ef6d-4380-9b67-bad933d7e5e7",
+              "leftValue": "={{ $json.data.Approve }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1632,
+        -16
+      ],
+      "id": "daf2557b-9e18-4fe4-a208-d489e0d31974",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the initial creative brief:\n\n{{ $('Telegram Trigger').item.json.message.caption }}\n\nHere are additional comments  {{ $json.data.Comments }}\n\n\n\nDescription of the image provided to you. Make sure to focus on just the product:\n\n{{ $('Analyze image').item.json.choices[0].message.content }}\n\n\nUse the Think tool to make sure the image_prompt and video_prompt are in stringified JSON format\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "system_prompt: |\n  ## 🧠 SYSTEM PROMPT: Image + Video Prompt Generator for Product Creatives\n\n  A – Ask:\n    Generate an image prompt and a video prompt (both stringified as JSON), plus a short caption and a structured creative summary, based on a product reference image and the user’s creative intent.\n\n  G – Guidance:\n    role: Seasoned creative director with deep expertise in visual storytelling, branding, and advertising\n    output_count: 1\n    character_limit: No hard limit, but each output should remain focused and readable\n\n  constraints:\n    - Prioritise dynamic backgrounds and elements, with scenes that are fully detailed out\n    - Avoid vague, generic, or brand-inaccurate descriptions\n    - If the reference image contains background elements, ignore them unless essential—focus solely on the product as the visual centrepiece\n    - If the user’s brief lacks detail, creatively interpret their intent and propose a well-directed image and video concept. Be imaginative — act like a creative director, not a mirror\n    - When the brief is vague, choose from one of the provided inspirational examples below and adapt its style, tone, and structure to fit the specific product and context\n    - The video setting must align with the image setting\n\n  video_prompt_details:\n    - camera_movement (prioritise simple camera movement)\n    - action (what the product will do, if any)\n    - lighting\n    - other_details\n    - dialogue (optional, depending on user intent)\n    - music\n    - ending (optional)\n    - keywords (optional)"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        0
+      ],
+      "id": "11583628-f23b-485b-9698-efc92635a348",
+      "name": "Revised prompt AI Agent"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Great your creative is now progreess. ",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        256
+      ],
+      "id": "89014769-f2d4-4bf6-8f7c-c8b6ec331858",
+      "name": "in progress",
+      "webhookId": "bc775133-f2f0-45e9-91b1-26fa5a79f064",
+      "credentials": {
+        "telegramApi": {
+          "id": "RA3wDOQoQjj6UVuu",
+          "name": "punit vfx ads bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.kie.ai/api/v1/gpt4o-image/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"filesUrl\": [\n\n\"https://api.telegram.org/file/bot8411151631:AAHU1Tr0cLvOhw_Niy8ryMJX7ukm7VpXt8I/{{ $('Get image path').item.json.result.file_path }}\n\"\n],\n\n\"prompt\": \"Take the product in the image and place it in this scenario: {{ $('Set Prompts').item.json.image_prompt.replace(/\\\"/g. }'\\\\\\\"') }}\",\n\n\"size\": \"3:2\",\n\n\"nVariants\": 1\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        256
+      ],
+      "id": "58631b58-b1f1-4f3c-aef5-30659d12fd40",
+      "name": "create gpt request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9GK42IrGsdMPTEJD",
+          "name": "Header Auth account punit"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        256
+      ],
+      "id": "b76e768e-5844-48b7-9c0d-01bd7bdb7c28",
+      "name": "Wait",
+      "webhookId": "4740f56a-f4ec-4fdc-8fb3-4582a937b169"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        256
+      ],
+      "id": "3780cbf0-4300-4633-a76e-8b5c4176c2f9",
+      "name": "get gpt image"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1888,
+        256
+      ],
+      "id": "45323968-d326-48aa-ac2e-6ff7ac1249e5",
+      "name": "Telegram1",
+      "webhookId": "9c971e22-3bf4-4c77-8c92-63997348feb5",
+      "credentials": {
+        "telegramApi": {
+          "id": "Hdw5kbftd6xgctsA",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        -304
+      ],
+      "id": "a5ff1666-7c47-4ce1-b316-575fb9026571",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "8edJLwdyWGvS4gmb",
+          "name": "punit api"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1504,
+        432
+      ],
+      "id": "7280807a-773f-4405-a778-0a33db1dacd4",
+      "name": "Wait1",
+      "webhookId": "4740f56a-f4ec-4fdc-8fb3-4582a937b169"
+    },
+    {
+      "parameters": {
+        "url": "https://api.kie.al/api/v1/veo/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1664,
+        432
+      ],
+      "id": "236cb781-7ca6-4064-8d6c-f84ab8548ec3",
+      "name": "get gpt image1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9GK42IrGsdMPTEJD",
+          "name": "Header Auth account punit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.kie.al/api/v1/veo/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=\"prompt\": {{ $('Set Prompts').item.json.video_prompt }},\n\n\"model\": \"{{ $('Set Prompts').item.json.video_model }}\",\n\n\"aspectRatio\": \"{{ $('Set Prompts').item.json.aspect_ratio }}\",\n\n\"imageUrls\": \"{{ $('Get GPT-Image').item.json.data.response.resultUrls[0] }}\"\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        432
+      ],
+      "id": "90149889-746c-4aec-8b6a-50d8069d95a9",
+      "name": "create veo3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9GK42IrGsdMPTEJD",
+          "name": "Header Auth account punit"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 994044805,
+          "message": {
+            "message_id": 3,
+            "from": {
+              "id": 6025556912,
+              "is_bot": false,
+              "first_name": "Legend",
+              "last_name": "Wave",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 6025556912,
+              "first_name": "Legend",
+              "last_name": "Wave",
+              "type": "private"
+            },
+            "date": 1757417845,
+            "document": {
+              "file_name": "Screenshot 2025-09-07 145058.png",
+              "mime_type": "image/png",
+              "thumbnail": {
+                "file_id": "AAMCBQADGQEAAwNowBF1txQSyrroGJJOg1ghFPnMpQACtBkAAgS1AAFWKDpAE5JXS5wBAAdtAAM2BA",
+                "file_unique_id": "AQADtBkAAgS1AAFWcg",
+                "file_size": 14966,
+                "width": 320,
+                "height": 182
+              },
+              "thumb": {
+                "file_id": "AAMCBQADGQEAAwNowBF1txQSyrroGJJOg1ghFPnMpQACtBkAAgS1AAFWKDpAE5JXS5wBAAdtAAM2BA",
+                "file_unique_id": "AQADtBkAAgS1AAFWcg",
+                "file_size": 14966,
+                "width": 320,
+                "height": 182
+              },
+              "file_id": "BQACAgUAAxkBAAMDaMARdbcUEsq66BiSToNYIRT5zKUAArQZAAIEtQABVig6QBOSV0ucNgQ",
+              "file_unique_id": "AgADtBkAAgS1AAFW",
+              "file_size": 688885
+            }
+          }
+        }
+      }
+    ],
+    "Get image path": [
+      {
+        "json": {
+          "ok": true,
+          "result": {
+            "file_id": "AAMCBQADGQEAAwNowBF1txQSyrroGJJOg1ghFPnMpQACtBkAAgS1AAFWKDpAE5JXS5wBAAdtAAM2BA",
+            "file_unique_id": "AQADtBkAAgS1AAFWcg",
+            "file_size": 14966,
+            "file_path": "thumbnails/file_0.jpg"
+          }
+        }
+      }
+    ],
+    "Analyze image": [
+      {
+        "json": {
+          "id": "chatcmpl-CDr5sjpZANTVU7DjHQ2Zoon6kf7zr",
+          "object": "chat.completion",
+          "created": 1757418392,
+          "model": "chatgpt-4o-latest",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "The product in the image is an educational or training course focused on mastering the automation tool **n8n** and learning how to **sell AI systems** using it. Here is a detailed breakdown of the elements related to the product and its branding:\n\n### Product Title:\n- **\"MASTER N8N\"** – This is the main focus of the course, indicating that viewers will gain expertise in n8n, an open-source workflow automation tool.\n- **\"SELL AI SYSTEMS\"** – Highlights an application of n8n: building and selling AI-powered automation solutions, likely targeting entrepreneurs and businesses.\n\n### Branding & Visual Identity:\n- The theme uses **bold uppercase text** in white and bright pink for emphasis. “MASTER N8N” is white, and “SELL AI SYSTEMS” is in pink, creating a visually compelling contrast.\n- The phrase **\"FOR BUSINESS\"** inside a red-pink rounded rectangle with a workflow/network icon reinforces the business-oriented focus of the course.\n- A **workflow diagram** is partially visible under the “FOR BUSINESS” label, providing a visual representation of what users might learn to build with n8n (possibly involving API calls, conditional logic, and data manipulation flows).\n- There is a **timestamp (4:57:18)** in the bottom right corner, suggesting this is a long-form video (likely a full course or workshop lasting nearly 5 hours).\n\n### Software Branding:\n- The course is based around **n8",
+                "refusal": null,
+                "annotations": []
+              },
+              "logprobs": null,
+              "finish_reason": "length"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 285,
+            "completion_tokens": 300,
+            "total_tokens": 585,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "service_tier": "default",
+          "system_fingerprint": "fp_d3a0838fb8"
+        }
+      }
+    ],
+    "Intial prompt AI agent": [
+      {
+        "json": {
+          "output": {
+            "image_prompt": "A high-tech, modern product creative for an educational course titled \"MASTER N8N\" and \"SELL AI SYSTEMS\". The foreground features bold uppercase typography: \"MASTER N8N\" in crisp white and \"SELL AI SYSTEMS\" in vibrant bright pink, contrasted sharply against a sleek dark navy blue background. Below these titles, a red-pink rounded rectangle badge with the phrase \"FOR BUSINESS\" in white bold letters is prominently displayed, accompanied by a smooth white workflow/network icon on its left side. Behind the badge, a sophisticated, semi-transparent workflow diagram with nodes, connecting lines, and conditional logic elements softly glows, illustrating the automation themes. In the bottom right corner, a small digital timestamp \"4:57:18\" appears in muted white, subtly integrating the course length. The scene is illuminated by elegant spotlights creating a futuristic tech vibe with dynamic soft lighting gradients and a faint holographic shimmer effect on text and badge edges. The overall composition radiates professionalism, innovation, and entrepreneurial ambition, focusing entirely on the course branding and its educational promise, with no extraneous background elements.",
+            "video_prompt": "Scene opens with a dark navy blue background. Slow zoom-in on the bold \"MASTER N8N\" text appearing quickly in crisp white uppercase, followed by the bright pink \"SELL AI SYSTEMS\" text elegantly sliding in below. Simultaneously, the red-pink \"FOR BUSINESS\" rounded rectangle badge fades in from the right with a subtle glow, along with the white workflow/network icon. Behind the badge, a dynamic semi-transparent workflow diagram animates softly — nodes pulse and connecting lines flow gently to symbolize automation processes. Lighting is cool and techy, with spotlights causing subtle reflections and gentle glows around text edges. Camera movement is a slow, steady inward zoom focusing on the center to enhance immersion. Background has faint holographic shimmer moving across the scene. The timestamp \"4:57:18\" gently appears in the bottom right corner. Music is ambient electronic with a motivational beat, building anticipation. The video ends with a slight pulse on the \"SELL AI SYSTEMS\" text and the workflow diagram nodes, reinforcing innovation and mastery themes.",
+            "caption": "Master automation with n8n and learn how to sell AI systems for business success.",
+            "creative_summary": "This creative concept visualizes an advanced training course centered on mastering the n8n automation tool and applying it to selling AI systems. The design uses bold typography in white and bright pink to highlight course titles, with a strong business-oriented \"FOR BUSINESS\" badge featuring a workflow icon to convey professional application. The dynamic workflow diagram behind the badge visually explains automation processes, enhancing thematic relevance. Sophisticated lighting and subtle animations create a futuristic and inspiring tech atmosphere. The composition delivers a focused message for entrepreneurs and professionals eager to gain deep expertise in n8n and AI system sales.",
+            "aspect_ratio": "16:9",
+            "video_model": "standard"
+          }
+        }
+      }
+    ],
+    "Edit Fields": [
+      {
+        "json": {
+          "image_prompt": "A high-tech, modern product creative for an educational course titled \"MASTER N8N\" and \"SELL AI SYSTEMS\". The foreground features bold uppercase typography: \"MASTER N8N\" in crisp white and \"SELL AI SYSTEMS\" in vibrant bright pink, contrasted sharply against a sleek dark navy blue background. Below these titles, a red-pink rounded rectangle badge with the phrase \"FOR BUSINESS\" in white bold letters is prominently displayed, accompanied by a smooth white workflow/network icon on its left side. Behind the badge, a sophisticated, semi-transparent workflow diagram with nodes, connecting lines, and conditional logic elements softly glows, illustrating the automation themes. In the bottom right corner, a small digital timestamp \"4:57:18\" appears in muted white, subtly integrating the course length. The scene is illuminated by elegant spotlights creating a futuristic tech vibe with dynamic soft lighting gradients and a faint holographic shimmer effect on text and badge edges. The overall composition radiates professionalism, innovation, and entrepreneurial ambition, focusing entirely on the course branding and its educational promise, with no extraneous background elements.",
+          "video_prompt": "Scene opens with a dark navy blue background. Slow zoom-in on the bold \"MASTER N8N\" text appearing quickly in crisp white uppercase, followed by the bright pink \"SELL AI SYSTEMS\" text elegantly sliding in below. Simultaneously, the red-pink \"FOR BUSINESS\" rounded rectangle badge fades in from the right with a subtle glow, along with the white workflow/network icon. Behind the badge, a dynamic semi-transparent workflow diagram animates softly — nodes pulse and connecting lines flow gently to symbolize automation processes. Lighting is cool and techy, with spotlights causing subtle reflections and gentle glows around text edges. Camera movement is a slow, steady inward zoom focusing on the center to enhance immersion. Background has faint holographic shimmer moving across the scene. The timestamp \"4:57:18\" gently appears in the bottom right corner. Music is ambient electronic with a motivational beat, building anticipation. The video ends with a slight pulse on the \"SELL AI SYSTEMS\" text and the workflow diagram nodes, reinforcing innovation and mastery themes.",
+          "caption": "Master automation with n8n and learn how to sell AI systems for business success.",
+          "creative_summary": "This creative concept visualizes an advanced training course centered on mastering the n8n automation tool and applying it to selling AI systems. The design uses bold typography in white and bright pink to highlight course titles, with a strong business-oriented \"FOR BUSINESS\" badge featuring a workflow icon to convey professional application. The dynamic workflow diagram behind the badge visually explains automation processes, enhancing thematic relevance. Sophisticated lighting and subtle animations create a futuristic and inspiring tech atmosphere. The composition delivers a focused message for entrepreneurs and professionals eager to gain deep expertise in n8n and AI system sales.",
+          "aspect_ratio": "16:9",
+          "video_model": "standard"
+        }
+      }
+    ],
+    "get approval": [
+      {
+        "json": {
+          "data": {
+            "Approve": "Yes",
+            "Comments": "ok"
+          }
+        }
+      }
+    ],
+    "If": [
+      {
+        "json": {
+          "data": {
+            "Approve": "Yes",
+            "Comments": "ok"
+          }
+        }
+      }
+    ],
+    "in progress": [
+      {
+        "json": {
+          "ok": true,
+          "result": {
+            "message_id": 17,
+            "from": {
+              "id": 8411151631,
+              "is_bot": true,
+              "first_name": "vfx ads",
+              "username": "vfx77bot"
+            },
+            "chat": {
+              "id": 6025556912,
+              "first_name": "Legend",
+              "last_name": "Wave",
+              "type": "private"
+            },
+            "date": 1757495653,
+            "text": "Great your creative is now progreess."
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Get image path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get image path": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Intial prompt AI agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Intial prompt AI agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Revised prompt AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Intial prompt AI agent",
+            "type": "ai_outputParser",
+            "index": 0
+          },
+          {
+            "node": "Revised prompt AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intial prompt AI agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "get approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get approval": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "in progress",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Revised prompt AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revised prompt AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "in progress": {
+      "main": [
+        [
+          {
+            "node": "create gpt request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create gpt request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get gpt image": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Intial prompt AI agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Revised prompt AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        [
+          {
+            "node": "create veo3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create veo3": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "968a8000-a5be-4d17-ad7f-d37dda40f823",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d5060035da1ac148c5b2d3ed9879dffa23154fe6976553f55ae65cc32f34ebe1"
+  },
+  "id": "bmDvDnnTRGqUepQJ",
+  "tags": []
+}

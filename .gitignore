@@ -1,0 +1,23 @@
+﻿# Production-ready automation library for n8n/Zapier/Make and voice agents
+node_modules/
+.env
+*.env
+.env.*
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+*.log
+.vscode/
+.idea/
+dist/
+build/
+.venv/
+venv/
+coverage/
+*.tmp
+*.bak
+# macOS Finder
+Icon?
+# Python virtual env
+*.egg-info/

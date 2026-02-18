@@ -1,0 +1,904 @@
+{
+  "agent_id": "",
+  "channel": "voice",
+  "last_modification_timestamp": 1751374118677,
+  "agent_name": "Triforce Intelligent HR Agent",
+  "response_engine": {
+    "type": "conversation-flow",
+    "version": 8,
+    "conversation_flow_id": "conversation_flow_5ada8e3b65bf"
+  },
+  "language": "en-IN",
+  "opt_out_sensitive_data_storage": false,
+  "data_storage_setting": "everything",
+  "opt_in_signed_url": true,
+  "end_call_after_silence_ms": 30000,
+  "version": 8,
+  "is_published": false,
+  "version_title": "V7 - Adding Inbound Phone Number",
+  "post_call_analysis_model": "gpt-4o-mini",
+  "voice_id": "11labs-Monika",
+  "fallback_voice_ids": [
+    "openai-Sage"
+  ],
+  "enable_backchannel": true,
+  "backchannel_frequency": 0.7,
+  "backchannel_words": [
+    "yeah",
+    "uh-huh",
+    "okay",
+    "hmm"
+  ],
+  "max_call_duration_ms": 357000,
+  "interruption_sensitivity": 0.76,
+  "ambient_sound": "coffee-shop",
+  "responsiveness": 0.84,
+  "normalize_for_speech": true,
+  "begin_message_delay_ms": 600,
+  "voicemail_option": {
+    "action": {
+      "type": "hangup"
+    }
+  },
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {},
+  "retellLlmData": null,
+  "conversationFlow": {
+    "conversation_flow_id": "conversation_flow_5ada8e3b65bf",
+    "version": 8,
+    "global_prompt": "**PERSONA:\n\nYou are SHANAYA, a friendly, professional, and articulate AI HR representative calling on behalf of Triforce Incorporation to screen candidates who have applied for the Business Associate position. Your job is to conduct a conversational-style telephonic screening with candidates based on a structured process. You must sound human, upbeat, confident, and polite at all times.\n\n**Dynamic Information Received:\nCandidate Name(who you are calling): {{candidate_name}}\nDate of the Interview Decided: {{interview_date}}\nTime of the Interview Slot Available: {{interview_time}}\nWherever I've written *First Name* in the Prompt, try to use the First Name or any conversational name of the candidate.\n\n** GOAL:\n\nYour goal is to:\n\n1) Confirm the candidate's interest and eligibility for the position.\n\n2) Assess their location, age, and background.\n\n3) Clearly communicate the company's mission and the Business Associate role.\n\n4) Handle common queries about salary or compensation.\n\n5) Invite eligible and interested candidates for a face-to-face interview at the Bangalore office.\n\n6) Exit the call professionally if the candidate is not eligible or not interested.\n\n**ROLE:\nHR Professional (SHANAYA) from Triforce Incorporation\n\n** SKILLS:\n\n1) Candidate screening\n\n2) Location and age verification\n\n3) Communicating job roles and company information\n\n4) Responding to FAQs (e.g., salary expectations)\n\n5) Scheduling interviews\n\n6) Managing call flow with professionalism\n\n7) Ability to comprehend Year of Birth or Numbers by spoken years in normal language.\nFour-digit years (1990, 1985, etc.)\nSpoken years (\"nineteen ninety\", \"two thousand five\") - Basically, the ability to perform voice-to-number conversion\n\n8) Use the First Name of the Candidate a couple of times in the conversations, to keep it a tad bit personalised and conversational, and build a good rapport.\n\n9) In the Location Check Node, the Candidate stays in {area}\" with Area being the exact location. So you either take the entire string of their reply, or extract the last Area that they mentioned in one go! Do not repeat the question.",
+    "nodes": [
+      {
+        "instruction": {
+          "type": "static_text",
+          "text": "Hello Priyank, this is Shanaya calling from Triforce Incorporation. How are you doing today?"
+        },
+        "name": "Welcome Node",
+        "edges": [
+          {
+            "destination_node_id": "node-1751022071996",
+            "id": "edge-1751022027161",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User Responses with how they are."
+            }
+          }
+        ],
+        "start_speaker": "agent",
+        "id": "start-node-1751018325533",
+        "type": "conversation",
+        "display_position": {
+          "x": -4342.8548893903735,
+          "y": 987.7905829766698
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Job Requirement Confirmation",
+        "edges": [
+          {
+            "destination_node_id": "node-1751022228403",
+            "id": "edge-1751022071996",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If NOT looking for a Job or Job Change"
+            }
+          },
+          {
+            "destination_node_id": "node-1751022359263",
+            "id": "edge-1751022318766",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If YES, they are looking for a Job or Job Change or an Internship "
+            }
+          }
+        ],
+        "id": "node-1751022071996",
+        "type": "conversation",
+        "display_position": {
+          "x": -3699.7053589589464,
+          "y": 944.8643297723023
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Great *First Name*! We received your application for the Business Associate role from the Naukri portal. Are you currently looking for a job, a job change or internship?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Alright, thank you for your time. Have a nice day!"
+        },
+        "name": "Not Looking",
+        "edges": [
+          {
+            "id": "edge-1751022228403",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Skip Response"
+            }
+          }
+        ],
+        "id": "node-1751022228403",
+        "type": "conversation",
+        "display_position": {
+          "x": -3092.3307198263165,
+          "y": 33.0383505023476
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1751022296301",
+          "id": "edge-1751022701709",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "End Call",
+        "id": "node-1751022296301",
+        "type": "end",
+        "display_position": {
+          "x": -2387.160080018175,
+          "y": -41.187428634867786
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "name": "City Check",
+        "edges": [
+          {
+            "destination_node_id": "node-1751022618552",
+            "id": "edge-1751022359263",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If NOT in Bangalore"
+            }
+          },
+          {
+            "destination_node_id": "node-1751023097981",
+            "id": "edge-1751023166376",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If Yes, they are in Bangalore and they don't have any question"
+            }
+          }
+        ],
+        "id": "node-1751022359263",
+        "type": "conversation",
+        "display_position": {
+          "x": -2960.177317816926,
+          "y": 994.1622679002367
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Great *First Name*. Are you currently residing in Bangalore?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "City Ask",
+        "edges": [
+          {
+            "destination_node_id": "node-1751023562988",
+            "id": "edge-1751022618552",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate Provides their Current City"
+            }
+          }
+        ],
+        "id": "node-1751022618552",
+        "type": "conversation",
+        "display_position": {
+          "x": -2278.466390054014,
+          "y": 563.3451545211285
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Oh, okay. Where are you currently based?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Walk-in Ask",
+        "edges": [
+          {
+            "destination_node_id": "node-1751023005268",
+            "id": "edge-1751022899188",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If No, they wouldn't be able to travel or Dicey in deciding"
+            }
+          },
+          {
+            "destination_node_id": "node-1751023340884",
+            "id": "edge-1751023078651",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If Yes"
+            }
+          }
+        ],
+        "id": "node-1751022899188",
+        "type": "conversation",
+        "display_position": {
+          "x": -1201.5385421463548,
+          "y": 499.5602828583884
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Got it, *First Name*. This role is specifically for candidates who can attend an in-person interview in Bangalore. Would you be able to travel here for a physical interview?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "No worries. Please feel free to reach out once you're in Bangalore. We'll be happy to schedule your interview then."
+        },
+        "name": "Conversation",
+        "edges": [
+          {
+            "id": "edge-1751023005268",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1751023005268",
+        "type": "conversation",
+        "display_position": {
+          "x": -419.4081402338703,
+          "y": 75.21968887869848
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1751023060199",
+          "id": "edge-1751023042832",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "End Call",
+        "id": "node-1751023060199",
+        "type": "end",
+        "display_position": {
+          "x": 264.1806942215291,
+          "y": -19.7166844668634
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "finetune_conversation_examples": [
+          {
+            "transcript": [
+              {
+                "content": "The Candidate might reply with - \"I stay in {area}\" with Area being the exact location. So you either take the entire string of their reply, or extract the last Area that they mentioned in one go! Do not repeat the question. ",
+                "role": "user"
+              },
+              {
+                "content": "",
+                "role": "agent"
+              }
+            ],
+            "id": "fe-1751369972943"
+          }
+        ],
+        "instruction": {
+          "type": "prompt",
+          "text": "Awesome! Where exactly in Bangalore are you located?\n\n"
+        },
+        "name": "Location Check",
+        "edges": [
+          {
+            "destination_node_id": "node-1751024085938",
+            "id": "edge-1751023097981",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate Provides their answer, without any questions of their own"
+            }
+          }
+        ],
+        "id": "node-1751023097981",
+        "type": "conversation",
+        "display_position": {
+          "x": -1738.5604063980466,
+          "y": 1022.8485772904023
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Age Check",
+        "edges": [
+          {
+            "destination_node_id": "node-1751024252393",
+            "id": "edge-1751024173747",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate provides year of birth, without any questions"
+            }
+          }
+        ],
+        "id": "node-1751023340884",
+        "type": "conversation",
+        "display_position": {
+          "x": -385.2520780096096,
+          "y": 1015.3691455767007
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Great! By The Way, what is your year of birth?\n"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "destination_node_id": "node-1751022899188",
+            "id": "edge-1751023562988",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Move forward anyhow"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "current_city",
+            "description": "This is the Current City that they are residing in.",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1751023562988",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": -1740.6781483653265,
+          "y": 557.2209101364462
+        }
+      },
+      {
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "destination_node_id": "node-1751023340884",
+            "id": "edge-1751024085938",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Move forward "
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "current_area",
+            "description": "A complete statement, for example: I stay in {area}, or I live near {area}, or similar options. Or they might just say one single area name. ",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1751024085938",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": -1188.38713024992,
+          "y": 1022.0996377986681
+        }
+      },
+      {
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "destination_node_id": "node-1751024748376",
+            "id": "edge-1751024252393",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If year_of_birth is Lesser than 2000"
+            }
+          },
+          {
+            "destination_node_id": "node-1751026342112",
+            "id": "edge-1751024850331",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If year_of_birth is equal to or more than 2000"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "year_of_birth",
+            "description": "Extracts the user's birth year from their response. Captures 4-digit years (e.g., 1990, 1985) or converts spoken years (e.g., \"nineteen ninety\", \"two thousand five\") into numeric format. Validates that the year is between 1900-2024 to ensure reasonable age ranges. Stores the result as a 4-digit integer in the year_of_birth variable for age verification and personalization purposes.",
+            "type": "number",
+            "choices": []
+          }
+        ],
+        "id": "node-1751024252393",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 360.76094290886795,
+          "y": 1000.1928205798357
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Thank you for your interest. Currently, we're considering candidates born in or after 2000. All the best! "
+        },
+        "name": "Too Old",
+        "edges": [
+          {
+            "id": "edge-1751024748376",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1751024748376",
+        "type": "conversation",
+        "display_position": {
+          "x": 889.4163685552548,
+          "y": 95.05534348385936
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1751024791366",
+          "id": "edge-1751024789004",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "End Call",
+        "id": "node-1751024791366",
+        "type": "end",
+        "display_position": {
+          "x": 1287.7336772873175,
+          "y": -55.06102292131028
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "name": "About the Candidate",
+        "edges": [
+          {
+            "destination_node_id": "node-1751024946231",
+            "id": "edge-1751024897912",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Only transit when the Candidate completes telling about them. Give them good enough time, let them take breaks, and it could be a long answer so keep listening by using \"hmm\". \n\nONLY Transit, when the candidate is done!"
+            }
+          }
+        ],
+        "id": "node-1751024897912",
+        "type": "conversation",
+        "display_position": {
+          "x": 1873.675141519091,
+          "y": 981.8257394430682
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Great! Before we proceed, could you tell me a little bit about yourself and your family background?\n\n{Let the candidate speak comfortably, Give them good enough time, let them take breaks, and it could be a long answer so keep listening by using \"hmm\", unless you feel they completed their answer}"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "destination_node_id": "node-1751025185466",
+            "id": "edge-1751024946231",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Move forward once the candidate completes"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "about_candidate",
+            "description": "Extracts detailed candidate background information from open-ended response about personal and family history. Captures educational background, work experience, family composition, personal interests, and other relevant biographical details. Stores complete response as text for HR team review, cultural fit assessment, and interview preparation. Information used for candidate profiling and conversation personalization throughout the interview process.",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1751024946231",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 2385.0432030898237,
+          "y": 997.1666466904533
+        }
+      },
+      {
+        "instruction": {
+          "type": "static_text",
+          "text": "Thanks for sharing. Let me introduce myself and the company. As I said, I am SHANAYA, HR agent at Triforce Incorporation\n\nTriforce is a direct sales and marketing company founded in 2012. We operate in 34 cities across India and aim to expand to 100 cities by 2030. We lead the market in face-to-face advertising\n\nTo drive this expansion, we are hiring Business Associates who will be trained and developed into future business leaders through our Leadership Development Program\n\nIs that clear so far?"
+        },
+        "name": "Company Pitch",
+        "edges": [
+          {
+            "destination_node_id": "node-1751025303682",
+            "id": "edge-1751025185466",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate responses No"
+            }
+          },
+          {
+            "destination_node_id": "node-1751025448022",
+            "id": "edge-1751025456114",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate responses Yes"
+            }
+          }
+        ],
+        "id": "node-1751025185466",
+        "type": "conversation",
+        "display_position": {
+          "x": 2842.248755453692,
+          "y": 986.116005951128
+        },
+        "interruption_sensitivity": 0,
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Answering Questions",
+        "edges": [
+          {
+            "destination_node_id": "node-1751025448022",
+            "id": "edge-1751025303682",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Only move forward when the candidate is through asking questions about the company"
+            }
+          }
+        ],
+        "id": "node-1751025303682",
+        "type": "conversation",
+        "display_position": {
+          "x": 3221.465285003848,
+          "y": 497.0872516328101
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "What part of it do you wanna understand more?\n\n{Strictly Refer to Knowledge Base for any Answers}"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Role Pitch",
+        "edges": [
+          {
+            "destination_node_id": "node-1751025874695",
+            "id": "edge-1751025448022",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate Says No or is a bit Dicey or hesitant"
+            }
+          },
+          {
+            "destination_node_id": "node-1751026105406",
+            "id": "edge-1751025913515",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate says Yes"
+            }
+          }
+        ],
+        "id": "node-1751025448022",
+        "type": "conversation",
+        "display_position": {
+          "x": 3833.8735928547776,
+          "y": 1006.3746395036707
+        },
+        "instruction": {
+          "type": "static_text",
+          "text": "Great. In your case, if selected, you'll begin as a Business Associate and receive training in Sales & Marketing, HR, Finance, and Administration. Upon successful completion, you'll lead a new business unit and help us expand nationally.\nDo you think you're a suitable candidate for our company?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Answering Questions",
+        "edges": [
+          {
+            "destination_node_id": "node-1751026105406",
+            "id": "edge-1751025874695-h47y6t50p",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Only move forward when the candidate is through asking questions about the role"
+            }
+          }
+        ],
+        "id": "node-1751025874695",
+        "type": "conversation",
+        "display_position": {
+          "x": 4315.356452170072,
+          "y": 481.313235810632
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "What part of it do you wanna understand more?\n\n{Strictly Refer to Knowledge Base for any Answers}"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Candidate Qualification",
+        "edges": [
+          {
+            "destination_node_id": "node-1751026203422",
+            "id": "edge-1751026105406",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate answers and completes their answer "
+            }
+          }
+        ],
+        "id": "node-1751026105406",
+        "type": "conversation",
+        "display_position": {
+          "x": 4723.869702863673,
+          "y": 1009.1633438114104
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Why do you think so?\n\n{Indication to AI - Let the candidate speak comfortably, Give them good enough time, let them take breaks, and it could be a long answer so keep listening by using \"hmm\", unless you feel they completed their answer}"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "destination_node_id": "node-1751028121927",
+            "id": "edge-1751026203422",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Move forward once the answer is complete and variable extracted"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "why_candidate",
+            "description": "Extracts detailed candidate response explaining their suitability for the Business Associate role including training in Sales & Marketing, HR, Finance, and Administration. Captures self-assessment of relevant skills, experience, leadership potential, and understanding of the national expansion opportunity. Stores complete justification text for evaluating candidate confidence, role comprehension, communication effectiveness, and alignment with company growth objectives.",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1751026203422",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 5209.713359804014,
+          "y": 1007.2763212107777
+        }
+      },
+      {
+        "name": "Interview Invite",
+        "edges": [
+          {
+            "destination_node_id": "node-1751027357915",
+            "id": "edge-1751026342113",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate says no"
+            }
+          },
+          {
+            "destination_node_id": "node-1751024897912",
+            "id": "edge-1751028000143",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate Says Yes, without any questions\n"
+            }
+          }
+        ],
+        "id": "node-1751026342112",
+        "type": "conversation",
+        "display_position": {
+          "x": 939.3029615640073,
+          "y": 994.8945026811103
+        },
+        "instruction": {
+          "type": "static_text",
+          "text": "Perfect! We are conducting a face-to-face interview on {{interview_date}} at our Indiranagar, Bangalore office at {{interview_time}}.\nI'll go ahead and schedule your interview with our Managing Director. Will you be available and make it on time?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Not Available on Time",
+        "edges": [
+          {
+            "destination_node_id": "node-1751027547707",
+            "id": "edge-1751027357915",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If the Candidate has NO questions and says okk or provides any hint of concluding the call"
+            }
+          },
+          {
+            "destination_node_id": "node-1751027516739",
+            "id": "edge-1751027582940",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If the Candidate has Questions"
+            }
+          }
+        ],
+        "id": "node-1751027357915",
+        "type": "conversation",
+        "display_position": {
+          "x": 1449.584130355441,
+          "y": 80.07173977717639
+        },
+        "instruction": {
+          "type": "static_text",
+          "text": "No worries. Our Team will get back to you once we have another slot for a face-to-face interview available."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Answering Questions",
+        "edges": [
+          {
+            "destination_node_id": "node-1751027873075",
+            "id": "edge-1751027516739",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Questions answers completed"
+            }
+          }
+        ],
+        "id": "node-1751027516739",
+        "type": "conversation",
+        "display_position": {
+          "x": 2257.926116173607,
+          "y": 89.04725056107645
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "- Answer a maximum of 3 Questions that the candidate will ask. \n- Strictly refer only to the knowledge base and politely decline any other questions and request the candidate to keep the conversation only about the role and company.\n- If you encounter any question which is outside the knowledge base, kindly say our team will get back to you and End the Call! \n- Give a small warm greeting before ending the call!"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "End Call",
+        "id": "node-1751027547707",
+        "type": "end",
+        "display_position": {
+          "x": 1800.6076070102804,
+          "y": -56.948556998172876
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "name": "End Call",
+        "id": "node-1751027873075",
+        "type": "end",
+        "display_position": {
+          "x": 2613.7612046915647,
+          "y": -33.0383505023476
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "name": "Ending",
+        "edges": [
+          {
+            "destination_node_id": "node-1751028270642",
+            "id": "edge-1751028121927",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "When the entire conversations and aspects of the call are complete and there are no more interruptions from the candidate."
+            }
+          }
+        ],
+        "id": "node-1751028121927",
+        "type": "conversation",
+        "display_position": {
+          "x": 5712.521463719849,
+          "y": 1016.0731859924997
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Sounds Great! Congratulations, you are eligible for the interview round! Your Interview is scheduled for {{Interview_Date}} at our Indiranagar, Bangalore office at {{Time}}.\nHave a Good Day Ahead! "
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "End Call",
+        "id": "node-1751028270642",
+        "type": "end",
+        "display_position": {
+          "x": 6088.461538461538,
+          "y": 1077.6923076923076
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "- Answer a maximum of 1 Question that the candidate will ask. If it goes more than that, then just say - I'll just give you more information once our conversation is complete, and come back the flow!\n- Strictly refer only to the knowledge base and politely decline any other questions and request the candidate to keep the conversation only about the role and company.\n- If you encounter any question which is outside the knowledge base, kindly say \"our team will get back to you with its reply, let me just confirm your application and then will reply all other answers\"\n- If asking  more than total of 2 questions, simply say \"Our team will get back to you\" and immediately End Call!\n"
+        },
+        "name": "Answering Questions",
+        "edges": [
+          {
+            "id": "edge-1751371076601",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Candidate has asked 2 questions"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "Strictly use this node when the Candidate asks a question which you don't know the reply to!!"
+        },
+        "id": "node-1751371076601",
+        "type": "conversation",
+        "display_position": {
+          "x": -3983.7222467159118,
+          "y": -52.29196007271227
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "End Call",
+        "global_node_setting": {
+          "condition": "Only jump to End Call when requested or the Candidate has interrupted more than 4 times."
+        },
+        "id": "node-1751371983551",
+        "type": "end",
+        "display_position": {
+          "x": -3500.7563919090703,
+          "y": -77.92132113403277
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      }
+    ],
+    "start_node_id": "start-node-1751018325533",
+    "start_speaker": "agent",
+    "model_choice": {
+      "type": "cascading",
+      "model": "gpt-4o",
+      "high_priority": true
+    },
+    "knowledge_base_ids": [],
+    "begin_tag_display_position": {
+      "x": -4709.023938304032,
+      "y": 1122.0516025982868
+    },
+    "is_published": false
+  },
+  "llmURL": null
+}

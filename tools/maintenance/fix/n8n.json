@@ -1,0 +1,150 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "event": "invitee.created"
+      },
+      "name": "Calendly Trigger",
+      "type": "n8n-nodes-base.calendlyTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "sheetId": "YOUR_SHEET_ID",
+        "range": "A:Z"
+      },
+      "name": "Google Sheets - Get Leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "lead_id",
+              "value": "={{$node[\"Google Sheets - Get Leads\"].json[\"id\"]}}"
+            }
+          ]
+        }
+      },
+      "name": "VAPI AI Cold Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        500,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node[\"VAPI AI Cold Call\"].json[\"lead_status\"]}}",
+              "value2": "qualified"
+            }
+          ]
+        }
+      },
+      "name": "IF Lead Qualified",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "sheetId": "YOUR_SHEET_ID",
+        "key": "id",
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "status",
+              "value": "qualified"
+            }
+          ]
+        }
+      },
+      "name": "Google Sheets - Update Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        950,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Calendly Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Get Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Get Leads": {
+      "main": [
+        [
+          {
+            "node": "VAPI AI Cold Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VAPI AI Cold Call": {
+      "main": [
+        [
+          {
+            "node": "IF Lead Qualified",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Lead Qualified": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Update Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  }
+}

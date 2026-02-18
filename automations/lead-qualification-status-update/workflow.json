@@ -1,0 +1,86 @@
+{
+  "workflow": {
+    "name": "Lead Qualification and Status Update",
+    "description": "Automated workflow that reads leads from Google Sheets, qualifies them via API call, and updates their status",
+    "trigger": {
+      "type": "calendly",
+      "name": "Calendly Trigger",
+      "description": "Workflow starts when a Calendly event occurs"
+    },
+    "steps": [
+      {
+        "id": "step_1",
+        "name": "Google Sheets - Get Leads",
+        "type": "google_sheets_read",
+        "action": "read_sheet",
+        "description": "Retrieves lead data from Google Sheets",
+        "parameters": {
+          "operation": "read_sheet"
+        },
+        "next": "step_2"
+      },
+      {
+        "id": "step_2",
+        "name": "VAPI AI Cold Call",
+        "type": "api_call",
+        "action": "post_request",
+        "description": "Makes API call to VAPI AI service for lead qualification",
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.vapi.ai/call",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "next": "step_3"
+      },
+      {
+        "id": "step_3",
+        "name": "IF Lead Qualified",
+        "type": "conditional",
+        "description": "Checks if the lead meets qualification criteria",
+        "condition": {
+          "field": "lead_status",
+          "operator": "equals",
+          "value": "qualified"
+        },
+        "paths": {
+          "true": "step_4",
+          "false": "end"
+        }
+      },
+      {
+        "id": "step_4",
+        "name": "Google Sheets - Update Status",
+        "type": "google_sheets_write",
+        "action": "update_sheet",
+        "description": "Updates the lead status in Google Sheets if qualified",
+        "parameters": {
+          "operation": "update_sheet",
+          "field": "status",
+          "value": "qualified"
+        },
+        "next": "end"
+      }
+    ],
+    "connections": [
+      {
+        "from": "calendly_trigger",
+        "to": "step_1"
+      },
+      {
+        "from": "step_1",
+        "to": "step_2"
+      },
+      {
+        "from": "step_2",
+        "to": "step_3"
+      },
+      {
+        "from": "step_3",
+        "to": "step_4",
+        "condition": "true"
+      }
+    ]
+  }
+}

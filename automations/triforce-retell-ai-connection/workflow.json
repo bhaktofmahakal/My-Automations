@@ -1,0 +1,456 @@
+{
+  "name": "Triforce Retell AI Connection",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        352
+      ],
+      "id": "920cce30-e3de-4548-aab3-5da0495d1083",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1E_HTD0UmOOyXwymx8pqM5q_XRYbrvNr9gb9-SFgeIL8",
+          "mode": "list",
+          "cachedResultName": "Triforce Interview Calling",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1E_HTD0UmOOyXwymx8pqM5q_XRYbrvNr9gb9-SFgeIL8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1E_HTD0UmOOyXwymx8pqM5q_XRYbrvNr9gb9-SFgeIL8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -80,
+        352
+      ],
+      "id": "509b1e81-86d6-4a47-a4a5-d1514ddf63e0",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3ftSD6kQOJx7qEdR",
+          "name": "priyank.singh2208 Google Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1E_HTD0UmOOyXwymx8pqM5q_XRYbrvNr9gb9-SFgeIL8",
+          "mode": "list",
+          "cachedResultName": "Triforce Interview Calling",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1E_HTD0UmOOyXwymx8pqM5q_XRYbrvNr9gb9-SFgeIL8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1E_HTD0UmOOyXwymx8pqM5q_XRYbrvNr9gb9-SFgeIL8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone Number": "={{ $json.to_number.slice(1) }}",
+            "Disconnection Reason": "={{ $json.disconnection_reason }}",
+            "Call Summary": "={{ $json.call_analysis.call_summary }}",
+            "Current Area": "={{ $json.collected_dynamic_variables.current_area }}",
+            "Year of Birth": "={{ $json.collected_dynamic_variables.year_of_birth }}",
+            "About Candidate": "={{ $json.collected_dynamic_variables.about_candidate }}",
+            "Why Candidate": "={{ $json.collected_dynamic_variables.why_candidate }}",
+            "Call ID": "={{ $json.call_id }}",
+            "Call Duration": "={{ Math.floor($json.duration_ms / 60000) + ':' + String(Math.floor(($json.duration_ms % 60000) / 1000)).padStart(2, '0') }}\n"
+          },
+          "matchingColumns": [
+            "Phone Number"
+          ],
+          "schema": [
+            {
+              "id": "Candidate Name",
+              "displayName": "Candidate Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Interview Date",
+              "displayName": "Interview Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Interview Time",
+              "displayName": "Interview Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Disconnection Reason",
+              "displayName": "Disconnection Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Call Summary",
+              "displayName": "Call Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Area",
+              "displayName": "Current Area",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Year of Birth",
+              "displayName": "Year of Birth",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "About Candidate",
+              "displayName": "About Candidate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Why Candidate",
+              "displayName": "Why Candidate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Call ID",
+              "displayName": "Call ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Call Duration",
+              "displayName": "Call Duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1024,
+        144
+      ],
+      "id": "0f704464-a62d-405f-a297-5b115bfb4c54",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3ftSD6kQOJx7qEdR",
+          "name": "priyank.singh2208 Google Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        368,
+        144
+      ],
+      "id": "37742fd8-14fa-4ca8-a3a1-0bf6c7fcdf88",
+      "name": "Wait",
+      "webhookId": "b9f3cbb9-2e1f-45aa-bc91-d6b06f48c7b1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.retellai.com/v2/create-phone-call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer key_9846bb527964e2b32bace1de919a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"from_number\": \"+18135345783\",\n  \"to_number\": \"+{{ $json['Phone Number'] }}\",\n  \"override_agent_id\": \"agent_5191ea56780ad55a762a377377\",\n  \"retell_llm_dynamic_variables\": {\n    \"candidate_name\": \"{{ $json['Candidate Name'] }}\",\n    \"interview_date\": \"{{ $json['Interview Date'] }}\",\n    \"interview_time\": \"{{ $json['Interview Time'] }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        368,
+        352
+      ],
+      "id": "26fff49a-2480-4863-98bd-b9fc34baa873",
+      "name": "Create Phone Call"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.retellai.com/v2/list-calls",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer key_9846bb527964e2b32bace1de919a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"sort_order\": \"descending\",\n  \"limit\": 500,\n  \"filter_criteria\": {\n    \"agent_id\": [\n      \"agent_5191ea56780ad55a762a377377\"\n    ],\n    \"direction\": [\n      \"outbound\"\n    ]\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        592,
+        144
+      ],
+      "id": "60fe24cb-58e5-4504-b385-f6b66e306190",
+      "name": "Get All Calls"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.retellai.com/v2/get-call/{{ $json.call_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer key_9846bb527964e2b32bace1de919a"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        144
+      ],
+      "id": "e119d145-9cd3-462e-9fb7-94ba18d3f460",
+      "name": "Fetch Individual Call Data"
+    },
+    {
+      "parameters": {
+        "batchSize": 2,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        144,
+        352
+      ],
+      "id": "c8a36f4e-04ce-4262-b37b-c0d38641888d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        416
+      ],
+      "id": "95946141-d1ae-4e66-b637-cdd1b2f36c51",
+      "name": "Wait1",
+      "webhookId": "9298c043-4e9e-46da-a156-eb3af6582c46"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get All Calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Phone Call": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Calls": {
+      "main": [
+        [
+          {
+            "node": "Fetch Individual Call Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Individual Call Data": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Phone Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0ff10802-37fb-4c03-93b1-6429938ae79d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "553b57d613227d205d7ede55094834dd7153866ccda4c971fd59f5fa147ec838"
+  },
+  "id": "ytAHaizbQEYHxQ6W",
+  "tags": []
+}

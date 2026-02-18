@@ -1,0 +1,365 @@
+﻿{
+  "name": "Linkedin scrapers",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Linkedin Scrapper",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Requirements"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "06b1dfc4-3612-469f-b4bf-a0707ddb252c",
+      "name": "On form submission",
+      "webhookId": "3b4c254c-c68e-4d82-9094-08003d5f89f6"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=INPUT:\n {{ $json.Requirements }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an API payload generation agent.\n\nConvert user input into JSON formatted for the following API payload:\n\n{\n  \"search\": \"string\",\n  \"location\": \"string\",\n  \"maxResults\": number,\n  \"jobTitles\": [\n    \"string\"\n  ],\n  \"industry\": \"string\"\n}\n\nRules:\n- Convert shorthand locations to full names (UK â†’ United Kingdom, US â†’ United States).\n- If quantity is missing â†’ default \"maxResults\" to 25.\n- Infer job titles when not explicit (Founder role implies: Founder, Co-Founder, CEO).\n- Output ONLY JSON with no text or formatting explanations.\n\n---\n\nExample:\n\nUser Input:\n\"Give me 50 SaaS founders in UK\"\n\nOutput:\n{\n  \"search\": \"SaaS founder\",\n  \"location\": \"United Kingdom\",\n  \"maxResults\": 50,\n  \"jobTitles\": [\"Founder\", \"Co-Founder\", \"CEO\"],\n  \"industry\": \"SaaS\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "0ee22cde-2ef4-4da1-9c84-373643867ffc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "z-ai/glm-4.5-air:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "8850e184-5cb5-4f03-b920-131b7ec4a6b3",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "2dH9Km1ebUOJG2Y4",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"search\": \"SaaS founder\",\n  \"location\": \"United Kingdom\",\n  \"maxResults\": 50,\n  \"jobTitles\": [\"Founder\", \"Co-Founder\", \"CEO\"],\n  \"industry\": \"SaaS\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        208
+      ],
+      "id": "4715580d-a69e-4ab5-8394-72b09e4e54cc",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/harvestapi~linkedin-profile-search/run-sync-get-dataset-items?token=APIFY_API_TOKEN",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"currentJobTitles\": [\n    \"{{ $json.jobTitles }}\"\n  ],\n  \"maxItems\": {{ $json.maxResults }},\n  \"profileScraperMode\": \"Full + email search\",\n  \"recentlyChangedJobs\": false,\n  \"searchQuery\": \"{{ $json.search }}\",\n  \"startPage\": 1\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        784,
+        0
+      ],
+      "id": "e1342d5f-7eae-4293-8be9-b66b12905bb5",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c2dd637c-25f3-4609-8efa-16d168bc558c",
+              "name": "search",
+              "value": "={{ $json.output.search }}",
+              "type": "string"
+            },
+            {
+              "id": "2c2c8102-9154-4ddd-9e60-9c75dcf24a61",
+              "name": "location",
+              "value": "={{ $json.output.location }}",
+              "type": "string"
+            },
+            {
+              "id": "7df00f9d-c34f-4476-90a2-384b1e4ad086",
+              "name": "maxResults",
+              "value": "={{ $json.output.maxResults }}",
+              "type": "string"
+            },
+            {
+              "id": "a08fd205-1b51-41a4-b174-af721284fcd9",
+              "name": "jobTitles",
+              "value": "={{ $json.output.jobTitles }}",
+              "type": "array"
+            },
+            {
+              "id": "2fdeae35-7e6e-48ac-afd3-6fbbedc2c4fb",
+              "name": "output.industry",
+              "value": "={{ $json.output.industry }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        0
+      ],
+      "id": "288a71c8-5933-469d-b5ff-2bfe785d912b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "19kgsHNRZdcSEtcAq9kdC9J83sVpmBFaXzK-NdVw5FAY",
+          "mode": "list",
+          "cachedResultName": "Linkedin Scraper",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19kgsHNRZdcSEtcAq9kdC9J83sVpmBFaXzK-NdVw5FAY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19kgsHNRZdcSEtcAq9kdC9J83sVpmBFaXzK-NdVw5FAY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Profile Url": "={{ $json.linkedinUrl }}",
+            "First Name": "={{ $json.firstName }}",
+            "Last Name": "={{ $json.lastName }}",
+            "Email": "={{ $json.emails[0].email }}",
+            "Headlines": "={{ $json.headline }}",
+            "Company Website": "={{ $json.companyWebsites[0].url }}",
+            "Location": "={{ $json.location.linkedinText }}",
+            "Followers": "={{ $json.followerCount }}",
+            "Connections Count": "={{ $json.connectionsCount }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Profile Url",
+              "displayName": "Profile Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Headlines",
+              "displayName": "Headlines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company Website",
+              "displayName": "Company Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Followers",
+              "displayName": "Followers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Connections Count",
+              "displayName": "Connections Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        992,
+        0
+      ],
+      "id": "b9f90a2d-c9a3-4558-bea1-370cdb8d8165",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "THWBbPaskJcSLZ1p",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cdf7317d-1bc8-49de-9bbe-c75e7c102413",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "838639876210f994028ff04386b8d0f23ac0e4f37af5b4adffb7949154cd9bbc"
+  },
+  "id": "IeAjnLHJIfjLoLL5",
+  "tags": []
+}

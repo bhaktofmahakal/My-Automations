@@ -1,0 +1,216 @@
+﻿{
+  "nodes": [
+    {
+      "id": "9e6ba282-c591-4aaf-97b3-cf83a5cc28a6",
+      "name": "When clicking â€˜Test workflowâ€™",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        -112
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "fed7f460-71df-4108-93b7-94f322f7c1d4",
+      "name": "Review Calls",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -256,
+        -112
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QmtpQDKsnxzT1jTG",
+          "name": "Google Sheets account"
+        }
+      },
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "183Hc5zQ8VXyOY3wxmrMtDIAO7RSdFLDTFS09sqQNU9o",
+          "mode": "list",
+          "cachedResultName": "Meeting Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/183Hc5zQ8VXyOY3wxmrMtDIAO7RSdFLDTFS09sqQNU9o/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Meeting Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/183Hc5zQ8VXyOY3wxmrMtDIAO7RSdFLDTFS09sqQNU9o/edit#gid=0"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "793412bb-b82b-48ec-8476-aa3f445bf4a0",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        96
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "smJ87CfcZ3hG87Pc",
+          "name": "Groq account"
+        }
+      },
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      }
+    },
+    {
+      "id": "fc704346-1e9d-4d3b-895c-1d4e6967ac8d",
+      "name": "Tavily",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        128
+      ],
+      "parameters": {
+        "toolDescription": "Use this tool to search the internet",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"api_key\": \"TAVILY_API_KEY\",\n  \"query\": \"{searchTerm}\",\n  \"search_depth\": \"basic\",\n  \"include_answer\": true,\n  \"topic\": \"news\",\n  \"include_raw_content\": false,\n  \"max_results\": 3\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "searchTerm",
+              "description": "What to search for",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "65c18606-ee12-4df9-bc3a-d68f2f7d767e",
+      "name": "Product List",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        16,
+        144
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QmtpQDKsnxzT1jTG",
+          "name": "Google Sheets account"
+        }
+      },
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "183Hc5zQ8VXyOY3wxmrMtDIAO7RSdFLDTFS09sqQNU9o",
+          "mode": "list",
+          "cachedResultName": "Meeting Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/183Hc5zQ8VXyOY3wxmrMtDIAO7RSdFLDTFS09sqQNU9o/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1831112839,
+          "mode": "list",
+          "cachedResultName": "Products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/183Hc5zQ8VXyOY3wxmrMtDIAO7RSdFLDTFS09sqQNU9o/edit#gid=1831112839"
+        },
+        "options": {}
+      }
+    }
+    ,
+    {
+      "id": "4e052cb4-e8a6-4939-ae20-923debb8088a",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [240,112],
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"company_overview\": {\"type\": \"string\"},\n    \"tech_stack\": {\"type\": \"string\"},\n    \"company_updates\": {\"type\": \"string\"},\n    \"primary_solution\": {\"type\": \"string\"},\n    \"solution_2\": {\"type\": \"string\"},\n    \"solution_3\": {\"type\": \"string\"}\n  },\n  \"required\": [\n    \"company_overview\",\n    \"tech_stack\",\n    \"company_updates\",\n    \"primary_solution\",\n    \"solution_2\",\n    \"solution_3\"\n  ]\n}"
+      }
+    },
+    {
+      "id": "ddefa686-f07b-4e09-90fa-c1e7c1596133",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [-48,-112],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please research these sales call attendees\n\nName: {{ $json.Name }}\nEmail: {{ $json.Email }}\nCompany Name: {{ $json['Company Name'] }}\nWebsite: {{ $json.Website }}\nBusiness Type: {{ $json['Business Type'] }}\nProject: {{ $json.Project }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You must gather company data using Tavily and Product List, then immediately call Update Sheet with six fields: company_overview, tech_stack, company_updates, primary_solution, solution_2, solution_3. Return valid JSON only and always execute Update Sheet."
+        }
+      }
+    },
+    {
+      "id": "cb5224f4-b5cc-4545-82d7-9244fec4ed01",
+      "name": "Sales Writing Assistant",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [448,-112],
+      "parameters": {
+        "promptType": "define",
+        "text": "=Name: {{ $('Review Calls').item.json.Name }}\nEmail: {{ $('Review Calls').item.json.Email }}\nCompany Name: {{ $('Review Calls').item.json['Company Name'] }}\nWebsite: {{ $('Review Calls').item.json.Website }}\nBusiness Type: {{ $('Review Calls').item.json['Business Type'] }}\nProject: {{ $('Review Calls').item.json.Project }}\n\ncompany_overview: {{ $('AI Agent').item.json.output.company_overview }}\ntech_stack: {{ $('AI Agent').item.json.output.tech_stack }}\ncompany_updates: {{ $('AI Agent').item.json.output.company_updates }}\nprimary_solution: {{ $('AI Agent').item.json.output.primary_solution }}\nsolution_2: {{ $('AI Agent').item.json.output.solution_2 }}\nsolution_3: {{ $('AI Agent').item.json.output.solution_3 }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Generate subject, email body and SMS. Output strictly as JSON with fields: email_subject, email_text, sms. Then call Update Sheets 2."
+        }
+      }
+    },
+    {
+      "id": "aaf02f00-0782-4494-a2e3-5b34caeee642",
+      "name": "Structured Output Parser1",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [752,112],
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"email_subject\": {\"type\": \"string\"},\n    \"email_text\": {\"type\": \"string\"},\n    \"sms\": {\"type\": \"string\"}\n  },\n  \"required\": [\"email_subject\",\"email_text\",\"sms\"]\n}"
+      }
+    }
+  ],
+  "connections": {
+    "When clicking â€˜Test workflowâ€™": {
+      "main": [[{"node":"Review Calls","type":"main","index":0}]]
+    },
+    "Review Calls": {
+      "main": [[{"node":"AI Agent","type":"main","index":0}]]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [[{"node":"AI Agent","type":"ai_languageModel","index":0}]]
+    },
+    "Tavily": {
+      "ai_tool": [[{"node":"AI Agent","type":"ai_tool","index":0}]]
+    },
+    "Product List": {
+      "ai_tool": [[{"node":"AI Agent","type":"ai_tool","index":0}]]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [[{"node":"AI Agent","type":"ai_outputParser","index":0}]]
+    },
+    "AI Agent": {
+      "main": [[{"node":"Sales Writing Assistant","type":"main","index":0}]]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [[{"node":"Sales Writing Assistant","type":"ai_languageModel","index":0}]]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [[{"node":"Sales Writing Assistant","type":"ai_outputParser","index":0}]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "170852f33e9522b0ada7cc80215df85b1f4e6ef70e62a6476b980b563e80a0ff"
+  }
+}
+

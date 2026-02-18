@@ -1,0 +1,486 @@
+{
+  "name": "Australian Business Broker Scraper",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "current-date",
+              "name": "currentDate",
+              "value": "={{ $now.format('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "sheet-name",
+              "name": "sheetName",
+              "value": "=Broker Exit Leads – {{ $now.format('yyyy-MM-dd') }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "set-variables",
+      "name": "Set Variables",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://xcllusive.com.au/businesses-for-sale/",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "scrape-xcllusive",
+      "name": "Scrape Xcllusive",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://www.businessesforsale.com/australian/search/businesses-for-sale",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "scrape-businessesforsale",
+      "name": "Scrape BusinessesForSale",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://www.anybusiness.com.au/business-for-sale",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "scrape-anybusiness",
+      "name": "Scrape AnyBusiness",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Xcllusive listings\nconst html = $input.item.json.data;\nconst listings = [];\n\n// This is a template - actual selectors need to be adjusted based on site structure\nconst listingRegex = /<div class=\"listing-item\"[^>]*>([\\s\\S]*?)<\\/div>/g;\nlet match;\n\nwhile ((match = listingRegex.exec(html)) !== null) {\n  const listingHtml = match[1];\n  \n  // Extract data using regex (adjust patterns based on actual HTML)\n  const titleMatch = listingHtml.match(/<h3[^>]*>([^<]+)<\\/h3>/);\n  const priceMatch = listingHtml.match(/\\$([\\d,]+)/);\n  const locationMatch = listingHtml.match(/Location:\\s*([^<]+)/);\n  const urlMatch = listingHtml.match(/href=\"([^\"]+)\"/);\n  \n  listings.push({\n    source: 'Xcllusive',\n    title: titleMatch ? titleMatch[1].trim() : 'N/A',\n    askingPrice: priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : null,\n    ebitda: null,\n    profit: null,\n    industry: 'N/A',\n    location: locationMatch ? locationMatch[1].trim() : 'N/A',\n    yearsEstablished: null,\n    reasonForSale: 'N/A',\n    listingUrl: urlMatch ? 'https://xcllusive.com.au' + urlMatch[1] : 'N/A',\n    scrapedDate: new Date().toISOString()\n  });\n}\n\nreturn listings.map(listing => ({ json: listing }));"
+      },
+      "id": "parse-xcllusive",
+      "name": "Parse Xcllusive",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse BusinessesForSale listings\nconst html = $input.item.json.data;\nconst listings = [];\n\n// Template parser - adjust selectors based on actual site structure\nconst listingRegex = /<article[^>]*class=\"[^\"]*business-listing[^\"]*\"[^>]*>([\\s\\S]*?)<\\/article>/g;\nlet match;\n\nwhile ((match = listingRegex.exec(html)) !== null) {\n  const listingHtml = match[1];\n  \n  const titleMatch = listingHtml.match(/<h2[^>]*>([^<]+)<\\/h2>/);\n  const priceMatch = listingHtml.match(/Price:\\s*\\$([\\d,]+)/);\n  const ebitdaMatch = listingHtml.match(/EBITDA:\\s*\\$([\\d,]+)/);\n  const locationMatch = listingHtml.match(/Location:\\s*([^<]+)/);\n  const urlMatch = listingHtml.match(/href=\"([^\"]+)\"/);\n  \n  listings.push({\n    source: 'BusinessesForSale',\n    title: titleMatch ? titleMatch[1].trim() : 'N/A',\n    askingPrice: priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : null,\n    ebitda: ebitdaMatch ? parseInt(ebitdaMatch[1].replace(/,/g, '')) : null,\n    profit: null,\n    industry: 'N/A',\n    location: locationMatch ? locationMatch[1].trim() : 'N/A',\n    yearsEstablished: null,\n    reasonForSale: 'N/A',\n    listingUrl: urlMatch ? urlMatch[1] : 'N/A',\n    scrapedDate: new Date().toISOString()\n  });\n}\n\nreturn listings.map(listing => ({ json: listing }));"
+      },
+      "id": "parse-businessesforsale",
+      "name": "Parse BusinessesForSale",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse AnyBusiness listings\nconst html = $input.item.json.data;\nconst listings = [];\n\n// Template parser - adjust based on actual site structure\nconst listingRegex = /<div[^>]*class=\"[^\"]*listing-card[^\"]*\"[^>]*>([\\s\\S]*?)<\\/div>/g;\nlet match;\n\nwhile ((match = listingRegex.exec(html)) !== null) {\n  const listingHtml = match[1];\n  \n  const titleMatch = listingHtml.match(/<h3[^>]*>([^<]+)<\\/h3>/);\n  const priceMatch = listingHtml.match(/\\$([\\d,]+)/);\n  const profitMatch = listingHtml.match(/Profit:\\s*\\$([\\d,]+)/);\n  const locationMatch = listingHtml.match(/Location:\\s*([^<]+)/);\n  const urlMatch = listingHtml.match(/href=\"([^\"]+)\"/);\n  \n  listings.push({\n    source: 'AnyBusiness',\n    title: titleMatch ? titleMatch[1].trim() : 'N/A',\n    askingPrice: priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : null,\n    ebitda: null,\n    profit: profitMatch ? parseInt(profitMatch[1].replace(/,/g, '')) : null,\n    industry: 'N/A',\n    location: locationMatch ? locationMatch[1].trim() : 'N/A',\n    yearsEstablished: null,\n    reasonForSale: 'N/A',\n    listingUrl: urlMatch ? 'https://www.anybusiness.com.au' + urlMatch[1] : 'N/A',\n    scrapedDate: new Date().toISOString()\n  });\n}\n\nreturn listings.map(listing => ({ json: listing }));"
+      },
+      "id": "parse-anybusiness",
+      "name": "Parse AnyBusiness",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {},
+      "id": "merge-listings",
+      "name": "Merge All Listings",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": ""
+          },
+          "conditions": [
+            {
+              "id": "ebitda-check",
+              "leftValue": "={{ $json.ebitda || $json.profit || 0 }}",
+              "rightValue": 500000,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "years-check",
+              "leftValue": "={{ $json.yearsEstablished || 0 }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-listings",
+      "name": "Filter Qualified Listings",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.1,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Additional filtering for retirement/exit mentions\nconst items = $input.all();\nconst filtered = [];\n\nfor (const item of items) {\n  const reasonForSale = (item.json.reasonForSale || '').toLowerCase();\n  \n  // Check if reason mentions retirement or exit\n  const isRetirementExit = reasonForSale.includes('retirement') || \n                          reasonForSale.includes('retire') ||\n                          reasonForSale.includes('exit');\n  \n  // If no reason provided, include anyway (will be reviewed manually)\n  // If reason provided, must mention retirement/exit\n  if (reasonForSale === 'n/a' || reasonForSale === '' || isRetirementExit) {\n    filtered.push(item);\n  }\n}\n\nreturn filtered;"
+      },
+      "id": "filter-retirement",
+      "name": "Filter Retirement/Exit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "19z_W8pJ2Wiic2MfBSED7hz6o48wjmJ-NgP0q2WyayH4",
+          "mode": "list",
+          "cachedResultName": "Business Leads Tracker"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Set Variables').item.json.sheetName }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Source": "={{ $json.source }}",
+            "Business Title": "={{ $json.title }}",
+            "Asking Price": "={{ $json.askingPrice }}",
+            "EBITDA": "={{ $json.ebitda }}",
+            "Profit": "={{ $json.profit }}",
+            "Industry": "={{ $json.industry }}",
+            "Location": "={{ $json.location }}",
+            "Years Established": "={{ $json.yearsEstablished }}",
+            "Reason for Sale": "={{ $json.reasonForSale }}",
+            "Listing URL": "={{ $json.listingUrl }}",
+            "Scraped Date": "={{ $json.scrapedDate }}"
+          }
+        },
+        "options": {
+          "createSheet": true
+        }
+      },
+      "id": "write-to-sheets",
+      "name": "Write to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1650, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_CREDENTIALS_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Count new listings and prepare summary\nconst items = $input.all();\nconst count = items.length;\n\nconst summary = {\n  totalListings: count,\n  message: `🔔 *Weekly Broker Deals Summary*\\n\\n` +\n           `Found *${count}* qualified business listings meeting criteria:\\n` +\n           `• EBITDA/Profit > $500k\\n` +\n           `• 10+ years established\\n` +\n           `• Retirement/Exit opportunity\\n\\n` +\n           `View details in Google Sheet: Broker Exit Leads – ${new Date().toISOString().split('T')[0]}`,\n  listingDetails: items.slice(0, 5).map(item => {\n    return `• *${item.json.title}* - ${item.json.location}\\n  Price: $${item.json.askingPrice?.toLocaleString() || 'N/A'} | EBITDA: $${item.json.ebitda?.toLocaleString() || 'N/A'}\\n  ${item.json.listingUrl}`;\n  }).join('\\n\\n')\n};\n\nif (count > 5) {\n  summary.message += `\\n\\n_Showing top 5 of ${count} listings_`;\n}\n\nif (count > 0) {\n  summary.message += `\\n\\n${summary.listingDetails}`;\n}\n\nreturn [{ json: summary }];"
+      },
+      "id": "prepare-slack-summary",
+      "name": "Prepare Slack Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 500]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A2MD9MC0G",
+          "mode": "list",
+          "cachedResultName": "#broker-deals"
+        },
+        "text": "={{ $json.message }}",
+        "otherOptions": {
+          "mrkdwn": true
+        }
+      },
+      "id": "send-to-slack",
+      "name": "Send to Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1850, 500],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "YOUR_SLACK_CREDENTIALS_ID",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "seconds"
+      },
+      "id": "rate-limit-1",
+      "name": "Rate Limit 1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [650, 200],
+      "webhookId": "rate-limit-xcllusive"
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "seconds"
+      },
+      "id": "rate-limit-2",
+      "name": "Rate Limit 2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [650, 300],
+      "webhookId": "rate-limit-businessesforsale"
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "seconds"
+      },
+      "id": "rate-limit-3",
+      "name": "Rate Limit 3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [650, 400],
+      "webhookId": "rate-limit-anybusiness"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": ""
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.error }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "error"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "error-handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1050, 500]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables": {
+      "main": [
+        [
+          {
+            "node": "Scrape Xcllusive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Scrape BusinessesForSale",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Scrape AnyBusiness",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Xcllusive": {
+      "main": [
+        [
+          {
+            "node": "Parse Xcllusive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape BusinessesForSale": {
+      "main": [
+        [
+          {
+            "node": "Parse BusinessesForSale",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape AnyBusiness": {
+      "main": [
+        [
+          {
+            "node": "Parse AnyBusiness",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Xcllusive": {
+      "main": [
+        [
+          {
+            "node": "Merge All Listings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse BusinessesForSale": {
+      "main": [
+        [
+          {
+            "node": "Merge All Listings",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Parse AnyBusiness": {
+      "main": [
+        [
+          {
+            "node": "Merge All Listings",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge All Listings": {
+      "main": [
+        [
+          {
+            "node": "Filter Qualified Listings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Qualified Listings": {
+      "main": [
+        [
+          {
+            "node": "Filter Retirement/Exit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Retirement/Exit": {
+      "main": [
+        [
+          {
+            "node": "Write to Google Sheets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Slack Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Slack Summary": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "YOUR_ERROR_WORKFLOW_ID"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-12-05T00:00:00.000Z",
+  "versionId": "1"
+}

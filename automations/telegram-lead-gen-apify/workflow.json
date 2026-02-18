@@ -1,0 +1,1182 @@
+{
+  "name": "Telegram Lead Gen - Apify Google Maps to Sheets",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "403e1650-9e29-49db-a4f9-a81674e3b18a",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -608,
+        112
+      ],
+      "webhookId": "telegram-lead-gen-webhook",
+      "credentials": {
+        "telegramApi": {
+          "id": "",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "voice-check",
+              "leftValue": "={{ $json.message.voice }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "fb27c9ea-2ab8-4cca-a75e-98bbb40aca07",
+      "name": "Voice or Text?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "id": "43999531-45c1-408e-808d-656b6c334f3e",
+      "name": "Get Voice File Info",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        -16
+      ],
+      "webhookId": "2cf1e2c6-cfdb-4f01-ab59-ef49011d5498",
+      "credentials": {
+        "telegramApi": {
+          "id": "yH1Iwnb3kvbKq5Mb",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot{{ 'GOOGLE_SHEET_ID' }}/{{ $json.result.file_path }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "891bb322-dfd8-425b-8c2a-725309472b30",
+      "name": "Download Voice File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        64,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "2c1c9763-d465-4cfe-9bde-728c4154621b",
+      "name": "Transcribe Voice (OpenAI)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        288,
+        -16
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "G0WyFlL0CAqhVGl8",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "user-request",
+              "name": "userRequest",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "chat-id",
+              "name": "chatId",
+              "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d74c44fa-8e66-45ab-bb79-74da37f09d76",
+      "name": "Set Transcribed Text",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "user-request",
+              "name": "userRequest",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "chat-id",
+              "name": "chatId",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "eefb7d8e-72b5-406a-ab2e-37957dfde7c9",
+      "name": "Set Text Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"LeadGenerationRequest\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"businessType\": {\n      \"type\": \"string\",\n      \"description\": \"The type of business to search for\"\n    },\n    \"location\": {\n      \"type\": \"string\", \n      \"description\": \"The geographic location/city/area to search within\"\n    },\n    \"quantity\": {\n      \"type\": \"integer\",\n      \"description\": \"Number of leads to retrieve\",\n      \"default\": 20,\n      \"minimum\": 1,\n      \"maximum\": 500\n    }\n  },\n  \"required\": [\"businessType\", \"location\", \"quantity\"],\n  \"additionalProperties\": false\n}"
+      },
+      "id": "73951b11-84e8-4f18-a48d-353a927fa9b5",
+      "name": "Define Output Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract the lead generation request from the user's message.\n\nUser Message: {{ $json.userRequest }}\n\nExtract:\n1. businessType - The type of business they want to find (e.g., \"dental clinics\", \"restaurants\", \"plumbers\")\n2. location - The location/city/area they specified (e.g., \"Sydney Australia\", \"Melbourne CBD\")\n3. quantity - The number of leads they want (default to 20 if not specified)\n\nRespond ONLY with valid JSON matching the schema.",
+        "hasOutputParser": true
+      },
+      "id": "3d1c4c9d-684b-40fa-96bb-25001b3887a2",
+      "name": "Parse Request (AI)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        752,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7d00bc1d-e726-4834-ad27-1e4c14a83efc",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        640,
+        592
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "G0WyFlL0CAqhVGl8",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=🔍 Got it! Searching for **{{ $json.output.businessType }}** in **{{ $json.output.location }}**...\n\n⏳ Using Apify Google Maps Scraper - this may take 2-5 minutes.\n\nI'll send you the Google Sheet link when ready!",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "27c07800-c808-49da-b856-2fc53f7f61b2",
+      "name": "Send Processing Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1168,
+        112
+      ],
+      "webhookId": "ebb74d06-1e13-40be-9400-45c54204d1b6",
+      "credentials": {
+        "telegramApi": {
+          "id": "yH1Iwnb3kvbKq5Mb",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/compass~crawler-google-places/runs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": ""
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"searchStringsArray\": [\"{{ $('Parse Request (AI)').item.json.output.businessType }} in {{ $('Parse Request (AI)').item.json.output.location }}\"]\n  ,\n  \"maxCrawledPlacesPerSearch\": {{ $('Parse Request (AI)').item.json.output.quantity }},\n  \"language\": \"en\",\n  \"deeperCityScrape\": false,\n  \"oneReviewPerRow\": false,\n  \"scrapeContacts\": true,\n  \"scrapeImages\": false,\n  \"scrapeReviews\": false,\n  \"scraperType\": \"places\"\n}",
+        "options": {}
+      },
+      "id": "7bc8280c-1cc8-4877-b369-ac193d16ffd4",
+      "name": "Start Apify Actor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "run-id",
+              "name": "runId",
+              "value": "={{ $json.data.id }}",
+              "type": "string"
+            },
+            {
+              "id": "dataset-id",
+              "name": "datasetId",
+              "value": "={{ $json.data.defaultDatasetId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b28b76a5-c287-4e95-a916-1528d2a9a804",
+      "name": "Set Run IDs",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "id": "41d3fc34-8da9-4a26-8d86-48d34dbb21ac",
+      "name": "Wait 30s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1824,
+        112
+      ],
+      "webhookId": "wait-apify"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/actor-runs/{{ $('Set Run IDs').item.json.runId }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "242c98ba-95b5-4835-9f26-98083d939d14",
+      "name": "Check Actor Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2048,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "status-check",
+              "leftValue": "={{ $json.data.status }}",
+              "rightValue": "SUCCEEDED",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2e1e50c9-8fdb-465a-8c69-f14596b8141c",
+      "name": "Actor Finished?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2272,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $('Set Run IDs').item.json.datasetId }}/items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": ""
+            },
+            {
+              "name": "format",
+              "value": "json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6014f4b2-7f15-4c6e-b79b-d20ce68e7ca7",
+      "name": "Get Apify Results",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2480,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process Apify Google Maps results\nconst results = $input.first().json;\nconst requestedQuantity = $('Parse Request (AI)').first().json.quantity || 20;\n\n// Handle both array and object responses\nconst dataArray = Array.isArray(results) ? results : [results];\n\n// Map and clean the Apify data format\nconst leads = dataArray.slice(0, requestedQuantity).map((place, index) => {\n  return {\n    rowNumber: index + 1,\n    businessName: place.title || place.name || '',\n    address: place.address || place.street || '',\n    city: place.city || '',\n    postalCode: place.postalCode || '',\n    phone: place.phone || place.phoneUnformatted || '',\n    website: place.website || '',\n    email: place.email || '',\n    rating: place.totalScore || place.rating || '',\n    reviewCount: place.reviewsCount || place.reviews || '',\n    businessType: place.categoryName || place.categories?.[0] || '',\n    placeId: place.placeId || '',\n    latitude: place.location?.lat || place.latitude || '',\n    longitude: place.location?.lng || place.longitude || '',\n    googleMapsUrl: place.url || place.googleMapsUrl || '',\n    claimedStatus: place.isClaimed ? 'Claimed' : 'Unclaimed',\n    permanentlyClosed: place.permanentlyClosed ? 'Yes' : 'No',\n    temporarilyClosed: place.temporarilyClosed ? 'Yes' : 'No',\n    priceLevel: place.price || '',\n    openingHours: place.openingHours?.[0]?.hours || 'Not available',\n    scrapedAt: new Date().toISOString()\n  };\n});\n\nreturn leads;"
+      },
+      "id": "c7d6b6df-4ffb-4be6-950e-07d4c545d585",
+      "name": "Process Apify Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "=1phjxOFjrWTIwbNBPyudT9d3MeOzwWXafamMl_kl9U2g",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1phjxOFjrWTIwbNBPyudT9d3MeOzwWXafamMl_kl9U2g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "rowNumber": "={{ $json.rowNumber }}",
+            "businessName": "={{ $json.businessName }}",
+            "address": "={{ $json.address }}",
+            "city": "={{ $json.city }}",
+            "postalCode": "={{ $json.postalCode }}",
+            "website": "={{ $json.website }}",
+            "phone": "={{\"'\" + $json.phone }}",
+            "email": "={{ $json.email }}",
+            "rating": "={{ $json.rating }}",
+            "reviewCount": "={{ $json.reviewCount }}",
+            "businessType": "={{ $json.businessType }}",
+            "placeId": "={{ $json.placeId }}",
+            "latitude": "={{ $json.latitude }}",
+            "longitude": "={{ $json.longitude }}",
+            "googleMapsUrl": "={{ $json.googleMapsUrl }}",
+            "claimedStatus": "={{ $json.claimedStatus }}",
+            "permanentlyClosed": "={{ $json.permanentlyClosed }}",
+            "temporarilyClosed": "={{ $json.temporarilyClosed }}",
+            "priceLevel": "={{ $json.priceLevel }}",
+            "openingHours": "={{ $json.openingHours }}",
+            "scrapedAt": "={{ $json.scrapedAt }}"
+          },
+          "matchingColumns": [
+            "businessName"
+          ],
+          "schema": [
+            {
+              "id": "rowNumber",
+              "displayName": "rowNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "businessName",
+              "displayName": "businessName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "postalCode",
+              "displayName": "postalCode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rating",
+              "displayName": "rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "reviewCount",
+              "displayName": "reviewCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "businessType",
+              "displayName": "businessType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "placeId",
+              "displayName": "placeId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "latitude",
+              "displayName": "latitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "longitude",
+              "displayName": "longitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "googleMapsUrl",
+              "displayName": "googleMapsUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "claimedStatus",
+              "displayName": "claimedStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "permanentlyClosed",
+              "displayName": "permanentlyClosed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "temporarilyClosed",
+              "displayName": "temporarilyClosed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "priceLevel",
+              "displayName": "priceLevel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "openingHours",
+              "displayName": "openingHours",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "scrapedAt",
+              "displayName": "scrapedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "4eaad226-3c13-48ac-9d40-a8bd4f712eda",
+      "name": "Append to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3200,
+        16
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7CmuUgY1NnVDULc3",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get count of processed items and sheet URL\nconst items = $input.all();\nconst count = items.length;\nconst sheetId = '1phjxOFjrWTIwbNBPyudT9d3MeOzwWXafamMl_kl9U2g';\nconst sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}`;\n\nreturn [{\n  json: {\n    count: count,\n    sheetUrl: sheetUrl,\n    businessType: $('Parse Request (AI)').first().json.businessType,\n    location: $('Parse Request (AI)').first().json.location\n  }\n}];"
+      },
+      "id": "f39b1628-89e4-454b-9a47-8eedc41d64ed",
+      "name": "Prepare Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3424,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=✅ **Lead Generation Complete!**\n\n📊 **Results:**\n• Business Type: {{ $json.businessType }}\n• Location: {{ $json.location }}\n• Leads Found: {{ $json.count }}\n\n📋 **Google Sheet:**\n{{ $json.sheetUrl }}\n\n_Data includes: Name, Address, Phone, Email, Website, Rating, Reviews, Claimed Status, and Google Maps link._\n\n🔗 Powered by Apify Google Maps Scraper",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "1771abe7-772c-46ed-a4c8-8f1f116ebf04",
+      "name": "Send Completion Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3632,
+        16
+      ],
+      "webhookId": "9708ee84-388e-44b7-9fd7-b99c57224629",
+      "credentials": {
+        "telegramApi": {
+          "id": "yH1Iwnb3kvbKq5Mb",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=⏳ **Still Processing...**\n\nApify is still scraping Google Maps data. Checking again in 30 seconds...\n\nStatus: {{ $json.data.status }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "e178db6e-937e-49c2-a9b4-b94f6a5f4e18",
+      "name": "Send Still Processing",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2480,
+        224
+      ],
+      "webhookId": "a45ae6f7-49c9-4bcf-ade0-c4d787083fd5",
+      "credentials": {
+        "telegramApi": {
+          "id": "yH1Iwnb3kvbKq5Mb",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=❌ **Error Processing Request**\n\nSorry, I couldn't process your lead generation request.\n\n**Your request:** {{ $('Telegram Trigger').item.json.message.text || 'Voice message' }}\n\n**Tip:** Try saying something like:\n• \"Find me 50 dental clinics in Sydney\"\n• \"Get 100 plumbers in Melbourne\"\n• \"Search for 30 restaurants in Brisbane CBD\"",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "36e5b58e-5a05-41dc-ae45-3298a7dc505d",
+      "name": "Send Error Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        1200
+      ],
+      "webhookId": "5e873d52-a11c-412f-922b-e923efc5932c",
+      "credentials": {
+        "telegramApi": {
+          "id": "yH1Iwnb3kvbKq5Mb",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "e3485b90-f6ed-4c2f-b918-6cae517e2bae",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        512,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fedbb917-9367-4195-9c8a-da1f831fa44f",
+              "name": "GOOGLE_SHEET_ID",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "f78705fe-1487-4b62-9899-3b1876d5ac78",
+              "name": "chatID",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "517be4c6-541d-4262-af75-cee825d680fc",
+              "name": "businessType",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "6a3e5ae7-2fb9-46f4-badc-826fae532ac9",
+              "name": "location",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2960,
+        16
+      ],
+      "id": "2a57c06d-3cb6-42d2-9bff-2e23536d37a0",
+      "name": "Init Variables"
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 812876158,
+          "message": {
+            "message_id": 23,
+            "from": {
+              "id": 7043186326,
+              "is_bot": false,
+              "first_name": "JS",
+              "last_name": "Primo",
+              "username": "jsprimoph",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 7043186326,
+              "first_name": "JS",
+              "last_name": "Primo",
+              "username": "jsprimoph",
+              "type": "private"
+            },
+            "date": 1765522253,
+            "voice": {
+              "duration": 5,
+              "mime_type": "audio/ogg",
+              "file_id": "AwACAgUAAxkBAAMXaTu7TY--ZIT9pmW1EZdQeKc9UO0AAsgbAAK5rthV9cNPA2l79d42BA",
+              "file_unique_id": "AgADyBsAArmu2FU",
+              "file_size": 27984
+            }
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Voice or Text?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice or Text?": {
+      "main": [
+        [
+          {
+            "node": "Get Voice File Info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Text Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voice File Info": {
+      "main": [
+        [
+          {
+            "node": "Download Voice File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voice File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Voice (OpenAI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Voice (OpenAI)": {
+      "main": [
+        [
+          {
+            "node": "Set Transcribed Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Transcribed Text": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Text Message": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Parse Request (AI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Request (AI)": {
+      "main": [
+        [
+          {
+            "node": "Send Processing Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Parse Request (AI)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Define Output Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Parse Request (AI)",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Processing Message": {
+      "main": [
+        [
+          {
+            "node": "Start Apify Actor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Apify Actor": {
+      "main": [
+        [
+          {
+            "node": "Set Run IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Run IDs": {
+      "main": [
+        [
+          {
+            "node": "Wait 30s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 30s": {
+      "main": [
+        [
+          {
+            "node": "Check Actor Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Actor Status": {
+      "main": [
+        [
+          {
+            "node": "Actor Finished?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actor Finished?": {
+      "main": [
+        [
+          {
+            "node": "Get Apify Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Still Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Still Processing": {
+      "main": [
+        [
+          {
+            "node": "Wait 30s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Apify Results": {
+      "main": [
+        [
+          {
+            "node": "Process Apify Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Apify Results": {
+      "main": [
+        [
+          {
+            "node": "Init Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Prepare Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Summary": {
+      "main": [
+        [
+          {
+            "node": "Send Completion Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Init Variables": {
+      "main": [
+        [
+          {
+            "node": "Append to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bd13e67e-2cc4-4f7b-9fb3-504ab1d4bede",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "450028ef010d8edf3c52943f09cdf2b60044ee191d9fa1abfadf62d688d98f2b"
+  },
+  "id": "KufpKeAJLyIj4B1Q",
+  "tags": [
+    {
+      "name": "Apify",
+      "id": "6Tveou6jMqK9D8vW",
+      "updatedAt": "2025-12-12T06:39:56.149Z",
+      "createdAt": "2025-12-12T06:39:56.149Z"
+    },
+    {
+      "updatedAt": "2025-12-12T02:24:40.850Z",
+      "createdAt": "2025-12-12T02:24:40.850Z",
+      "id": "78NYYn33RhKqZH2h",
+      "name": "Google Maps"
+    },
+    {
+      "updatedAt": "2025-12-12T02:24:40.809Z",
+      "createdAt": "2025-12-12T02:24:40.809Z",
+      "id": "P1h3BNKJL3dIyEZA",
+      "name": "Lead Generation"
+    },
+    {
+      "updatedAt": "2025-12-09T06:38:01.764Z",
+      "createdAt": "2025-12-09T06:38:01.764Z",
+      "id": "nhp2H7CezJzJ8DDh",
+      "name": "Telegram"
+    }
+  ]
+}
