@@ -1,6 +1,6 @@
 ﻿# My-Automations
 
-> Import-ready n8n workflows, voice agents, and browser scripts — built and maintained by [Utsav Mishra](mailto:utsavmishraa005@gmail.com)
+> Import-ready n8n workflows, voice agents, and browser scripts
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Automations](https://img.shields.io/badge/automations-21-blue)](#automation-catalog)
