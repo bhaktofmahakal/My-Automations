@@ -140,6 +140,9 @@ My-Automations/
 | [job-finder-automation](automations/job-finder-automation/) | Scheduled | OpenRouter, Google Sheets |
 | [wellfound-auto-apply](automations/wellfound-auto-apply/) | Manual (browser console) | Browser JS |
 
+
+| [new web based](https://github.com/bhaktofmahakal/sop-agent) | semi-automation |  JS + llm|
+
 ---
 
 ## Quick start
