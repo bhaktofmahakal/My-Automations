@@ -145,6 +145,8 @@ My-Automations/
 
 ---
 
+#### Sales Tools  [link](https://docs.google.com/spreadsheets/d/1EuNgELuqNbY-17jVprzxu68QuC76_HmSNE_7d_JF9gA/edit?usp=sharing)
+
 ## Quick start
 
 ```bash
