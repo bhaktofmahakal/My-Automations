@@ -11,7 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/github/stars/bhaktofmahakal/My-Automations?style=social" alt="GitHub Stars" /> 
   <img src="https://img.shields.io/github/forks/bhaktofmahakal/My-Automations?style=social" alt="GitHub Forks" /> 
-  <img src="https://img.shields.io/badge/templates-22-blue" alt="Templates" /> 
+  <img src="https://img.shields.io/badge/templates-23-blue" alt="Templates" /> 
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License" /> 
   <img src="https://img.shields.io/github/last-commit/bhaktofmahakal/My-Automations" alt="Last Commit" /> 
   <img src="https://img.shields.io/badge/maintained-yes-brightgreen" alt="Maintained" />
@@ -49,7 +49,7 @@
 
 ## 💡 What this is
 
-A curated, deployment-ready collection of **22 automations** covering lead generation, cold outreach, voice-based screening, AI content creation, and job hunting. Every automation is modular and ships with:
+A curated, deployment-ready collection of **23 automations** covering lead generation, cold outreach, voice-based screening, AI content creation, and job hunting. Every automation is modular and ships with:
 
 - ✅ **`workflow.json`** — Unaltered export ready for instant import.
 - ✅ **`setup.md`** — Step-by-step guide for deployment and smoke-testing.
@@ -143,6 +143,7 @@ A curated, deployment-ready collection of **22 automations** covering lead gener
 ### 🎨 AI Content & Ads
 | Automation | Trigger | Key Integrations |
 | :--- | :--- | :--- |
+| [social-media-auto-poster](automations/social-media-auto-poster/) | Telegram received | Blotato, OpenAI, Google Sheets |
 | [ai-avatar-trending-news](automations/ai-avatar-trending-news/) | Scheduled | OpenAI |
 | [veo3-ads-making](automations/veo3-ads-making/) | Manual / scheduled | OpenAI, Telegram |
 
