@@ -152,6 +152,8 @@ A curated, deployment-ready collection of **23 automations** covering lead gener
 | :--- | :--- | :--- |
 | [job-finder-automation](automations/job-finder-automation/) | Scheduled | OpenRouter, Google Sheets |
 | [wellfound-auto-apply](automations/wellfound-auto-apply/) | Manual (browser console) | Browser JS |
+| [SOP/Resume](https://github.com/bhaktofmahakal/sop-agent) | Semi (Web) | Web |
+
 
 ---
 
