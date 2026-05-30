@@ -1,4 +1,4 @@
-﻿# Triforce HR Voice Agent
+﻿# HR Voice Agent
 
 ## What it does
 Phone-screen candidates for the Business Associate role.
