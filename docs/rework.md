@@ -58,22 +58,6 @@ The outreach engine operates through a coordinated sequence of nodes:
   * `Wait3` (Wait node, lines 2381–2415)
 * **Scripted Logic:** The JS Code node `Opt Out Token` generates secure URL-safe base64 tokens matching the user's email address to ensure unsubscribe requests map directly to Google Sheets database records without exposing raw credentials.
 
-### Screenshots to Capture
-1. **n8n Canvas Overview:** Take a full canvas screenshot of the "Cold email Agent" workflow in the n8n editor, showing the three follow-up waves separated by Wait nodes.
-2. **LLM Node Setup:** Take a screenshot of the `Email #1 #2 #3` OpenAI node open in the parameter editor panel, displaying the system prompt utilizing variables like `{{ $json.company_name }}` and `{{ $json.profile_data }}`.
-3. **Wait Node Configuration:** Open the `Wait3` node details panel showing the wait duration configuration.
-4. **Google Sheets Database Layout:** A screenshot of the Google Sheet columns containing columns: `Email`, `Company`, `Status` (e.g. `"Sent Email #1"`, `"Replied"`, `"Opted Out"`), `Thread ID`, and `Opt-out Token`.
-
-### Verifiability Assessment of Claims
-
-| Claim | Status | Repository Evidence / Traceability |
-| :--- | :--- | :--- |
-| **Outreach Automation:** Automates multi-wave outbound cold email campaigns with dynamic personalizations based on Perplexity and LinkedIn scraping. | **VERIFIED** | Present in [workflow.json](file:///u:/My-Automations/automations/cold-email-agent-v1/workflow.json#L6084-L6377) via configured Relevance, Perplexity, and OpenAI nodes. |
-| **Suppression Logic:** Suppresses follow-up sequences automatically the moment a reply is detected in Gmail or an unsubscribe webhook is received. | **VERIFIED** | Webhook listener and Gmail check nodes (`Replied?`, `Wait3`, `Opt Out Token`) are fully routed to sheet-status updates which break the execution loops. |
-| **Google Sheets Database:** Uses Google Sheets as a lightweight CRM to track thread IDs, message IDs, and contact outreach status. | **VERIFIED** | Active Google Sheets nodes (e.g. `Google Sheets9`, `Google Sheets10`, `Google Sheets12`) map and write these keys. |
-| **HubSpot CRM Integration:** Seamlessly syncs leads, deal stages, and outbound communications directly to HubSpot CRM. | **NOT VERIFIED** | No HubSpot nodes or API calls are configured in this repository. Google Sheets is the sole datastore. |
-| **Outreach Performance Metrics:** Achieved a 47% open rate and a 12% reply rate across 10,000 processed B2B leads. | **NOT VERIFIED** | The repository contains no campaign logs, analytics tables, or performance metrics. |
-| **Personal Experience Claim:** 2+ years of full-stack engineering experience, including building 10+ workflows reducing manual effort by 65% and duplicate errors by 90%. | **PARTIALLY VERIFIED** | These claims are explicitly written in [wellfound.js](file:///u:/My-Automations/automations/wellfound-auto-apply/wellfound.js#L20-L34) as part of Utsav's resume script, but the raw logs or production metrics backing them are not in this repository. |
 
 ---
 
@@ -139,10 +123,6 @@ The repository excels in asynchronous operational documentation, allowing team m
    * **File Path:** [ai-systems-generation-steps.md](file:///u:/My-Automations/docs/guides/ai-systems-generation-steps.md)  
    * **Why it qualifies:** A conceptual design manual explaining how to structure AI systems, from choosing architectures (RAG vs. Agents) to defining evaluation thresholds, fallback strategies, and observability metrics (logging prompts, outputs, and latency).
 
-### Screenshots to Capture
-1. **GitHub README Table:** Capture a screenshot of the root `README.md` rendered on GitHub, highlighting the "Automation Catalog" table.
-2. **Troubleshooting Matrix:** Capture the rendered `troubleshooting.md` file in a markdown preview, displaying the categorized error lists.
-3. **Runbook Section:** Capture the "Common Failure Cases" and "Runbook" sections in the `human-in-the-loop-email-response/README.md` to demonstrate the presence of standard operating procedures.
 
 ---
 
