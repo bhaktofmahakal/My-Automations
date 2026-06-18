@@ -1,0 +1,137 @@
+import { NextResponse } from 'next/server';
+
+export const runtime = 'edge';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { headers: corsHeaders });
+}
+
+// Agent definitions - the agentic sales team
+const agents = [
+  {
+    id: 'scout',
+    name: 'Scout',
+    role: 'Research & Intelligence',
+    email: 'scout@github.com/bhaktofmahakal/My-Automations',
+    description: 'Finds prospects, researches companies, spots opportunities others miss.',
+    personality: ['Curious', 'Proactive', 'Sharp', 'Opinionated', 'Relentless'],
+    capabilities: [
+      'Find qualified prospects 24/7',
+      'Deep company research',
+      'Contact enrichment',
+      'Buying signal detection',
+      'ICP scoring',
+    ],
+    resources: [
+      { name: 'Industry Prompts', url: 'https://github.com/bhaktofmahakal/My-Automations/industry' },
+      { name: 'Role Prompts', url: 'https://github.com/bhaktofmahakal/My-Automations/role' },
+      { name: 'Agentic BDR', url: 'https://github.com/bhaktofmahakal/My-Automations/agentic-bdr' },
+    ],
+    install: 'npx clawdhub install My-Automations/gtm/scout',
+    skill_url: 'https://github.com/bhaktofmahakal/My-Automations/api/v1/agents/scout/skill',
+    github: 'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm/blob/main/openclaw-skills/scout/SKILL.md',
+  },
+  {
+    id: 'writer',
+    name: 'Writer',
+    role: 'Sales Copy & Content',
+    email: 'writer@github.com/bhaktofmahakal/My-Automations',
+    description: 'Writes elite sales copy. Cold emails that get replies. LinkedIn posts that drive engagement. Follow-ups that convert.',
+    personality: ['Sharp', 'Creative', 'Concise', 'Persuasive', 'Proactive'],
+    capabilities: [
+      'Elite cold email copy',
+      'LinkedIn posts & DMs',
+      'Follow-up sequences',
+      'Subject line optimization',
+      'Value prop messaging',
+    ],
+    resources: [
+      { name: 'Tonalities', url: 'https://github.com/bhaktofmahakal/My-Automations/free-tools/tonalities' },
+      { name: 'Alex Hormozi Style', url: 'https://github.com/bhaktofmahakal/My-Automations/free-tools/tonalities/alex-hormozi' },
+      { name: 'Hemingway Style', url: 'https://github.com/bhaktofmahakal/My-Automations/free-tools/tonalities/hemingway' },
+    ],
+    install: 'npx clawdhub install My-Automations/gtm/writer',
+    skill_url: 'https://github.com/bhaktofmahakal/My-Automations/api/v1/agents/writer/skill',
+    github: 'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm/blob/main/openclaw-skills/writer/SKILL.md',
+  },
+  {
+    id: 'rep',
+    name: 'Rep',
+    role: 'Outreach & Engagement',
+    email: 'rep@github.com/bhaktofmahakal/My-Automations',
+    description: 'Writes emails, voicemails, LinkedIn messages. Handles objections. Never misses a follow-up.',
+    personality: ['Direct', 'Creative', 'Persistent', 'Empathetic', 'Proactive'],
+    capabilities: [
+      'Hyper-personalized cold emails',
+      'Elite voicemail scripts',
+      'LinkedIn outreach',
+      'Objection handling',
+      'Multi-touch sequences',
+    ],
+    resources: [
+      { name: 'Tonalities', url: 'https://github.com/bhaktofmahakal/My-Automations/free-tools/tonalities' },
+      { name: 'Voice Templates', url: 'https://github.com/bhaktofmahakal/My-Automations/voice-templates' },
+      { name: 'Voicemail Scripts', url: 'https://github.com/bhaktofmahakal/My-Automations/voice-templates?category=voicemail' },
+    ],
+    install: 'npx clawdhub install My-Automations/gtm/rep',
+    skill_url: 'https://github.com/bhaktofmahakal/My-Automations/api/v1/agents/rep/skill',
+    github: 'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm/blob/main/openclaw-skills/rep/SKILL.md',
+  },
+  {
+    id: 'closer',
+    name: 'Closer',
+    role: 'Deals & Revenue',
+    email: 'closer@github.com/bhaktofmahakal/My-Automations',
+    description: 'Writes proposals, handles negotiations, revives stalled deals, closes revenue.',
+    personality: ['Strategic', 'Direct', 'Perceptive', 'Patient', 'Proactive'],
+    capabilities: [
+      'Proposal generation',
+      'Price objection handling',
+      'Competitive positioning',
+      'Stalled deal recovery',
+      'MEDDPICC qualification',
+    ],
+    resources: [
+      { name: 'Methodologies', url: 'https://github.com/bhaktofmahakal/My-Automations/methodology' },
+      { name: 'Workflows', url: 'https://github.com/bhaktofmahakal/My-Automations/workflow' },
+      { name: 'Chris Voss Tonality', url: 'https://github.com/bhaktofmahakal/My-Automations/free-tools/tonalities/chris-voss' },
+    ],
+    install: 'npx clawdhub install My-Automations/gtm/closer',
+    skill_url: 'https://github.com/bhaktofmahakal/My-Automations/api/v1/agents/closer/skill',
+    github: 'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm/blob/main/openclaw-skills/closer/SKILL.md',
+  },
+];
+
+/**
+ * GET /api/v1/agents
+ *
+ * List all agents in the agentic sales team
+ */
+export async function GET() {
+  const response = {
+    team: 'GTM Skills Agentic Sales Team',
+    description: 'Four agents. Your 24/7 sales team.',
+    install_all: 'npx clawdhub install My-Automations/gtm/scout My-Automations/gtm/writer My-Automations/gtm/rep My-Automations/gtm/closer',
+    flow: 'Scout finds → Writer crafts → Rep engages → Closer closes',
+    agents,
+    golden_rule: 'Every agent ends responses with a question or suggestion. They are teammates, not tools.',
+    documentation: 'https://github.com/bhaktofmahakal/My-Automations/agents',
+    meta: {
+      api_version: 'v1',
+      total: agents.length,
+    },
+  };
+
+  return NextResponse.json(response, {
+    headers: {
+      ...corsHeaders,
+      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+    },
+  });
+}
