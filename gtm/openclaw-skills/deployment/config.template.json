@@ -1,0 +1,89 @@
+{
+  "$schema": "https://docs.openclaw.ai/schema/config.json",
+  "_comment": "OpenClaw GTM Agent Fleet Configuration Template",
+
+  "agents": {
+    "defaults": {
+      "workspace": "/path/to/workspace",
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      },
+      "models": {
+        "anthropic/claude-sonnet-4": {
+          "alias": "sonnet"
+        },
+        "anthropic/claude-haiku": {
+          "alias": "haiku"
+        }
+      }
+    }
+  },
+
+  "channels": {
+    "telegram": {
+      "_comment": "SECURITY: Lock to specific chat and user IDs",
+      "botToken": "YOUR_BOT_TOKEN",
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist",
+      "allowedGroups": ["YOUR_GROUP_CHAT_ID"],
+      "allowedUsers": ["YOUR_USER_ID"],
+      "mentionOnly": true,
+      "streamMode": "partial"
+    }
+  },
+
+  "gateway": {
+    "mode": "local",
+    "remote": {
+      "url": "ws://127.0.0.1:18789",
+      "token": "YOUR_GATEWAY_TOKEN"
+    }
+  },
+
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true
+      }
+    }
+  },
+
+  "auth": {
+    "profiles": {
+      "anthropic:default": {
+        "provider": "anthropic",
+        "mode": "api_key"
+      }
+    }
+  },
+
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto"
+  },
+
+  "_security_notes": {
+    "telegram_lockdown": [
+      "1. Set allowedGroups to your specific Telegram group chat ID",
+      "2. Set allowedUsers to your Telegram user ID only",
+      "3. Enable mentionOnly so bot only responds to @mentions in groups",
+      "4. Use groupPolicy: allowlist to reject unknown groups"
+    ],
+    "api_keys": [
+      "Store API keys in environment variables, not in config",
+      "ANTHROPIC_API_KEY - Claude API",
+      "HUBSPOT_API_KEY - HubSpot CRM API",
+      "Never commit API keys to git"
+    ],
+    "permissions": [
+      "Agents should only have access to their workspace",
+      "No sudo or system-level access",
+      "Use scoped permissions where possible"
+    ]
+  }
+}
