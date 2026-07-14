@@ -1,0 +1,997 @@
+{
+  "name": "Divine Hindu - DM Monitor & Router",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 3
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger-dm",
+      "name": "Every 3 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://graph.facebook.com/v19.0/' + $env.META_IG_USER_ID + '/conversations' }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "participants,messages{message,from,created_time,id}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $env.META_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "platform",
+              "value": "instagram"
+            },
+            {
+              "name": "limit",
+              "value": "25"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "fetch-ig-dms",
+      "name": "Fetch Instagram DMs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://graph.facebook.com/v19.0/me/conversations",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "participants,messages{message,from,created_time,id}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $env.META_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "limit",
+              "value": "25"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "fetch-fb-dms",
+      "name": "Fetch Facebook Messenger DMs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Instagram DMs\nconst igData = $('Fetch Instagram DMs').first().json;\nconst igMessages = [];\n\nif (igData && igData.data) {\n  for (const convo of igData.data) {\n    const participants = convo.participants ? convo.participants.data : [];\n    const participantNames = participants.map(p => p.name || p.username || p.id).join(', ');\n\n    if (convo.messages && convo.messages.data) {\n      for (const msg of convo.messages.data) {\n        // Skip messages sent by our own page/account\n        const fromName = msg.from ? (msg.from.name || msg.from.username || msg.from.id) : 'unknown';\n        \n        igMessages.push({\n          platform: 'instagram',\n          conversation_id: convo.id,\n          message_id: msg.id,\n          from_name: fromName,\n          from_id: msg.from ? msg.from.id : '',\n          message_text: msg.message || '',\n          timestamp: msg.created_time || new Date().toISOString(),\n          participants: participantNames,\n          fetched_at: new Date().toISOString()\n        });\n      }\n    }\n  }\n}\n\n// Normalize Facebook Messenger DMs\nconst fbData = $('Fetch Facebook Messenger DMs').first().json;\nconst fbMessages = [];\n\nif (fbData && fbData.data) {\n  for (const convo of fbData.data) {\n    const participants = convo.participants ? convo.participants.data : [];\n    const participantNames = participants.map(p => p.name || p.id).join(', ');\n\n    if (convo.messages && convo.messages.data) {\n      for (const msg of convo.messages.data) {\n        const fromName = msg.from ? (msg.from.name || msg.from.id) : 'unknown';\n        \n        fbMessages.push({\n          platform: 'facebook_messenger',\n          conversation_id: convo.id,\n          message_id: msg.id,\n          from_name: fromName,\n          from_id: msg.from ? msg.from.id : '',\n          message_text: msg.message || '',\n          timestamp: msg.created_time || new Date().toISOString(),\n          participants: participantNames,\n          fetched_at: new Date().toISOString()\n        });\n      }\n    }\n  }\n}\n\nconst allMessages = [...igMessages, ...fbMessages];\n\nif (allMessages.length === 0) {\n  return [{ json: { _noMessages: true, message: 'No DMs found in this cycle' } }];\n}\n\nreturn allMessages.map(m => ({ json: m }));"
+      },
+      "id": "merge-normalize-dms",
+      "name": "Merge & Normalize DMs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "no-dm-check",
+              "leftValue": "={{ $json._noMessages }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notTrue"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-dms-check",
+      "name": "Has DMs?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_ID }}/values/DMTracker!C:C",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.GOOGLE_SHEETS_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "fetch-processed-dm-ids",
+      "name": "Fetch Processed DM IDs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1480,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get list of already-processed message IDs from Google Sheets\nconst sheetsData = $('Fetch Processed DM IDs').first().json;\nconst processedIds = new Set();\n\nif (sheetsData && sheetsData.values) {\n  for (const row of sheetsData.values) {\n    if (row[0]) processedIds.add(row[0]);\n  }\n}\n\n// Filter out already-processed messages and messages from our own page\nconst allItems = $input.all();\nconst newMessages = [];\nconst pageId = $env.META_PAGE_ID || '';\nconst igUserId = $env.META_IG_USER_ID || '';\n\nfor (const item of allItems) {\n  if (item.json._noMessages) continue;\n  \n  // Skip if already processed\n  if (processedIds.has(item.json.message_id)) continue;\n  \n  // Skip messages sent by our own page/account\n  if (item.json.from_id === pageId || item.json.from_id === igUserId) continue;\n  \n  // Skip empty messages\n  if (!item.json.message_text || item.json.message_text.trim() === '') continue;\n  \n  // Only process messages from the last 30 minutes to avoid old message backlog\n  const msgTime = new Date(item.json.timestamp).getTime();\n  const thirtyMinsAgo = Date.now() - (30 * 60 * 1000);\n  if (msgTime < thirtyMinsAgo) continue;\n  \n  newMessages.push(item);\n}\n\nif (newMessages.length === 0) {\n  return [{ json: { _noNewMessages: true, message: 'No new DMs to process' } }];\n}\n\nreturn newMessages;"
+      },
+      "id": "filter-processed-dms",
+      "name": "Filter New DMs Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "new-dms-check",
+              "leftValue": "={{ $json._noNewMessages }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notTrue"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-new-dms",
+      "name": "Has New DMs?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.LLM_BASE_URL + '/chat/completions' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.LLM_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{ $env.LLM_MODEL }}\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a customer service AI for Divine Hindu, a D2C Hindu religious products brand. They sell puja samagri, idols, rudraksha, yantras, and spiritual accessories on Instagram and Facebook.\\n\\nClassify this incoming DM into exactly ONE category:\\n- HOT_LEAD: Customer wants to buy / asking to place order / ready to purchase\\n- SUPPORT_REQUEST: Has an issue, complaint, damaged product, wrong item, refund request\\n- PRICE_INQUIRY: Asking about pricing, discounts, offers\\n- ORDER_STATUS: Asking about order tracking, delivery, shipping\\n- COLLABORATION: Influencer, brand collab, partnership request\\n- SPAM: Spam, scam, irrelevant promotional message\\n- GENERAL: General question, greeting, or misc\\n\\nReturn ONLY valid JSON with no markdown formatting:\\n{\\\"category\\\": \\\"...\\\", \\\"priority\\\": <1-5 where 5=highest>, \\\"suggested_reply_hindi\\\": \\\"<warm reply in Hindi Devanagari>\\\", \\\"suggested_reply_english\\\": \\\"<professional reply in English>\\\", \\\"route_to\\\": \\\"<sales|support|marketing|auto>\\\", \\\"urgency\\\": \\\"<low|medium|high|critical>\\\", \\\"reasoning\\\": \\\"<brief explanation>\\\"}\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Platform: {{ $json.platform }}\\nFrom: {{ $json.from_name }}\\nMessage: {{ $json.message_text }}\"\n    }\n  ],\n  \"temperature\": 0.2,\n  \"max_tokens\": 600\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 3000
+      },
+      "id": "llm-classify-dm",
+      "name": "LLM Classify DM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the LLM response and merge with original DM data\nconst llmResponse = $json;\nconst originalDM = $('Has New DMs?').item;\n\nlet classification = {};\n\ntry {\n  const content = llmResponse.choices[0].message.content;\n  \n  // Remove markdown code block wrapping if present\n  let jsonStr = content;\n  const jsonMatch = content.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n  if (jsonMatch) {\n    jsonStr = jsonMatch[1].trim();\n  }\n  \n  classification = JSON.parse(jsonStr);\n} catch (e) {\n  // Fallback classification\n  classification = {\n    category: 'GENERAL',\n    priority: 3,\n    suggested_reply_hindi: 'नमस्ते! 🙏 Divine Hindu में आपका स्वागत है। हम जल्द ही आपसे संपर्क करेंगे।',\n    suggested_reply_english: 'Namaste! 🙏 Welcome to Divine Hindu. We will get back to you shortly.',\n    route_to: 'auto',\n    urgency: 'medium',\n    reasoning: 'LLM parse error - defaulting to safe classification: ' + (e.message || 'unknown')\n  };\n}\n\n// Validate fields\nconst validCategories = ['HOT_LEAD', 'SUPPORT_REQUEST', 'PRICE_INQUIRY', 'ORDER_STATUS', 'COLLABORATION', 'SPAM', 'GENERAL'];\nconst validRoutes = ['sales', 'support', 'marketing', 'auto'];\nconst validUrgencies = ['low', 'medium', 'high', 'critical'];\n\nif (!validCategories.includes(classification.category)) classification.category = 'GENERAL';\nif (!validRoutes.includes(classification.route_to)) classification.route_to = 'auto';\nif (!validUrgencies.includes(classification.urgency)) classification.urgency = 'medium';\nif (typeof classification.priority !== 'number' || classification.priority < 1 || classification.priority > 5) classification.priority = 3;\n\nreturn [{\n  json: {\n    ...originalDM.json,\n    category: classification.category,\n    priority: classification.priority,\n    suggested_reply_hindi: classification.suggested_reply_hindi || '',\n    suggested_reply_english: classification.suggested_reply_english || '',\n    route_to: classification.route_to,\n    urgency: classification.urgency,\n    reasoning: classification.reasoning || '',\n    classified_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "parse-dm-classification",
+      "name": "Parse DM Classification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputIndex": 0,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route_to }}",
+                    "rightValue": "sales",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputIndex": 1,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route_to }}",
+                    "rightValue": "support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputIndex": 2,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route_to }}",
+                    "rightValue": "marketing",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputIndex": 3,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route_to }}",
+                    "rightValue": "auto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "route-switch",
+      "name": "Route by Destination",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🔥 *HOT LEAD / SALES DM - Divine Hindu*\\n\\n*Platform:* {{ $json.platform }}\\n*From:* {{ $json.from_name }}\\n*Category:* {{ $json.category }}\\n*Priority:* {{ $json.priority }}/5\\n*Urgency:* {{ $json.urgency }}\\n\\n*Message:* {{ $json.message_text }}\\n\\n*Suggested Reply (Hindi):*\\n{{ $json.suggested_reply_hindi }}\\n\\n*Suggested Reply (English):*\\n{{ $json.suggested_reply_english }}\\n\\n*Reasoning:* {{ $json.reasoning }}\\n\\n💰 _Hot lead! Respond within 5 minutes for best conversion!_\"\n}",
+        "options": {
+          "timeout": 10000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "slack-sales-dm",
+      "name": "Slack → Sales (DM)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        -40
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// WhatsApp Business API Alert\n// Requires: META_WHATSAPP_PHONE_NUMBER_ID and META_ACCESS_TOKEN with whatsapp_business_messaging permission\n// If WHATSAPP_NUMBER_ID env var is not set, this step is skipped gracefully\n\nconst item = $input.item.json;\nconst phoneNumberId = $env.META_WHATSAPP_PHONE_NUMBER_ID || '';\nconst toNumber = $env.WHATSAPP_ALERT_TO_NUMBER || '';\nconst token = $env.META_ACCESS_TOKEN;\n\nif (!phoneNumberId || !toNumber) {\n  return [{ json: { ...item, whatsapp_result: 'skipped', whatsapp_note: 'META_WHATSAPP_PHONE_NUMBER_ID or WHATSAPP_ALERT_TO_NUMBER not configured' } }];\n}\n\nconst body = {\n  messaging_product: 'whatsapp',\n  to: toNumber,\n  type: 'text',\n  text: {\n    body: '🔥 HOT LEAD on ' + item.platform + '\\nFrom: ' + item.from_name + '\\nMessage: ' + item.message_text + '\\n\\nPriority: ' + item.priority + '/5\\nRespond within 15 minutes!'\n  }\n};\n\ntry {\n  const resp = await fetch(`https://graph.facebook.com/v19.0/${phoneNumberId}/messages`, {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },\n    body: JSON.stringify(body)\n  });\n  const result = await resp.json();\n  return [{ json: { ...item, whatsapp_result: result } }];\n} catch(e) {\n  return [{ json: { ...item, whatsapp_result: 'error: ' + e.message } }];\n}"
+      },
+      "id": "whatsapp-sales-alert",
+      "name": "WhatsApp Sales Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        100
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Auto-acknowledge DM — handles Instagram vs Facebook Messenger correctly\nconst item = $input.item.json;\nconst token = $env.META_ACCESS_TOKEN;\nconst platform = item.platform;\nconst fromId = item.from_id;\nconst convoId = item.conversation_id;\n\nconst replyText = platform === 'instagram'\n  ? `नमस्ते! 🙏 आपकी inquiry मिल गई। हमारी Sales team 15 मिनट में आपसे संपर्क करेगी। Divine Hindu में आपका स्वागत है!`\n  : `Namaste! 🙏 We have received your inquiry. Our Sales team will contact you within 15 minutes.`;\n\nlet url, bodyData;\n\nif (platform === 'instagram') {\n  // Instagram Messaging API format\n  url = `https://graph.facebook.com/v19.0/me/messages?access_token=${token}`;\n  bodyData = {\n    recipient: { id: fromId },\n    message: { text: replyText },\n    messaging_type: 'RESPONSE'\n  };\n} else {\n  // Facebook Messenger API format\n  url = `https://graph.facebook.com/v19.0/${convoId}/messages?access_token=${token}`;\n  bodyData = { message: replyText };\n}\n\ntry {\n  const resp = await fetch(url, {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(bodyData)\n  });\n  const result = await resp.json();\n  return [{ json: { ...item, ack_result: result, ack_sent: true } }];\n} catch(e) {\n  return [{ json: { ...item, ack_result: e.message, ack_sent: false } }];\n}"
+      },
+      "id": "auto-ack-sales",
+      "name": "Auto-Ack Sales DM",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🎫 *SUPPORT TICKET - Divine Hindu DM*\\n\\n*Platform:* {{ $json.platform }}\\n*From:* {{ $json.from_name }}\\n*Category:* {{ $json.category }}\\n*Priority:* {{ $json.priority }}/5\\n*Urgency:* {{ $json.urgency }}\\n\\n*Message:* {{ $json.message_text }}\\n\\n*Suggested Reply (Hindi):*\\n{{ $json.suggested_reply_hindi }}\\n\\n*Reasoning:* {{ $json.reasoning }}\\n\\n🔧 _Please create a support ticket and respond_\"\n}",
+        "options": {
+          "timeout": 10000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "slack-support-dm",
+      "name": "Slack → Support (DM)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        380
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Auto-acknowledge DM — handles Instagram vs Facebook Messenger correctly\nconst item = $input.item.json;\nconst token = $env.META_ACCESS_TOKEN;\nconst platform = item.platform;\nconst fromId = item.from_id;\nconst convoId = item.conversation_id;\n\nconst replyText = platform === 'instagram'\n  ? `नमस्ते! 🙏 आपकी समस्या हमें मिल गई। हमारी Support team जल्द ही आपसे संपर्क करेगी। असुविधा के लिए खेद है।`\n  : `Namaste! 🙏 We have received your concern. Our Support team will reach out shortly. We apologize for the inconvenience.`;\n\nlet url, bodyData;\n\nif (platform === 'instagram') {\n  // Instagram Messaging API format\n  url = `https://graph.facebook.com/v19.0/me/messages?access_token=${token}`;\n  bodyData = {\n    recipient: { id: fromId },\n    message: { text: replyText },\n    messaging_type: 'RESPONSE'\n  };\n} else {\n  // Facebook Messenger API format\n  url = `https://graph.facebook.com/v19.0/${convoId}/messages?access_token=${token}`;\n  bodyData = { message: replyText };\n}\n\ntry {\n  const resp = await fetch(url, {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(bodyData)\n  });\n  const result = await resp.json();\n  return [{ json: { ...item, ack_result: result, ack_sent: true } }];\n} catch(e) {\n  return [{ json: { ...item, ack_result: e.message, ack_sent: false } }];\n}"
+      },
+      "id": "auto-ack-support",
+      "name": "Auto-Ack Support DM",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🤝 *MARKETING / COLLAB DM - Divine Hindu*\\n\\n*Platform:* {{ $json.platform }}\\n*From:* {{ $json.from_name }}\\n*Category:* {{ $json.category }}\\n\\n*Message:* {{ $json.message_text }}\\n\\n*Reasoning:* {{ $json.reasoning }}\\n\\n📣 _Review this collaboration/marketing opportunity_\"\n}",
+        "options": {
+          "timeout": 10000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "slack-marketing-dm",
+      "name": "Slack → Marketing (DM)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        660
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v19.0/' + $json.conversation_id + '/messages' }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "={{ $env.META_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $json.suggested_reply_hindi }}"
+            },
+            {
+              "name": "recipient",
+              "value": "={{ JSON.stringify({id: $json.from_id}) }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "auto-reply-dm",
+      "name": "Send Auto-Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        800
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare row data for DM Tracker Google Sheets logging\nconst item = $input.first().json;\nconst now = new Date().toISOString();\n\nconst responseTimeMs = item.classified_at && item.fetched_at \n  ? (new Date(now).getTime() - new Date(item.fetched_at).getTime()) \n  : 0;\n\nconst row = {\n  timestamp: item.timestamp || now,\n  platform: item.platform || 'unknown',\n  message_id: item.message_id || '',\n  conversation_id: item.conversation_id || '',\n  from_name: item.from_name || '',\n  message_text: item.message_text || '',\n  category: item.category || '',\n  route_to: item.route_to || '',\n  priority: item.priority || 3,\n  urgency: item.urgency || 'medium',\n  suggested_reply_hindi: item.suggested_reply_hindi || '',\n  suggested_reply_english: item.suggested_reply_english || '',\n  action_taken: 'YES',\n  response_time_ms: responseTimeMs,\n  logged_at: now\n};\n\nreturn [{ json: row }];"
+      },
+      "id": "prepare-dm-log",
+      "name": "Prepare DM Log Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_ID }}/values/DMTracker!A:O:append?valueInputOption=USER_ENTERED",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.GOOGLE_SHEETS_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"values\": [[\n    \"{{ $json.timestamp }}\",\n    \"{{ $json.platform }}\",\n    \"{{ $json.message_id }}\",\n    \"{{ $json.conversation_id }}\",\n    \"{{ $json.from_name }}\",\n    \"{{ $json.message_text }}\",\n    \"{{ $json.category }}\",\n    \"{{ $json.route_to }}\",\n    {{ $json.priority }},\n    \"{{ $json.urgency }}\",\n    \"{{ $json.suggested_reply_hindi }}\",\n    \"{{ $json.suggested_reply_english }}\",\n    \"{{ $json.action_taken }}\",\n    {{ $json.response_time_ms }},\n    \"{{ $json.logged_at }}\"\n  ]]\n}",
+        "options": {
+          "timeout": 15000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "log-dm-to-sheets",
+      "name": "Log DM to Google Sheets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3620,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🕉️ Divine Hindu - DM Monitor & Router\n\n**Trigger:** Every 3 minutes\n**Purpose:** Monitor all Instagram & Facebook DMs, classify with AI, route to the right team, and auto-acknowledge customers\n\n### Environment Variables Needed:\n- `META_ACCESS_TOKEN` - Meta Graph API token\n- `META_IG_USER_ID` - Instagram Business Account ID\n- `META_PAGE_ID` - Facebook Page ID\n- `LLM_BASE_URL` - OpenAI-compatible API endpoint\n- `LLM_API_KEY` - API key for LLM service\n- `LLM_MODEL` - Model name\n- `GOOGLE_SHEETS_ID` - Spreadsheet ID\n- `GOOGLE_SHEETS_TOKEN` - Google OAuth token\n- `SLACK_WEBHOOK_URL` - Slack notifications\n- `WHATSAPP_WEBHOOK_URL` - WhatsApp sales alerts",
+        "height": 440,
+        "width": 520,
+        "color": 7
+      },
+      "id": "note-dm-overview",
+      "name": "Sticky Note - DM Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 📥 Step 1: Fetch DMs\n\nFetches latest conversations from:\n- **Instagram DMs** via `/{ig-user-id}/conversations` (platform=instagram)\n- **Facebook Messenger** via `/me/conversations`\n\nBoth include message text, sender info, and timestamps.\n30-second timeout with 3 retry attempts.",
+        "height": 240,
+        "width": 360,
+        "color": 4
+      },
+      "id": "note-dm-fetch",
+      "name": "Sticky Note - DM Fetch",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🔍 Step 2: Filter & Deduplicate\n\n- Normalizes DMs from both platforms\n- Filters out already-processed messages (Google Sheets check)\n- Skips messages from our own page account\n- Only processes messages from last 30 minutes (avoids backlog)\n- Skips empty/blank messages",
+        "height": 240,
+        "width": 360,
+        "color": 3
+      },
+      "id": "note-dm-filter",
+      "name": "Sticky Note - DM Filter",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 Step 3: AI Classification\n\nLLM classifies each DM into:\n- **HOT_LEAD** → Route to sales\n- **SUPPORT_REQUEST** → Route to support\n- **PRICE_INQUIRY / ORDER_STATUS** → Route to sales or auto\n- **COLLABORATION** → Route to marketing\n- **SPAM** → Auto-handle\n- **GENERAL** → Auto-reply\n\nIncludes bilingual (Hindi + English) reply suggestions.",
+        "height": 280,
+        "width": 360,
+        "color": 6
+      },
+      "id": "note-dm-llm",
+      "name": "Sticky Note - DM LLM",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🔀 Step 4: Smart Routing\n\n**Sales Route:**\n1. Slack alert with full context\n2. WhatsApp alert for instant mobile notification\n3. Auto-acknowledge to customer (\"team will respond shortly\")\n\n**Support Route:**\n1. Slack alert to support channel\n2. Auto-acknowledge with request for order number\n\n**Marketing Route:**\n1. Forward to marketing Slack channel for review\n\n**Auto Route:**\n1. Send AI-generated Hindi reply directly via Meta API\n\nAll routes converge to logging.",
+        "height": 380,
+        "width": 400,
+        "color": 5
+      },
+      "id": "note-dm-routing",
+      "name": "Sticky Note - DM Routing",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 📊 Step 5: Log to DMTracker\n\nEvery DM is logged to 'DMTracker' tab with:\n- Timestamp, Platform, MessageID, ConversationID\n- From Name, Message Text\n- Category, Route, Priority, Urgency\n- Both Hindi & English suggested replies\n- Action Taken, Response Time\n\nFeeds daily report generation workflow.",
+        "height": 260,
+        "width": 340,
+        "color": 1
+      },
+      "id": "note-dm-log",
+      "name": "Sticky Note - DM Log",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3340,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { status: \"skipped\", reason: $input.first().json.message || \"No items to process\", timestamp: new Date().toISOString() } }];"
+      },
+      "id": "d1ae080f-fef3-4cb3-8d6e-b4863df58119",
+      "name": "End (No DMs)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { status: \"skipped\", reason: $input.first().json.message || \"No items to process\", timestamp: new Date().toISOString() } }];"
+      },
+      "id": "24495c25-2133-4937-be20-1247f184e7c1",
+      "name": "End (All DMs Done)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        560
+      ]
+    }
+  ],
+  "connections": {
+    "Every 3 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Fetch Instagram DMs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Instagram DMs": {
+      "main": [
+        [
+          {
+            "node": "Fetch Facebook Messenger DMs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Facebook Messenger DMs": {
+      "main": [
+        [
+          {
+            "node": "Merge & Normalize DMs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge & Normalize DMs": {
+      "main": [
+        [
+          {
+            "node": "Has DMs?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has DMs?": {
+      "main": [
+        [
+          {
+            "node": "Fetch Processed DM IDs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End (No DMs)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Processed DM IDs": {
+      "main": [
+        [
+          {
+            "node": "Filter New DMs Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter New DMs Only": {
+      "main": [
+        [
+          {
+            "node": "Has New DMs?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has New DMs?": {
+      "main": [
+        [
+          {
+            "node": "LLM Classify DM",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End (All DMs Done)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Classify DM": {
+      "main": [
+        [
+          {
+            "node": "Parse DM Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse DM Classification": {
+      "main": [
+        [
+          {
+            "node": "Route by Destination",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Destination": {
+      "main": [
+        [
+          {
+            "node": "Slack → Sales (DM)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack → Support (DM)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack → Marketing (DM)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Auto-Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack → Sales (DM)": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Sales Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Sales Alert": {
+      "main": [
+        [
+          {
+            "node": "Auto-Ack Sales DM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-Ack Sales DM": {
+      "main": [
+        [
+          {
+            "node": "Prepare DM Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack → Support (DM)": {
+      "main": [
+        [
+          {
+            "node": "Auto-Ack Support DM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-Ack Support DM": {
+      "main": [
+        [
+          {
+            "node": "Prepare DM Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack → Marketing (DM)": {
+      "main": [
+        [
+          {
+            "node": "Prepare DM Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Auto-Reply": {
+      "main": [
+        [
+          {
+            "node": "Prepare DM Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare DM Log Row": {
+      "main": [
+        [
+          {
+            "node": "Log DM to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "divine-hindu"
+    },
+    {
+      "name": "social-media"
+    },
+    {
+      "name": "dms"
+    },
+    {
+      "name": "production"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-06-18T22:14:00.000Z",
+  "versionId": "1.0.0"
+}

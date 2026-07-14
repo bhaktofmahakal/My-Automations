@@ -1,0 +1,1091 @@
+{
+  "name": "Divine Hindu - Comment Monitor & Classifier",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://graph.facebook.com/v19.0/' + $env.META_IG_USER_ID + '/media' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,caption,timestamp,comments{text,username,timestamp,id}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $env.META_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "fetch-ig-comments",
+      "name": "Fetch Instagram Comments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://graph.facebook.com/v19.0/' + $env.META_PAGE_ID + '/feed' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "id,message,created_time,comments{message,from,created_time,id}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $env.META_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "fetch-fb-comments",
+      "name": "Fetch Facebook Comments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Instagram comments\nconst igData = $('Fetch Instagram Comments').first().json;\nconst igComments = [];\n\nif (igData && igData.data) {\n  for (const post of igData.data) {\n    if (post.comments && post.comments.data) {\n      for (const comment of post.comments.data) {\n        igComments.push({\n          platform: 'instagram',\n          post_id: post.id,\n          post_caption: post.caption || '',\n          comment_id: comment.id,\n          username: comment.username || 'unknown',\n          comment_text: comment.text || '',\n          timestamp: comment.timestamp || new Date().toISOString(),\n          fetched_at: new Date().toISOString()\n        });\n      }\n    }\n  }\n}\n\n// Normalize Facebook comments\nconst fbData = $('Fetch Facebook Comments').first().json;\nconst fbComments = [];\n\nif (fbData && fbData.data) {\n  for (const post of fbData.data) {\n    if (post.comments && post.comments.data) {\n      for (const comment of post.comments.data) {\n        fbComments.push({\n          platform: 'facebook',\n          post_id: post.id,\n          post_caption: post.message || '',\n          comment_id: comment.id,\n          username: (comment.from && comment.from.name) ? comment.from.name : 'unknown',\n          comment_text: comment.message || '',\n          timestamp: comment.created_time || new Date().toISOString(),\n          fetched_at: new Date().toISOString()\n        });\n      }\n    }\n  }\n}\n\nconst allComments = [...igComments, ...fbComments];\n\nif (allComments.length === 0) {\n  return [{ json: { _noComments: true, message: 'No comments found in this cycle' } }];\n}\n\nreturn allComments.map(c => ({ json: c }));"
+      },
+      "id": "merge-normalize",
+      "name": "Merge & Normalize Comments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "no-comments-check",
+              "leftValue": "={{ $json._noComments }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notTrue"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-comments-check",
+      "name": "Has Comments?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_ID }}/values/MasterTracker!D:D",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.GOOGLE_SHEETS_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "fetch-processed-ids",
+      "name": "Fetch Processed Comment IDs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1480,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get list of already-processed comment IDs from Google Sheets\nconst sheetsData = $('Fetch Processed Comment IDs').first().json;\nconst processedIds = new Set();\n\nif (sheetsData && sheetsData.values) {\n  for (const row of sheetsData.values) {\n    if (row[0]) processedIds.add(row[0]);\n  }\n}\n\n// Filter out already-processed comments\nconst allItems = $input.all();\nconst newComments = [];\n\nfor (const item of allItems) {\n  if (item.json._noComments) continue;\n  if (!processedIds.has(item.json.comment_id)) {\n    newComments.push(item);\n  }\n}\n\nif (newComments.length === 0) {\n  return [{ json: { _noNewComments: true, message: 'All comments already processed' } }];\n}\n\nreturn newComments;"
+      },
+      "id": "filter-processed",
+      "name": "Filter Already Processed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "new-comments-check",
+              "leftValue": "={{ $json._noNewComments }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notTrue"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-new-comments",
+      "name": "Has New Comments?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.LLM_BASE_URL + '/chat/completions' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.LLM_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{ $env.LLM_MODEL }}\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a social media moderator for Divine Hindu, a D2C Hindu religious products brand selling puja items, idols, rudraksha, yantras, and religious accessories on Instagram and Facebook. Classify the following comment into exactly ONE category: PRODUCT_INQUIRY, PRICE_QUESTION, COMPLAINT, ORDER_QUERY, SPAM, IRRELEVANT, POSITIVE_FEEDBACK, COLLABORATION_REQUEST. Also determine the moderation action: AUTO_REPLY, HIDE, DELETE, ESCALATE_SALES, ESCALATE_SUPPORT, ESCALATE_MANAGER, LIKE_ONLY. Also suggest a warm, respectful reply in Hindi (using Devanagari script) that reflects the spiritual brand voice. Return ONLY valid JSON with no markdown formatting: {\\\"category\\\": \\\"...\\\", \\\"action\\\": \\\"...\\\", \\\"priority\\\": <1-5 where 1=lowest>, \\\"suggested_reply\\\": \\\"...\\\", \\\"reasoning\\\": \\\"...\\\"}\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Platform: {{ $json.platform }}\\nPost Caption: {{ $json.post_caption }}\\nComment by @{{ $json.username }}: {{ $json.comment_text }}\"\n    }\n  ],\n  \"temperature\": 0.2,\n  \"max_tokens\": 500\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 3000
+      },
+      "id": "llm-classify",
+      "name": "LLM Classify Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the LLM response and merge with original comment data\nconst llmResponse = $json;\nconst originalComment = $('Has New Comments?').item;\n\nlet classification = {};\n\ntry {\n  // The LLM response is in choices[0].message.content\n  const content = llmResponse.choices[0].message.content;\n  \n  // Try to parse JSON from the response - handle markdown code blocks\n  let jsonStr = content;\n  \n  // Remove markdown code block wrapping if present\n  const jsonMatch = content.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n  if (jsonMatch) {\n    jsonStr = jsonMatch[1].trim();\n  }\n  \n  classification = JSON.parse(jsonStr);\n} catch (e) {\n  // Fallback classification if LLM response is malformed\n  classification = {\n    category: 'IRRELEVANT',\n    action: 'LIKE_ONLY',\n    priority: 3,\n    suggested_reply: 'धन्यवाद! 🙏 हमसे संपर्क करने के लिए शुक्रिया।',\n    reasoning: 'LLM parse error - defaulting to safe classification: ' + (e.message || 'unknown error')\n  };\n}\n\n// Validate classification fields\nconst validCategories = ['PRODUCT_INQUIRY', 'PRICE_QUESTION', 'COMPLAINT', 'ORDER_QUERY', 'SPAM', 'IRRELEVANT', 'POSITIVE_FEEDBACK', 'COLLABORATION_REQUEST'];\nconst validActions = ['AUTO_REPLY', 'HIDE', 'DELETE', 'ESCALATE_SALES', 'ESCALATE_SUPPORT', 'ESCALATE_MANAGER', 'LIKE_ONLY'];\n\nif (!validCategories.includes(classification.category)) {\n  classification.category = 'IRRELEVANT';\n}\nif (!validActions.includes(classification.action)) {\n  classification.action = 'LIKE_ONLY';\n}\nif (typeof classification.priority !== 'number' || classification.priority < 1 || classification.priority > 5) {\n  classification.priority = 3;\n}\n\nreturn [{\n  json: {\n    ...originalComment.json,\n    category: classification.category,\n    action: classification.action,\n    priority: classification.priority,\n    suggested_reply: classification.suggested_reply || '',\n    reasoning: classification.reasoning || '',\n    classified_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "parse-llm-response",
+      "name": "Parse AI Classification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputIndex": 0,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "DELETE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputIndex": 1,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "HIDE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputIndex": 2,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "AUTO_REPLY",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputIndex": 3,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "ESCALATE_SALES",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputIndex": 4,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "ESCALATE_SUPPORT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputIndex": 5,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "ESCALATE_MANAGER",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputIndex": 6,
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "LIKE_ONLY",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "action-switch",
+      "name": "Route by Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "={{ 'https://graph.facebook.com/v19.0/' + $json.comment_id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "={{ $env.META_ACCESS_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "delete-comment",
+      "name": "Delete Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        -60
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Hide comment — handles both Instagram and Facebook\nconst item = $input.item.json;\nconst token = $env.META_ACCESS_TOKEN;\nconst commentId = item.comment_id;\nconst platform = item.platform;\n\nlet url, body;\n\nif (platform === 'instagram') {\n  // Instagram Graph API: hidden=true\n  url = `https://graph.facebook.com/v19.0/${commentId}?hidden=true&access_token=${token}`;\n} else {\n  // Facebook Graph API: is_hidden=true\n  url = `https://graph.facebook.com/v19.0/${commentId}?is_hidden=true&access_token=${token}`;\n}\n\n// Make the API call\nconst resp = await fetch(url, { method: 'POST' });\nconst result = await resp.json().catch(() => ({}));\n\nreturn [{\n  json: {\n    ...item,\n    hide_result: result,\n    hide_success: result.success || false\n  }\n}];"
+      },
+      "id": "hide-comment",
+      "name": "Hide Comment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://graph.facebook.com/v19.0/' + $json.comment_id + '/replies' }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "={{ $env.META_ACCESS_TOKEN }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $json.suggested_reply }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "auto-reply",
+      "name": "Auto Reply to Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        220
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🛒 *SALES ESCALATION - Divine Hindu*\\n\\n*Platform:* {{ $json.platform }}\\n*Post:* {{ $json.post_id }}\\n*User:* @{{ $json.username }}\\n*Comment:* {{ $json.comment_text }}\\n*Category:* {{ $json.category }}\\n*Priority:* {{ $json.priority }}/5\\n*Suggested Reply:* {{ $json.suggested_reply }}\\n*Reasoning:* {{ $json.reasoning }}\\n\\n⏰ _Respond within 15 minutes for best conversion_\"\n}",
+        "options": {
+          "timeout": 10000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "slack-sales",
+      "name": "Slack → Sales Team",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        360
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🔧 *SUPPORT ESCALATION - Divine Hindu*\\n\\n*Platform:* {{ $json.platform }}\\n*Post:* {{ $json.post_id }}\\n*User:* @{{ $json.username }}\\n*Comment:* {{ $json.comment_text }}\\n*Category:* {{ $json.category }}\\n*Priority:* {{ $json.priority }}/5\\n*Suggested Reply:* {{ $json.suggested_reply }}\\n*Reasoning:* {{ $json.reasoning }}\\n\\n🎫 _Please create a support ticket_\"\n}",
+        "options": {
+          "timeout": 10000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "slack-support",
+      "name": "Slack → Support Team",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        500
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🚨 *MANAGER ESCALATION - Divine Hindu*\\n\\n*Platform:* {{ $json.platform }}\\n*Post:* {{ $json.post_id }}\\n*User:* @{{ $json.username }}\\n*Comment:* {{ $json.comment_text }}\\n*Category:* {{ $json.category }}\\n*Priority:* {{ $json.priority }}/5\\n*Suggested Reply:* {{ $json.suggested_reply }}\\n*Reasoning:* {{ $json.reasoning }}\\n\\n🔴 _This requires immediate manager attention!_\"\n}",
+        "options": {
+          "timeout": 10000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "slack-manager",
+      "name": "Slack → Manager Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        640
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Like comment — Facebook only (Instagram API does not support this)\nconst item = $input.item.json;\nconst platform = item.platform;\n\nif (platform === 'instagram') {\n  // Instagram does not allow liking comments via Graph API\n  // Just log it — comment is already positive feedback, no action needed\n  return [{\n    json: {\n      ...item,\n      like_result: 'skipped',\n      like_note: 'Instagram does not support comment likes via API. Comment noted as positive feedback.'\n    }\n  }];\n}\n\n// Facebook — like the comment\nconst token = $env.META_ACCESS_TOKEN;\nconst commentId = item.comment_id;\nconst url = `https://graph.facebook.com/v19.0/${commentId}/likes?access_token=${token}`;\nconst resp = await fetch(url, { method: 'POST' });\nconst result = await resp.json().catch(() => ({}));\n\nreturn [{\n  json: {\n    ...item,\n    like_result: result,\n    like_success: result.success || false\n  }\n}];"
+      },
+      "id": "like-comment",
+      "name": "Like Comment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare row data for Google Sheets logging\nconst item = $input.first().json;\n\n// Try to get the original classified data by traversing back\n// This node receives items from ALL switch branches\nconst now = new Date().toISOString();\n\nconst row = {\n  timestamp: item.classified_at || item.timestamp || now,\n  platform: item.platform || 'unknown',\n  post_id: item.post_id || '',\n  comment_id: item.comment_id || '',\n  username: item.username || '',\n  comment_text: item.comment_text || '',\n  category: item.category || '',\n  action: item.action || '',\n  priority: item.priority || 3,\n  suggested_reply: item.suggested_reply || '',\n  action_taken: 'YES',\n  response_time_ms: item.classified_at ? (new Date(now).getTime() - new Date(item.fetched_at).getTime()) : 0,\n  logged_at: now\n};\n\nreturn [{ json: row }];"
+      },
+      "id": "prepare-log-row",
+      "name": "Prepare Log Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_ID }}/values/MasterTracker!A:M:append?valueInputOption=USER_ENTERED",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.GOOGLE_SHEETS_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"values\": [[\n    \"{{ $json.timestamp }}\",\n    \"{{ $json.platform }}\",\n    \"{{ $json.post_id }}\",\n    \"{{ $json.comment_id }}\",\n    \"{{ $json.username }}\",\n    \"{{ $json.comment_text }}\",\n    \"{{ $json.category }}\",\n    \"{{ $json.action }}\",\n    {{ $json.priority }},\n    \"{{ $json.suggested_reply }}\",\n    \"{{ $json.action_taken }}\",\n    {{ $json.response_time_ms }},\n    \"{{ $json.logged_at }}\"\n  ]]\n}",
+        "options": {
+          "timeout": 15000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "log-to-sheets",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3620,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🕉️ Divine Hindu - Comment Monitor & Classifier\n\n**Trigger:** Every 5 minutes\n**Purpose:** Automatically fetch, classify, and act on all Instagram & Facebook comments\n\n### Environment Variables Needed:\n- `META_ACCESS_TOKEN` - Meta Graph API token\n- `META_IG_USER_ID` - Instagram Business Account ID\n- `META_PAGE_ID` - Facebook Page ID\n- `LLM_BASE_URL` - OpenAI-compatible API endpoint (e.g., Groq, Ollama)\n- `LLM_API_KEY` - API key for the LLM service\n- `LLM_MODEL` - Model name (e.g., llama-3.1-8b-instant)\n- `GOOGLE_SHEETS_ID` - Spreadsheet ID for logging\n- `GOOGLE_SHEETS_TOKEN` - Google OAuth token\n- `SLACK_WEBHOOK_URL` - Slack webhook for notifications",
+        "height": 420,
+        "width": 520,
+        "color": 7
+      },
+      "id": "note-overview",
+      "name": "Sticky Note - Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 📥 Step 1: Fetch Comments\n\nFetches latest comments from both:\n- **Instagram** via `/{ig-user-id}/media` with comments expansion\n- **Facebook** via `/{page-id}/feed` with comments expansion\n\nBoth requests include retry logic (3 attempts) and 30s timeout.",
+        "height": 240,
+        "width": 340,
+        "color": 4
+      },
+      "id": "note-fetch",
+      "name": "Sticky Note - Fetch",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        440,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🔀 Step 2: Merge & Deduplicate\n\nNormalizes comment data from both platforms into a unified format.\nThen filters out already-processed comments by checking against the Google Sheets Master Tracker.",
+        "height": 200,
+        "width": 340,
+        "color": 3
+      },
+      "id": "note-merge",
+      "name": "Sticky Note - Merge",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        960,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 Step 3: AI Classification\n\nSends each comment to LLM (Groq/Ollama/any OpenAI-compatible API) for:\n- **Category:** PRODUCT_INQUIRY, PRICE_QUESTION, COMPLAINT, etc.\n- **Action:** AUTO_REPLY, DELETE, HIDE, ESCALATE_*\n- **Priority:** 1-5 scale\n- **Hindi Reply:** Suggested response in Hindi\n\nUses low temperature (0.2) for consistent classification.\nIncludes robust JSON parsing with fallback handling.",
+        "height": 280,
+        "width": 360,
+        "color": 6
+      },
+      "id": "note-llm",
+      "name": "Sticky Note - LLM",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🔀 Step 4: Action Router\n\n7-way switch routes each classified comment to the appropriate action:\n\n1. **DELETE** → Remove spam/abusive comments via Meta API\n2. **HIDE** → Hide inappropriate comments\n3. **AUTO_REPLY** → Post suggested Hindi reply\n4. **ESCALATE_SALES** → Slack alert to sales team\n5. **ESCALATE_SUPPORT** → Slack alert to support\n6. **ESCALATE_MANAGER** → Urgent Slack + priority alert\n7. **LIKE_ONLY** → Like positive feedback\n\nAll branches converge to the logging step.",
+        "height": 340,
+        "width": 400,
+        "color": 5
+      },
+      "id": "note-switch",
+      "name": "Sticky Note - Switch",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2680,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 📊 Step 5: Log Everything\n\nEvery comment (regardless of action) is logged to Google Sheets 'MasterTracker' tab with:\n- Timestamp, Platform, PostID, CommentID\n- Username, CommentText\n- AI Category, Action, Priority\n- Suggested Reply, Action Taken\n- Response Time (ms)\n\nThis prevents reprocessing and feeds the daily report.",
+        "height": 260,
+        "width": 340,
+        "color": 1
+      },
+      "id": "note-log",
+      "name": "Sticky Note - Log",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3300,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ⚠️ Error Handling Notes\n\n- All Meta API calls use `onError: continueRegularOutput` so one failed action doesn't stop the pipeline\n- LLM classification has fallback defaults if JSON parsing fails\n- Google Sheets logging retries 3 times\n- Category and action values are validated against allowed lists\n- Empty comment cycles exit early without errors",
+        "height": 240,
+        "width": 360,
+        "color": 2
+      },
+      "id": "note-errors",
+      "name": "Sticky Note - Errors",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { status: \"skipped\", reason: $input.first().json.message || \"No items to process\", timestamp: new Date().toISOString() } }];"
+      },
+      "id": "7616fa56-2384-4547-bc9b-b66f2a982344",
+      "name": "End (No Comments)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { status: \"skipped\", reason: $input.first().json.message || \"No items to process\", timestamp: new Date().toISOString() } }];"
+      },
+      "id": "fda55cc3-6fd6-4004-8f93-9dd4f1adc9e8",
+      "name": "End (All Processed)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        560
+      ]
+    }
+  ],
+  "connections": {
+    "Every 5 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Fetch Instagram Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Instagram Comments": {
+      "main": [
+        [
+          {
+            "node": "Fetch Facebook Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Facebook Comments": {
+      "main": [
+        [
+          {
+            "node": "Merge & Normalize Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge & Normalize Comments": {
+      "main": [
+        [
+          {
+            "node": "Has Comments?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Comments?": {
+      "main": [
+        [
+          {
+            "node": "Fetch Processed Comment IDs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End (No Comments)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Processed Comment IDs": {
+      "main": [
+        [
+          {
+            "node": "Filter Already Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Already Processed": {
+      "main": [
+        [
+          {
+            "node": "Has New Comments?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has New Comments?": {
+      "main": [
+        [
+          {
+            "node": "LLM Classify Comment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End (All Processed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Classify Comment": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Classification": {
+      "main": [
+        [
+          {
+            "node": "Route by Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action": {
+      "main": [
+        [
+          {
+            "node": "Delete Comment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hide Comment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Auto Reply to Comment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack → Sales Team",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack → Support Team",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack → Manager Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Like Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Comment": {
+      "main": [
+        [
+          {
+            "node": "Prepare Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hide Comment": {
+      "main": [
+        [
+          {
+            "node": "Prepare Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto Reply to Comment": {
+      "main": [
+        [
+          {
+            "node": "Prepare Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack → Sales Team": {
+      "main": [
+        [
+          {
+            "node": "Prepare Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack → Support Team": {
+      "main": [
+        [
+          {
+            "node": "Prepare Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack → Manager Alert": {
+      "main": [
+        [
+          {
+            "node": "Prepare Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Like Comment": {
+      "main": [
+        [
+          {
+            "node": "Prepare Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Log Row": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "divine-hindu"
+    },
+    {
+      "name": "social-media"
+    },
+    {
+      "name": "comments"
+    },
+    {
+      "name": "production"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-06-18T22:14:00.000Z",
+  "versionId": "1.0.0"
+}

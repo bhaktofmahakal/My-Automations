@@ -1,0 +1,110 @@
+{
+  "instagram_comments_mock": {
+    "data": [
+      {
+        "id": "18023456789012345",
+        "caption": "Beautiful brass Ganesha idol for your home temple. 🕉️ Link in bio to buy.",
+        "timestamp": "2026-06-18T10:00:00+0000",
+        "comments": {
+          "data": [
+            {
+              "id": "17891234567890123",
+              "username": "sharma_pooja",
+              "text": "price kya hai iska? aur size kitna bada hai?",
+              "timestamp": "2026-06-18T10:05:00+0000"
+            },
+            {
+              "id": "17894567890123456",
+              "username": "bot_promo_99",
+              "text": "Check out our page for discounts on luxury watches! DM for collab!",
+              "timestamp": "2026-06-18T10:06:00+0000"
+            },
+            {
+              "id": "17897890123456789",
+              "username": "rahul_singh",
+              "text": "Very beautiful murti, fast delivery. Jai Shri Ram!",
+              "timestamp": "2026-06-18T10:08:00+0000"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "facebook_comments_mock": {
+    "data": [
+      {
+        "id": "100234567890123_456789012345678",
+        "message": "Premium Sandalwood Agarbatti (Pack of 3) now available. Order today!",
+        "created_time": "2026-06-18T09:30:00+0000",
+        "comments": {
+          "data": [
+            {
+              "id": "456789012345678_123456789012345",
+              "from": {
+                "name": "Amit Patel",
+                "id": "987654321"
+              },
+              "message": "Mera order 5 din pehle book hua tha par abhi tak status shipped hi dikha raha hai, contact number do customer care ka urgent",
+              "created_time": "2026-06-18T10:10:00+0000"
+            },
+            {
+              "id": "456789012345678_234567890123456",
+              "from": {
+                "name": "Sita Verma",
+                "id": "876543210"
+              },
+              "message": "Kya isme chemical fragrances hain? Natural sandlewood hai?",
+              "created_time": "2026-06-18T10:12:00+0000"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "instagram_dms_mock": {
+    "data": [
+      {
+        "id": "CONV_1111",
+        "participants": {
+          "data": [
+            {
+              "username": "preeti_agarwal",
+              "id": "12345"
+            }
+          ]
+        },
+        "messages": {
+          "data": [
+            {
+              "id": "MSG_101",
+              "message": "Hello, mujhe pooja thali set order karna hai, kya cod mil jayega? Urgent chahiye next week festival ke liye.",
+              "from": {
+                "username": "preeti_agarwal",
+                "id": "12345"
+              },
+              "created_time": "2026-06-18T10:15:00+0000"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "llm_classify_comment_response_mock": {
+    "choices": [
+      {
+        "message": {
+          "content": "{\n  \"category\": \"PRODUCT_INQUIRY\",\n  \"action\": \"AUTO_REPLY\",\n  \"priority\": 2,\n  \"suggested_reply\": \"Namaste Pooja ji! 🙏 Yeh murti brass metal ki bani hai aur iski height 8 inches hai. Details aur order link ke liye humare website catalogue par click karein: {{catalog_link}}. Dhanyavaad!\",\n  \"reasoning\": \"Customer asking about material details and price of Ganesha idol.\"\n}"
+        }
+      }
+    ]
+  },
+  "llm_classify_dm_response_mock": {
+    "choices": [
+      {
+        "message": {
+          "content": "{\n  \"category\": \"HOT_LEAD\",\n  \"priority\": 1,\n  \"suggested_reply_hindi\": \"Namaste Preeti ji! 🙏 Pooja thali set ke liye humare paas COD (Cash on Delivery) available hai! Hum 3-4 days mein deliver kar denge. Order confirm karne ke liye apna full address aur phone number yahan share karein. Dhanyavaad!\",\n  \"suggested_reply_english\": \"Namaste Preeti Ji! 🙏 Yes, we offer Cash on Delivery (COD) on our Pooja Thali Sets! We will deliver it within 3-4 days. Please share your full address and phone number to confirm the order. Thank you!\",\n  \"route_to\": \"sales\",\n  \"urgency\": \"high\"\n}"
+        }
+      }
+    ]
+  }
+}

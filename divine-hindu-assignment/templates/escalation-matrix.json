@@ -1,0 +1,132 @@
+[
+  {
+    "level": "L0",
+    "name": "Auto-Response / Bot",
+    "handler_role": "Automated System / Chatbot",
+    "response_time_minutes": 0,
+    "scenarios": [
+      "Welcome message / first contact greeting",
+      "Business hours inquiry",
+      "Product catalog link sharing",
+      "Order tracking link sharing (when tracking ID is available)",
+      "FAQ — shipping policy, return policy, payment options",
+      "Festival greetings / auto-replies to common greetings",
+      "Positive comment acknowledgment (thank you, emoji reactions)",
+      "Spam / irrelevant comment filtering",
+      "After-hours auto-reply with expected response time",
+      "Coupon code / current offer auto-share"
+    ],
+    "notification_channels": [
+      "None — fully automated"
+    ],
+    "authority": "Can send pre-approved template replies, share links, acknowledge messages, filter spam. Cannot make promises, process refunds, offer custom discounts, or handle any complaint."
+  },
+  {
+    "level": "L1",
+    "name": "Frontline Support Agent",
+    "handler_role": "Customer Support Executive / Social Media Handler",
+    "response_time_minutes": 30,
+    "scenarios": [
+      "Product inquiry — details, availability, specifications",
+      "Price questions — single product, bulk pricing structure",
+      "Order status check requiring manual lookup",
+      "Delivery timeline clarification",
+      "Simple order modifications (before dispatch)",
+      "Return/exchange initiation (standard cases within policy)",
+      "Payment confirmation and receipt sharing",
+      "First-time buyer assistance and onboarding",
+      "Cart abandonment follow-up messages",
+      "Redirecting to correct channel (website, WhatsApp, email)",
+      "Simple product comparison and recommendations",
+      "Influencer/collaboration inquiry — initial response and info collection"
+    ],
+    "notification_channels": [
+      "Instagram DM notification",
+      "Facebook Messenger notification",
+      "Internal Slack channel (#customer-support)",
+      "Email alert to support queue"
+    ],
+    "authority": "Can apply standard discount codes (up to 10% OFF), initiate standard returns within policy, modify orders before dispatch, share product information, collect collaboration inquiries. Cannot approve refunds above ₹500, offer custom pricing, handle damage complaints requiring compensation, or override policies."
+  },
+  {
+    "level": "L2",
+    "name": "Senior Support / Team Lead",
+    "handler_role": "Senior Customer Support Executive / Support Team Lead",
+    "response_time_minutes": 120,
+    "scenarios": [
+      "Damaged product complaint — requires replacement/refund decision",
+      "Wrong product received — requires re-shipment coordination",
+      "Delivery delayed beyond promised date",
+      "Customer threatening negative review or social media backlash",
+      "Refund requests above ₹500",
+      "Complex return/exchange cases (outside standard policy window)",
+      "Bulk/wholesale pricing negotiation",
+      "Payment disputes or failed transaction resolution",
+      "Repeated complaints from same customer",
+      "Product quality issues requiring investigation",
+      "Customization order management and pricing",
+      "Influencer deal negotiation and terms finalization"
+    ],
+    "notification_channels": [
+      "Internal Slack channel (#escalations)",
+      "Direct WhatsApp message to Team Lead",
+      "Email with priority flag",
+      "CRM ticket auto-assigned"
+    ],
+    "authority": "Can approve refunds up to ₹5,000, offer custom discounts up to 20% OFF, authorize free replacements, offer store credit up to ₹1,000 as compensation, negotiate bulk pricing within pre-approved ranges, approve influencer barter deals up to ₹3,000 product value. Cannot authorize refunds above ₹5,000, approve paid influencer deals, change company policies, or handle legal threats."
+  },
+  {
+    "level": "L3",
+    "name": "Operations Manager",
+    "handler_role": "Operations Manager / Brand Manager",
+    "response_time_minutes": 360,
+    "scenarios": [
+      "High-value refund requests (above ₹5,000)",
+      "Legal threats or consumer forum complaints",
+      "Viral negative social media posts about the brand",
+      "Systemic product quality issues (multiple complaints about same product)",
+      "Courier partner disputes requiring escalation",
+      "Brand collaboration proposals and partnership approvals",
+      "Paid influencer campaign approvals and budgeting",
+      "Bulk/wholesale contracts and agreements",
+      "Policy exception requests",
+      "Customer data privacy or security concerns",
+      "Payment gateway or system-level issues affecting multiple orders",
+      "Media or press inquiries"
+    ],
+    "notification_channels": [
+      "Direct phone call",
+      "WhatsApp message with urgency tag",
+      "Email to management distribution list",
+      "Slack channel (#management-alerts)",
+      "CRM dashboard high-priority flag"
+    ],
+    "authority": "Can approve refunds up to ₹25,000, authorize paid influencer deals up to ₹50,000, approve bulk contracts, issue formal apology statements, create policy exceptions for VIP customers, coordinate with courier partners at management level, approve brand collaboration terms, authorize compensation packages. Cannot make decisions with legal implications, approve budgets above ₹50,000, or change brand strategy."
+  },
+  {
+    "level": "L4",
+    "name": "Founder / CEO",
+    "handler_role": "Founder / CEO / Business Owner",
+    "response_time_minutes": 1440,
+    "scenarios": [
+      "Legal notices or court-related communications",
+      "Consumer forum cases requiring official response",
+      "Crisis management — viral brand-damaging content",
+      "Major brand collaboration or strategic partnership decisions",
+      "Budget approvals above ₹50,000",
+      "Major policy changes affecting all customers",
+      "Key account / VIP customer personal engagement",
+      "Business-critical decisions involving brand reputation",
+      "Government or regulatory body communications",
+      "Insurance claims for high-value shipment losses",
+      "Strategic influencer or celebrity endorsement deals"
+    ],
+    "notification_channels": [
+      "Direct phone call (immediate)",
+      "Personal WhatsApp message",
+      "Email marked URGENT",
+      "In-person briefing (for crisis situations)"
+    ],
+    "authority": "Full authority — can approve any refund amount, make policy changes, authorize legal responses, approve any budget, sign contracts and agreements, make public statements on behalf of the brand, negotiate strategic partnerships, and make final decisions on all escalated matters."
+  }
+]

@@ -1,0 +1,593 @@
+{
+  "name": "Divine Hindu - Daily Report Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 12 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-daily",
+      "name": "Daily 6PM IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_ID }}/values/MasterTracker!A:M",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.GOOGLE_SHEETS_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "read-master-tracker",
+      "name": "Read Master Tracker",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_ID }}/values/DMTracker!A:O",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.GOOGLE_SHEETS_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "read-dm-tracker",
+      "name": "Read DM Tracker",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Calculate daily metrics from Master Tracker and DM Tracker\nconst masterData = $('Read Master Tracker').first().json;\nconst dmData = $('Read DM Tracker').first().json;\n\n// Get today's date string (IST)\nconst now = new Date();\nconst istOffset = 5.5 * 60 * 60 * 1000;\nconst istNow = new Date(now.getTime() + istOffset);\nconst todayStr = istNow.toISOString().split('T')[0]; // YYYY-MM-DD\n\n// ============ MASTER TRACKER METRICS ============\nconst masterHeaders = masterData.values ? masterData.values[0] : [];\nconst masterRows = masterData.values ? masterData.values.slice(1) : [];\n\n// Filter today's comment rows\nconst todayComments = masterRows.filter(row => {\n  if (!row[0]) return false;\n  try {\n    const rowDate = new Date(row[0]).toISOString().split('T')[0];\n    return rowDate === todayStr;\n  } catch(e) { return false; }\n});\n\n// Comment metrics\nconst totalComments = todayComments.length;\n\n// Category breakdown\nconst categoryBreakdown = {};\nconst categoryCol = 6; // Column G = Category\ntodayComments.forEach(row => {\n  const cat = row[categoryCol] || 'UNKNOWN';\n  categoryBreakdown[cat] = (categoryBreakdown[cat] || 0) + 1;\n});\n\n// Action breakdown\nconst actionBreakdown = {};\nconst actionCol = 7; // Column H = Action\ntodayComments.forEach(row => {\n  const act = row[actionCol] || 'UNKNOWN';\n  actionBreakdown[act] = (actionBreakdown[act] || 0) + 1;\n});\n\n// Platform breakdown\nconst platformBreakdown = {};\nconst platformCol = 1; // Column B = Platform\ntodayComments.forEach(row => {\n  const plat = row[platformCol] || 'unknown';\n  platformBreakdown[plat] = (platformBreakdown[plat] || 0) + 1;\n});\n\n// Average response time\nconst responseTimeCol = 11; // Column L = Response Time (ms)\nconst responseTimes = todayComments\n  .map(row => parseInt(row[responseTimeCol]) || 0)\n  .filter(t => t > 0);\nconst avgResponseTime = responseTimes.length > 0\n  ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length)\n  : 0;\n\n// Priority breakdown\nconst priorityBreakdown = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };\nconst priorityCol = 8; // Column I = Priority\ntodayComments.forEach(row => {\n  const p = String(row[priorityCol] || '3');\n  if (priorityBreakdown[p] !== undefined) priorityBreakdown[p]++;\n});\n\n// Escalation counts\nconst escalations = todayComments.filter(row =>\n  (row[actionCol] || '').startsWith('ESCALATE')\n).length;\n\nconst complaints = categoryBreakdown['COMPLAINT'] || 0;\n\n// ============ DM TRACKER METRICS ============\nconst dmHeaders = dmData.values ? dmData.values[0] : [];\nconst dmRows = dmData.values ? dmData.values.slice(1) : [];\n\n// Filter today's DM rows\nconst todayDMs = dmRows.filter(row => {\n  if (!row[0]) return false;\n  try {\n    const rowDate = new Date(row[0]).toISOString().split('T')[0];\n    return rowDate === todayStr;\n  } catch(e) { return false; }\n});\n\nconst totalDMs = todayDMs.length;\n\n// DM Category breakdown\nconst dmCategoryBreakdown = {};\nconst dmCatCol = 6;\ntodayDMs.forEach(row => {\n  const cat = row[dmCatCol] || 'UNKNOWN';\n  dmCategoryBreakdown[cat] = (dmCategoryBreakdown[cat] || 0) + 1;\n});\n\n// DM Route breakdown\nconst dmRouteBreakdown = {};\nconst dmRouteCol = 7;\ntodayDMs.forEach(row => {\n  const route = row[dmRouteCol] || 'unknown';\n  dmRouteBreakdown[route] = (dmRouteBreakdown[route] || 0) + 1;\n});\n\n// DM Urgency breakdown\nconst dmUrgencyBreakdown = { low: 0, medium: 0, high: 0, critical: 0 };\nconst dmUrgencyCol = 9;\ntodayDMs.forEach(row => {\n  const urg = (row[dmUrgencyCol] || 'medium').toLowerCase();\n  if (dmUrgencyBreakdown[urg] !== undefined) dmUrgencyBreakdown[urg]++;\n});\n\nconst hotLeads = dmCategoryBreakdown['HOT_LEAD'] || 0;\nconst dmComplaints = dmCategoryBreakdown['SUPPORT_REQUEST'] || 0;\n\n// DM Average response time\nconst dmRtCol = 13;\nconst dmResponseTimes = todayDMs\n  .map(row => parseInt(row[dmRtCol]) || 0)\n  .filter(t => t > 0);\nconst dmAvgResponseTime = dmResponseTimes.length > 0\n  ? Math.round(dmResponseTimes.reduce((a, b) => a + b, 0) / dmResponseTimes.length)\n  : 0;\n\n// DM Platform breakdown\nconst dmPlatformBreakdown = {};\nconst dmPlatCol = 1;\ntodayDMs.forEach(row => {\n  const plat = row[dmPlatCol] || 'unknown';\n  dmPlatformBreakdown[plat] = (dmPlatformBreakdown[plat] || 0) + 1;\n});\n\n// ============ COMBINED METRICS ============\nconst metrics = {\n  report_date: todayStr,\n  report_generated_at: new Date().toISOString(),\n  \n  // Comment metrics\n  comments: {\n    total: totalComments,\n    by_category: categoryBreakdown,\n    by_action: actionBreakdown,\n    by_platform: platformBreakdown,\n    by_priority: priorityBreakdown,\n    avg_response_time_ms: avgResponseTime,\n    avg_response_time_readable: avgResponseTime > 0 ? `${Math.round(avgResponseTime / 1000)}s` : 'N/A',\n    escalations: escalations,\n    complaints: complaints\n  },\n  \n  // DM metrics\n  dms: {\n    total: totalDMs,\n    by_category: dmCategoryBreakdown,\n    by_route: dmRouteBreakdown,\n    by_urgency: dmUrgencyBreakdown,\n    by_platform: dmPlatformBreakdown,\n    avg_response_time_ms: dmAvgResponseTime,\n    avg_response_time_readable: dmAvgResponseTime > 0 ? `${Math.round(dmAvgResponseTime / 1000)}s` : 'N/A',\n    hot_leads: hotLeads,\n    support_requests: dmComplaints\n  },\n  \n  // Summary\n  summary: {\n    total_interactions: totalComments + totalDMs,\n    total_hot_leads: hotLeads,\n    total_complaints: complaints + dmComplaints,\n    total_escalations: escalations,\n    requires_attention: (complaints + dmComplaints + escalations) > 0\n  }\n};\n\nreturn [{ json: metrics }];"
+      },
+      "id": "calculate-metrics",
+      "name": "Calculate Daily Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.LLM_BASE_URL + '/chat/completions' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.LLM_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{ $env.LLM_MODEL }}\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a professional social media analytics report writer for Divine Hindu, a D2C Hindu religious products brand. Generate a comprehensive daily social media report based on the metrics provided. The report must include:\\n\\n1. Executive Summary (2-3 lines)\\n2. Comment Analytics - total, category breakdown, action breakdown\\n3. DM Analytics - total, leads, support requests\\n4. Key Highlights (hot leads, complaints, escalations)\\n5. Recommendations (2-3 actionable items)\\n\\nGenerate the report in TWO sections:\\n- First in ENGLISH (professional tone)\\n- Then in HINDI (Devanagari script, warm tone)\\n\\nFormat with clear headers, bullet points, and emojis for readability. Use Slack-compatible markdown (*bold*, _italic_).\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Generate daily report for {{ $json.report_date }}. Here are the metrics:\\n\\n{{ JSON.stringify($json, null, 2) }}\"\n    }\n  ],\n  \"temperature\": 0.4,\n  \"max_tokens\": 2000\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 60000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      "id": "llm-generate-report",
+      "name": "LLM Generate Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse LLM report and combine with metrics\nconst llmResponse = $json;\nconst metrics = $('Calculate Daily Metrics').first().json;\n\nlet reportText = '';\n\ntry {\n  reportText = llmResponse.choices[0].message.content;\n} catch (e) {\n  // Fallback report if LLM fails\n  reportText = `📊 *Divine Hindu - Daily Social Media Report*\\n` +\n    `📅 Date: ${metrics.report_date}\\n\\n` +\n    `*Comment Summary:*\\n` +\n    `• Total Comments: ${metrics.comments.total}\\n` +\n    `• Complaints: ${metrics.comments.complaints}\\n` +\n    `• Escalations: ${metrics.comments.escalations}\\n` +\n    `• Avg Response: ${metrics.comments.avg_response_time_readable}\\n\\n` +\n    `*DM Summary:*\\n` +\n    `• Total DMs: ${metrics.dms.total}\\n` +\n    `• Hot Leads: ${metrics.dms.hot_leads}\\n` +\n    `• Support Requests: ${metrics.dms.support_requests}\\n` +\n    `• Avg Response: ${metrics.dms.avg_response_time_readable}\\n\\n` +\n    `*Totals:*\\n` +\n    `• Total Interactions: ${metrics.summary.total_interactions}\\n` +\n    `• Total Hot Leads: ${metrics.summary.total_hot_leads}\\n` +\n    `• Total Complaints: ${metrics.summary.total_complaints}\\n\\n` +\n    `_Auto-generated fallback report (LLM unavailable)_`;\n}\n\n// Build structured output\nreturn [{\n  json: {\n    report_date: metrics.report_date,\n    report_text: reportText,\n    metrics: metrics,\n    // Slack-formatted header\n    slack_header: `🕉️ *Divine Hindu - Daily Social Media Report* | 📅 ${metrics.report_date}`,\n    // Email subject\n    email_subject: `Divine Hindu - Daily Social Media Report - ${metrics.report_date}`,\n    // Quick stats for sheets\n    total_comments: metrics.comments.total,\n    total_dms: metrics.dms.total,\n    total_interactions: metrics.summary.total_interactions,\n    hot_leads: metrics.summary.total_hot_leads,\n    complaints: metrics.summary.total_complaints,\n    escalations: metrics.summary.total_escalations,\n    comment_avg_response: metrics.comments.avg_response_time_readable,\n    dm_avg_response: metrics.dms.avg_response_time_readable,\n    requires_attention: metrics.summary.requires_attention\n  }\n}];"
+      },
+      "id": "format-report",
+      "name": "Format Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.slack_header }}\\n\\n{{ $json.report_text }}\\n\\n---\\n📊 _Quick Stats:_ Comments: {{ $json.total_comments }} | DMs: {{ $json.total_dms }} | Leads: {{ $json.hot_leads }} | Complaints: {{ $json.complaints }}\\n⏱️ _Avg Response:_ Comments: {{ $json.comment_avg_response }} | DMs: {{ $json.dm_avg_response }}\"\n}",
+        "options": {
+          "timeout": 15000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "slack-report",
+      "name": "Send Slack Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1840,
+        300
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.SMTP_FROM_EMAIL || 'reports@divinehindhu.com' }}",
+        "toEmail": "={{ $env.REPORT_EMAIL_TO || 'team@divinehindhu.com' }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailType": "text",
+        "message": "={{ $json.report_text }}",
+        "options": {}
+      },
+      "id": "email-report",
+      "name": "Email Daily Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1840,
+        460
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $env.GOOGLE_SHEETS_ID }}/values/DailyReports!A:K:append?valueInputOption=USER_ENTERED",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.GOOGLE_SHEETS_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"values\": [[\n    \"{{ $json.report_date }}\",\n    {{ $json.total_comments }},\n    {{ $json.total_dms }},\n    {{ $json.total_interactions }},\n    {{ $json.hot_leads }},\n    {{ $json.complaints }},\n    {{ $json.escalations }},\n    \"{{ $json.comment_avg_response }}\",\n    \"{{ $json.dm_avg_response }}\",\n    {{ $json.requires_attention }},\n    \"{{ new Date().toISOString() }}\"\n  ]]\n}",
+        "options": {
+          "timeout": 15000
+        },
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000
+      },
+      "id": "log-daily-report",
+      "name": "Log to Daily Reports Sheet",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1840,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "attention-check",
+              "leftValue": "={{ $json.requires_attention }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "needs-attention",
+      "name": "Needs Attention?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2120,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🚨 *ATTENTION REQUIRED - Divine Hindu Daily Summary*\\n\\n⚠️ Today's report flagged items requiring attention:\\n\\n• *{{ $json.complaints }}* complaints received\\n• *{{ $json.escalations }}* escalations triggered\\n• *{{ $json.hot_leads }}* hot leads (ensure follow-up!)\\n\\n_Please review the full daily report above and take action on pending items._\\n\\n🙏 जय श्री राम\"\n}",
+        "options": {
+          "timeout": 10000
+        },
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 1000
+      },
+      "id": "slack-attention-alert",
+      "name": "Slack Attention Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        360
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item.json;\nconst phoneNumberId = $env.META_WHATSAPP_PHONE_NUMBER_ID || '';\nconst toNumber = $env.WHATSAPP_ALERT_TO_NUMBER || '';\nconst token = $env.META_ACCESS_TOKEN;\n\nif (!phoneNumberId || !toNumber) {\n  return [{ json: { ...item, whatsapp_result: 'skipped — WHATSAPP env vars not set' } }];\n}\n\nconst msgText = '🚨 Divine Hindu — Attention Required!\\n\\n' +\n  'Date: ' + item.report_date + '\\n' +\n  'Complaints: ' + item.complaints + '\\n' +\n  'Escalations: ' + item.escalations + '\\n' +\n  'Hot Leads: ' + item.hot_leads + '\\n\\n' +\n  'Please check Slack for full report.';\n\ntry {\n  const resp = await fetch(`https://graph.facebook.com/v19.0/${phoneNumberId}/messages`, {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },\n    body: JSON.stringify({ messaging_product: 'whatsapp', to: toNumber, type: 'text', text: { body: msgText } })\n  });\n  const result = await resp.json();\n  return [{ json: { ...item, whatsapp_result: result } }];\n} catch(e) {\n  return [{ json: { ...item, whatsapp_result: 'error: ' + e.message } }];\n}"
+      },
+      "id": "whatsapp-attention-alert",
+      "name": "WhatsApp Attention Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        520
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## 🕉️ Divine Hindu - Daily Report Generator\n\n**Trigger:** Daily at 6:00 PM IST (12:30 UTC)\n**Purpose:** Generate comprehensive daily analytics report, distribute via Slack + Email, and log metrics\n\n### Environment Variables Needed:\n- `LLM_BASE_URL` - OpenAI-compatible API endpoint\n- `LLM_API_KEY` - API key for LLM service\n- `LLM_MODEL` - Model name\n- `GOOGLE_SHEETS_ID` - Spreadsheet ID\n- `GOOGLE_SHEETS_TOKEN` - Google OAuth token\n- `SLACK_WEBHOOK_URL` - Slack webhook\n- `WHATSAPP_WEBHOOK_URL` - WhatsApp alerts\n- `SMTP_FROM_EMAIL` - Sender email\n- `REPORT_EMAIL_TO` - Report recipient email\n\n### Google Sheets Tabs Required:\n- `MasterTracker` - Comment data (from Workflow 1)\n- `DMTracker` - DM data (from Workflow 2)\n- `DailyReports` - Daily summary metrics (this workflow writes here)\n\n### Cron Note:\n6 PM IST = 12:30 UTC, so cron is set to `30 12 * * *`",
+        "height": 560,
+        "width": 520,
+        "color": 7
+      },
+      "id": "note-report-overview",
+      "name": "Sticky Note - Report Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        60,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 📥 Step 1: Read Data\n\nReads all rows from:\n- **MasterTracker** tab (comment data from Workflow 1)\n- **DMTracker** tab (DM data from Workflow 2)\n\nBoth fetched in parallel for speed.\n30-second timeout with 3 retries.",
+        "height": 220,
+        "width": 340,
+        "color": 4
+      },
+      "id": "note-report-read",
+      "name": "Sticky Note - Read Data",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 📊 Step 2: Calculate Metrics\n\nFilters for today's data (IST timezone) and calculates:\n\n**Comment Metrics:**\n- Total processed, category/action/platform/priority breakdown\n- Average response time, escalation & complaint counts\n\n**DM Metrics:**\n- Total processed, category/route/urgency/platform breakdown\n- Hot leads, support requests, average response time\n\n**Combined Summary:**\n- Total interactions, leads, complaints, escalations\n- Attention flag if complaints or escalations exist",
+        "height": 340,
+        "width": 360,
+        "color": 3
+      },
+      "id": "note-report-metrics",
+      "name": "Sticky Note - Metrics",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 Step 3: AI Report Generation\n\nLLM generates a professional bilingual report:\n- **English** section (professional analytics tone)\n- **Hindi** section (warm, spiritual brand voice)\n\nIncludes executive summary, breakdowns, highlights, and actionable recommendations.\n\nFallback: If LLM fails, a structured plain-text report is generated from raw metrics.",
+        "height": 260,
+        "width": 360,
+        "color": 6
+      },
+      "id": "note-report-llm",
+      "name": "Sticky Note - AI Report",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 📤 Step 4: Distribute Report\n\nReport is sent to 3 destinations simultaneously:\n1. **Slack** → #social-media-reports channel with full report + quick stats\n2. **Email** → Team email via SMTP with full report\n3. **Google Sheets** → 'DailyReports' tab with key metrics for tracking trends\n\nIf the report flags attention items (complaints, escalations, hot leads), an additional urgent alert is sent via Slack + WhatsApp.",
+        "height": 280,
+        "width": 400,
+        "color": 5
+      },
+      "id": "note-report-distribute",
+      "name": "Sticky Note - Distribute",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🚨 Step 5: Attention Alerts\n\nIf today's report contains complaints, escalations, or hot leads, an additional high-priority alert is sent:\n- **Slack** → Urgent attention alert with counts\n- **WhatsApp** → Mobile notification for immediate awareness\n\nThis ensures nothing critical falls through the cracks.",
+        "height": 240,
+        "width": 340,
+        "color": 2
+      },
+      "id": "note-report-attention",
+      "name": "Sticky Note - Attention",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2100,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 📋 DailyReports Sheet Columns\n\nA: Date\nB: Total Comments\nC: Total DMs\nD: Total Interactions\nE: Hot Leads\nF: Complaints\nG: Escalations\nH: Comment Avg Response\nI: DM Avg Response\nJ: Requires Attention\nK: Generated At",
+        "height": 280,
+        "width": 280,
+        "color": 1
+      },
+      "id": "note-sheet-schema",
+      "name": "Sticky Note - Sheet Schema",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { status: \"skipped\", reason: $input.first().json.message || \"No items to process\", timestamp: new Date().toISOString() } }];"
+      },
+      "id": "54668d49-b803-430c-9b9b-209a6dddf78a",
+      "name": "End (No Alert Needed)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        640
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 6PM IST": {
+      "main": [
+        [
+          {
+            "node": "Read Master Tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Master Tracker": {
+      "main": [
+        [
+          {
+            "node": "Read DM Tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read DM Tracker": {
+      "main": [
+        [
+          {
+            "node": "Calculate Daily Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Daily Metrics": {
+      "main": [
+        [
+          {
+            "node": "LLM Generate Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Generate Report": {
+      "main": [
+        [
+          {
+            "node": "Format Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Report": {
+      "main": [
+        [
+          {
+            "node": "Send Slack Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Daily Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log to Daily Reports Sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Needs Attention?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs Attention?": {
+      "main": [
+        [
+          {
+            "node": "Slack Attention Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "WhatsApp Attention Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "End (No Alert Needed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "",
+    "timezone": "Asia/Kolkata",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "divine-hindu"
+    },
+    {
+      "name": "reports"
+    },
+    {
+      "name": "daily"
+    },
+    {
+      "name": "production"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-06-18T22:14:00.000Z",
+  "versionId": "1.0.0"
+}

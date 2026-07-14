@@ -1,0 +1,389 @@
+[
+  {
+    "category_id": "CAT_PRODUCT_INQUIRY",
+    "name": "Product Inquiry",
+    "description": "Comments asking about product details, specifications, availability, materials, sizes, or general product information.",
+    "examples": [
+      "Yeh idol kitni badi hai?",
+      "Kya yeh brass mein available hai?",
+      "Is product ka weight kitna hai?",
+      "Material kya hai iska?",
+      "What is this made of?",
+      "Size batao",
+      "Kya yeh stock mein hai?"
+    ],
+    "default_action": "reply_with_template",
+    "priority": "medium",
+    "auto_reply_enabled": true,
+    "escalation_level": "L0"
+  },
+  {
+    "category_id": "CAT_PRICE_QUESTION",
+    "name": "Price Question",
+    "description": "Comments asking about product pricing, discounts, offers, coupon codes, EMI options, or cost-related questions.",
+    "examples": [
+      "Price kya hai?",
+      "Kitne ka hai?",
+      "Koi discount milega?",
+      "Rate batao",
+      "How much?",
+      "Offer chal raha hai kya?",
+      "EMI available hai?",
+      "COD hai kya?"
+    ],
+    "default_action": "reply_with_template",
+    "priority": "high",
+    "auto_reply_enabled": true,
+    "escalation_level": "L0"
+  },
+  {
+    "category_id": "CAT_ORDER_STATUS",
+    "name": "Order Status",
+    "description": "Comments or DMs asking about order tracking, delivery status, shipping updates, or when their order will arrive.",
+    "examples": [
+      "Mera order kab aayega?",
+      "Tracking ID bhejo",
+      "Order dispatch hua kya?",
+      "Kitne din mein delivery hogi?",
+      "Where is my order?",
+      "Shipped ho gaya kya?",
+      "Kab tak milega?"
+    ],
+    "default_action": "reply_with_template_and_lookup",
+    "priority": "high",
+    "auto_reply_enabled": false,
+    "escalation_level": "L1"
+  },
+  {
+    "category_id": "CAT_COMPLAINT_DAMAGE",
+    "name": "Complaint — Damaged Product",
+    "description": "Comments or messages reporting a damaged, broken, cracked, or defective product received.",
+    "examples": [
+      "Product toota hua aaya",
+      "Idol crack ho gayi",
+      "Damaged product mila",
+      "Kharab quality",
+      "Broken item received",
+      "Tuta hua tha box mein",
+      "Defective product"
+    ],
+    "default_action": "escalate_and_reply",
+    "priority": "critical",
+    "auto_reply_enabled": true,
+    "escalation_level": "L2"
+  },
+  {
+    "category_id": "CAT_COMPLAINT_WRONG",
+    "name": "Complaint — Wrong Product",
+    "description": "Comments or messages reporting that the wrong product was delivered instead of what was ordered.",
+    "examples": [
+      "Galat product aaya",
+      "Yeh toh maine order nahi kiya",
+      "Wrong item received",
+      "Different product mila",
+      "Alag cheez aayi hai",
+      "This is not what I ordered"
+    ],
+    "default_action": "escalate_and_reply",
+    "priority": "critical",
+    "auto_reply_enabled": true,
+    "escalation_level": "L2"
+  },
+  {
+    "category_id": "CAT_COMPLAINT_DELAY",
+    "name": "Complaint — Delayed Delivery",
+    "description": "Comments expressing frustration about late delivery, orders not arriving on time, or shipment delays.",
+    "examples": [
+      "10 din ho gaye abhi tak nahi aaya",
+      "Bahut late delivery",
+      "Still waiting for my order",
+      "Kab deliver hoga?",
+      "Very slow delivery",
+      "Order bahut late aa raha",
+      "Promised date nikal gayi"
+    ],
+    "default_action": "escalate_and_reply",
+    "priority": "high",
+    "auto_reply_enabled": true,
+    "escalation_level": "L1"
+  },
+  {
+    "category_id": "CAT_COMPLAINT_GENERAL",
+    "name": "Complaint — General",
+    "description": "Generic complaints about service, quality, experience, or other issues not fitting specific complaint categories.",
+    "examples": [
+      "Bahut bura experience",
+      "Not satisfied",
+      "Worst service",
+      "Kabhi nahi khareedoonga",
+      "Very poor quality",
+      "Disappointed",
+      "Time waste"
+    ],
+    "default_action": "escalate_and_reply",
+    "priority": "high",
+    "auto_reply_enabled": true,
+    "escalation_level": "L2"
+  },
+  {
+    "category_id": "CAT_RETURN_REFUND",
+    "name": "Return / Refund Request",
+    "description": "Comments or DMs requesting product returns, exchanges, or refund processing.",
+    "examples": [
+      "Return karna hai",
+      "Refund chahiye",
+      "Exchange kaise hoga?",
+      "Paise wapas karo",
+      "Want to return",
+      "Replace karo",
+      "Return policy kya hai?"
+    ],
+    "default_action": "reply_with_template_and_escalate",
+    "priority": "high",
+    "auto_reply_enabled": false,
+    "escalation_level": "L1"
+  },
+  {
+    "category_id": "CAT_POSITIVE_REVIEW",
+    "name": "Positive Review / Feedback",
+    "description": "Positive comments praising the product, quality, packaging, delivery, or overall experience.",
+    "examples": [
+      "Beautiful product!",
+      "Bahut sundar hai",
+      "Amazing quality 🙏",
+      "Loved it!",
+      "Best puja items",
+      "Excellent packaging",
+      "5 star ⭐⭐⭐⭐⭐",
+      "Bahut accha product hai"
+    ],
+    "default_action": "reply_with_template",
+    "priority": "medium",
+    "auto_reply_enabled": true,
+    "escalation_level": "L0"
+  },
+  {
+    "category_id": "CAT_USER_PHOTO_VIDEO",
+    "name": "User-Generated Content (Photo/Video)",
+    "description": "Comments or posts where users share photos or videos of purchased products, home temple setups, or unboxing.",
+    "examples": [
+      "Dekho kitni sundar lag rahi",
+      "My pooja room setup 🙏",
+      "Unboxing video",
+      "Product pic shared",
+      "See how beautiful this looks",
+      "Mandir mein rakh diya"
+    ],
+    "default_action": "reply_with_template_and_flag_for_repost",
+    "priority": "medium",
+    "auto_reply_enabled": true,
+    "escalation_level": "L0"
+  },
+  {
+    "category_id": "CAT_PURCHASE_INTENT",
+    "name": "Purchase Intent",
+    "description": "Comments showing clear buying interest — asking how to order, adding to cart, or expressing desire to purchase.",
+    "examples": [
+      "Kaise order karein?",
+      "Chahiye mujhe",
+      "I want to buy this",
+      "Order karna hai",
+      "Add to cart kaise?",
+      "Le leti hoon",
+      "Book kar do",
+      "Bhej do mujhe",
+      "Link bhejo"
+    ],
+    "default_action": "reply_with_template_and_dm",
+    "priority": "critical",
+    "auto_reply_enabled": true,
+    "escalation_level": "L0"
+  },
+  {
+    "category_id": "CAT_BULK_WHOLESALE",
+    "name": "Bulk / Wholesale Inquiry",
+    "description": "Comments asking about bulk orders, wholesale pricing, reseller opportunities, temple or event orders.",
+    "examples": [
+      "Bulk mein chahiye",
+      "Wholesale rate kya hai?",
+      "Mandir ke liye 50 moortiyan chahiye",
+      "Thok bhav?",
+      "Dealer ban sakte hain?",
+      "Event ke liye order karna hai"
+    ],
+    "default_action": "dm_and_escalate",
+    "priority": "high",
+    "auto_reply_enabled": false,
+    "escalation_level": "L1"
+  },
+  {
+    "category_id": "CAT_COLLAB_REQUEST",
+    "name": "Collaboration Request",
+    "description": "Comments or DMs from influencers, content creators, or brands proposing collaboration, sponsored posts, or partnerships.",
+    "examples": [
+      "Collab karenge?",
+      "I'm an influencer, interested in partnership",
+      "PR send karo",
+      "Brand collaboration interested",
+      "Can we collaborate?",
+      "Paid promotion available?"
+    ],
+    "default_action": "reply_with_template_and_escalate",
+    "priority": "low",
+    "auto_reply_enabled": true,
+    "escalation_level": "L1"
+  },
+  {
+    "category_id": "CAT_FESTIVAL_GREETING",
+    "name": "Festival Greeting",
+    "description": "Comments wishing Happy Diwali, Navratri, Holi, or other Hindu festival greetings.",
+    "examples": [
+      "Happy Diwali 🪔",
+      "Shubh Navratri 🙏",
+      "Jai Shree Ram",
+      "Happy Ganesh Chaturthi",
+      "Har Har Mahadev",
+      "Ram Navami ki shubhkamnayein"
+    ],
+    "default_action": "reply_with_template",
+    "priority": "low",
+    "auto_reply_enabled": true,
+    "escalation_level": "L0"
+  },
+  {
+    "category_id": "CAT_EMOJI_REACTION",
+    "name": "Emoji-Only Reaction",
+    "description": "Comments containing only emojis without any text — likes, hearts, fire, prayer hands, etc.",
+    "examples": [
+      "🙏",
+      "❤️",
+      "🔥🔥🔥",
+      "😍",
+      "👏👏",
+      "🙏🙏🙏",
+      "💯",
+      "🪔✨"
+    ],
+    "default_action": "like_comment",
+    "priority": "low",
+    "auto_reply_enabled": false,
+    "escalation_level": "L0"
+  },
+  {
+    "category_id": "CAT_TAGGING_FRIENDS",
+    "name": "Tagging Friends",
+    "description": "Comments where users tag friends or family members to share the product or post.",
+    "examples": [
+      "@friendname dekho yeh",
+      "@username check this out",
+      "@name tere liye",
+      "@user yeh le le",
+      "@friend mummy ke liye perfect"
+    ],
+    "default_action": "like_comment",
+    "priority": "low",
+    "auto_reply_enabled": false,
+    "escalation_level": "L0"
+  },
+  {
+    "category_id": "CAT_SPAM",
+    "name": "Spam / Irrelevant",
+    "description": "Spam comments, self-promotion, irrelevant links, offensive content, or bot-generated messages.",
+    "examples": [
+      "Follow me back",
+      "Check my page",
+      "Make money online",
+      "Random link sharing",
+      "Unrelated promotion",
+      "Bot-generated text",
+      "DM for collab 💰💰"
+    ],
+    "default_action": "hide_and_flag",
+    "priority": "low",
+    "auto_reply_enabled": false,
+    "escalation_level": "L0"
+  },
+  {
+    "category_id": "CAT_OFFENSIVE",
+    "name": "Offensive / Abusive",
+    "description": "Comments containing offensive language, abusive words, hate speech, religious disrespect, or harassment.",
+    "examples": [
+      "Abusive language",
+      "Hate speech",
+      "Disrespectful religious comments",
+      "Harassment",
+      "Threatening language",
+      "Vulgar content"
+    ],
+    "default_action": "hide_delete_and_escalate",
+    "priority": "critical",
+    "auto_reply_enabled": false,
+    "escalation_level": "L2"
+  },
+  {
+    "category_id": "CAT_COMPETITOR_MENTION",
+    "name": "Competitor Mention",
+    "description": "Comments mentioning competitor brands, comparing with competitors, or promoting competitor products.",
+    "examples": [
+      "XYZ brand better hai",
+      "Amazon par sasta milta hai",
+      "Flipkart se le lo",
+      "Dusri jagah pe better quality",
+      "Other brand ka compare karo"
+    ],
+    "default_action": "flag_for_review",
+    "priority": "medium",
+    "auto_reply_enabled": false,
+    "escalation_level": "L1"
+  },
+  {
+    "category_id": "CAT_PAYMENT_ISSUE",
+    "name": "Payment Issue",
+    "description": "Comments or DMs reporting failed payments, double charges, payment not reflecting, or UPI/card issues.",
+    "examples": [
+      "Payment kat gaya lekin order nahi hua",
+      "Double charge ho gaya",
+      "UPI se payment fail",
+      "Paisa kat gaya order nahi mila",
+      "Transaction failed but amount deducted",
+      "Refund nahi aaya"
+    ],
+    "default_action": "escalate_immediately",
+    "priority": "critical",
+    "auto_reply_enabled": true,
+    "escalation_level": "L2"
+  },
+  {
+    "category_id": "CAT_CUSTOM_REQUEST",
+    "name": "Customization Request",
+    "description": "Comments asking about product customization, personalization, engraving, special sizes, or bespoke orders.",
+    "examples": [
+      "Custom size ban sakta hai?",
+      "Naam likhwa sakte hain?",
+      "Engraving possible hai?",
+      "Special order le sakte ho?",
+      "Apne hisab se banwa sakte hain?"
+    ],
+    "default_action": "reply_with_template_and_dm",
+    "priority": "medium",
+    "auto_reply_enabled": true,
+    "escalation_level": "L1"
+  },
+  {
+    "category_id": "CAT_GENERAL_QUESTION",
+    "name": "General Question",
+    "description": "Generic questions about the brand, store location, business hours, website, or general information.",
+    "examples": [
+      "Store kahan hai?",
+      "Website kya hai?",
+      "Kab tak open ho?",
+      "WhatsApp number do",
+      "Contact number?",
+      "Kahan se order karein?"
+    ],
+    "default_action": "reply_with_template",
+    "priority": "low",
+    "auto_reply_enabled": true,
+    "escalation_level": "L0"
+  }
+]

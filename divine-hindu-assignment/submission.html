@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divine Hindu — AI-Powered Social Media Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E65100;
+            --primary-light: #FF8A50;
+            --primary-dark: #AC1900;
+            --accent: #FF6D00;
+            --gold: #FFB300;
+            --gold-light: #FFE082;
+            --dark: #1A1A2E;
+            --dark-card: #16213E;
+            --dark-surface: #0F3460;
+            --text: #E8E8E8;
+            --text-muted: #A0A0B0;
+            --success: #00C853;
+            --warning: #FFD600;
+            --danger: #FF1744;
+            --info: #448AFF;
+            --gradient-primary: linear-gradient(135deg, #E65100, #FF6D00);
+            --gradient-dark: linear-gradient(135deg, #1A1A2E, #16213E);
+            --gradient-gold: linear-gradient(135deg, #FFB300, #FF8F00);
+            --shadow: 0 8px 32px rgba(0,0,0,0.3);
+            --shadow-glow: 0 0 40px rgba(230,81,0,0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #1A1A2E 0%, #16213E 40%, #0F3460 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(230,81,0,0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 60%, rgba(255,179,0,0.06) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(2%, -2%) rotate(1deg); }
+            50% { transform: translate(-1%, 2%) rotate(-1deg); }
+            75% { transform: translate(1%, -1%) rotate(0.5deg); }
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(230,81,0,0.15);
+            border: 1px solid rgba(230,81,0,0.3);
+            color: var(--primary-light);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF8A50, #FFB300, #FF6D00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-meta-item {
+            text-align: center;
+        }
+
+        .hero-meta-item .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .hero-meta-item .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        /* Navigation */
+        .nav-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(26,26,46,0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-sticky a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-sticky a:hover {
+            color: var(--primary-light);
+            background: rgba(230,81,0,0.1);
+        }
+
+        /* Sections */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-number {
+            display: inline-block;
+            background: var(--gradient-primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            margin: 0 auto 1rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-divider {
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-primary);
+            margin: 0 auto;
+            border-radius: 3px;
+            margin-top: 1.5rem;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(22,33,62,0.6);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(230,81,0,0.2);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card h3 .icon {
+            font-size: 1.5rem;
+        }
+
+        /* Grid */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+
+        /* Stats */
+        .stat-card {
+            background: rgba(22,33,62,0.6);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(230,81,0,0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .stat-card .stat-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .stat-card .stat-value { font-size: 2rem; font-weight: 800; color: var(--gold); }
+        .stat-card .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead { background: rgba(230,81,0,0.15); }
+
+        th {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-light);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.9rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: var(--text);
+        }
+
+        tr:hover td { background: rgba(230,81,0,0.05); }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-critical { background: rgba(255,23,68,0.15); color: #FF1744; border: 1px solid rgba(255,23,68,0.3); }
+        .badge-high { background: rgba(255,109,0,0.15); color: #FF6D00; border: 1px solid rgba(255,109,0,0.3); }
+        .badge-medium { background: rgba(255,214,0,0.15); color: #FFD600; border: 1px solid rgba(255,214,0,0.3); }
+        .badge-low { background: rgba(0,200,83,0.15); color: #00C853; border: 1px solid rgba(0,200,83,0.3); }
+        .badge-info { background: rgba(68,138,255,0.15); color: #448AFF; border: 1px solid rgba(68,138,255,0.3); }
+
+        /* Flow Diagram */
+        .flow-container {
+            background: rgba(22,33,62,0.4);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .flow-node {
+            background: rgba(230,81,0,0.12);
+            border: 1px solid rgba(230,81,0,0.3);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .flow-node.trigger {
+            background: rgba(68,138,255,0.12);
+            border-color: rgba(68,138,255,0.3);
+            color: var(--info);
+        }
+
+        .flow-node.ai {
+            background: rgba(255,179,0,0.12);
+            border-color: rgba(255,179,0,0.3);
+            color: var(--gold);
+        }
+
+        .flow-node.action {
+            background: rgba(0,200,83,0.12);
+            border-color: rgba(0,200,83,0.3);
+            color: var(--success);
+        }
+
+        .flow-node.danger {
+            background: rgba(255,23,68,0.12);
+            border-color: rgba(255,23,68,0.3);
+            color: var(--danger);
+        }
+
+        .flow-arrow {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+
+        /* Process Steps */
+        .process-step {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .process-step::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 50px;
+            bottom: -20px;
+            width: 2px;
+            background: rgba(230,81,0,0.2);
+        }
+
+        .process-step:last-child::before { display: none; }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+            z-index: 1;
+        }
+
+        .step-content h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.8;
+            overflow-x: auto;
+            margin: 1rem 0;
+            color: #A0C4FF;
+        }
+
+        .code-block .comment { color: #6B7280; }
+        .code-block .keyword { color: #FF6D00; }
+        .code-block .string { color: #00C853; }
+
+        /* Tool Stack */
+        .tool-card {
+            background: rgba(22,33,62,0.6);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(230,81,0,0.2);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .tool-card .tool-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .tool-card .tool-name { font-weight: 700; font-size: 1rem; color: white; }
+        .tool-card .tool-role { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+        .tool-card .tool-cost { font-size: 0.85rem; color: var(--success); margin-top: 0.5rem; font-weight: 600; }
+
+        /* Timeline */
+        .timeline-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            align-items: flex-start;
+        }
+
+        .timeline-time {
+            min-width: 80px;
+            font-weight: 700;
+            color: var(--gold);
+            font-size: 0.9rem;
+            padding-top: 0.3rem;
+        }
+
+        .timeline-content {
+            background: rgba(22,33,62,0.6);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 1.25rem;
+            flex: 1;
+        }
+
+        .timeline-content h4 { color: white; margin-bottom: 0.5rem; }
+        .timeline-content p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(230,81,0,0.1), rgba(255,179,0,0.05));
+            border: 1px solid rgba(230,81,0,0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .highlight-box h4 {
+            color: var(--primary-light);
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Escalation Levels */
+        .escalation-level {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .escalation-level:hover { transform: translateX(4px); }
+
+        .level-badge {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .l0 { background: rgba(0,200,83,0.15); border: 2px solid #00C853; }
+        .l0 .level-badge { background: #00C853; }
+        .l1 { background: rgba(68,138,255,0.08); border: 1px solid rgba(68,138,255,0.3); }
+        .l1 .level-badge { background: #448AFF; }
+        .l2 { background: rgba(255,214,0,0.08); border: 1px solid rgba(255,214,0,0.3); }
+        .l2 .level-badge { background: #FFD600; color: #1A1A2E; }
+        .l3 { background: rgba(255,109,0,0.08); border: 1px solid rgba(255,109,0,0.3); }
+        .l3 .level-badge { background: #FF6D00; }
+        .l4 { background: rgba(255,23,68,0.08); border: 1px solid rgba(255,23,68,0.3); }
+        .l4 .level-badge { background: #FF1744; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(22,33,62,0.4);
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .footer p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate { animation: fadeInUp 0.6s ease-out forwards; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .hero-meta { flex-direction: column; gap: 1rem; }
+            .flow-row { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+            .section { padding: 3rem 1rem; }
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: white; color: #333; }
+            .hero { min-height: auto; padding: 3rem; }
+            .card, .stat-card, .tool-card { border: 1px solid #ddd; }
+            .nav-sticky { display: none; }
+        }
+
+        ul, ol { padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; color: var(--text-muted); }
+        li strong { color: var(--text); }
+
+        a { color: var(--primary-light); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+    <div class="hero-badge">AI Executive Assignment</div>
+    <h1>🙏 Divine Hindu<br>Social Media Intelligence System</h1>
+    <p class="subtitle">AI-Powered Instagram & Facebook Comment/DM Management — A Production-Ready, Automated Solution for Smart Customer Engagement</p>
+    <div class="hero-meta">
+        <div class="hero-meta-item">
+            <div class="value">3</div>
+            <div class="label">Automated Workflows</div>
+        </div>
+        <div class="hero-meta-item">
+            <div class="value">35+</div>
+            <div class="label">Reply Templates</div>
+        </div>
+        <div class="hero-meta-item">
+            <div class="value">8</div>
+            <div class="label">AI Categories</div>
+        </div>
+        <div class="hero-meta-item">
+            <div class="value">5</div>
+            <div class="label">Escalation Levels</div>
+        </div>
+        <div class="hero-meta-item">
+            <div class="value">₹0</div>
+            <div class="label">Monthly Tool Cost*</div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ NAV ============ -->
+<nav class="nav-sticky">
+    <a href="#problem">Problem</a>
+    <a href="#solution">Solution</a>
+    <a href="#classification">AI Classification</a>
+    <a href="#workflows">Workflows</a>
+    <a href="#dm-management">DM Management</a>
+    <a href="#templates">Templates</a>
+    <a href="#escalation">Escalation</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#sop">Daily SOP</a>
+    <a href="#tools">Tools</a>
+    <a href="#implementation">Implementation</a>
+    <a href="#challenges">Challenges</a>
+    <a href="#roi">ROI</a>
+</nav>
+
+<!-- ============ 1. PROBLEM ============ -->
+<section class="section" id="problem">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">1</div>
+        <h2>The Problem</h2>
+        <p>Why Divine Hindu needs an intelligent social media management system</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="grid-3">
+        <div class="stat-card">
+            <div class="stat-icon">💬</div>
+            <div class="stat-value">100+</div>
+            <div class="stat-label">Daily Comments/DMs (est.)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-value">4-6 hrs</div>
+            <div class="stat-label">Manual Processing Time</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💸</div>
+            <div class="stat-value">30%</div>
+            <div class="stat-label">Lost Sales Leads (est.)</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+        <h3><span class="icon">🔴</span> Current Challenges</h3>
+        <div class="grid-2" style="margin-top: 1rem;">
+            <div>
+                <ul>
+                    <li><strong>Missed Sales Opportunities</strong> — Product inquiries buried under spam comments, leads go cold before team responds</li>
+                    <li><strong>Slow Response Times</strong> — Manual checking of comments across Instagram + Facebook takes hours</li>
+                    <li><strong>No Prioritization</strong> — Urgent complaints treated same as generic comments</li>
+                    <li><strong>Spam Overload</strong> — Irrelevant/spam comments pollute brand image and waste time</li>
+                </ul>
+            </div>
+            <div>
+                <ul>
+                    <li><strong>No Tracking</strong> — No data on how many queries come in, response times, or resolution rates</li>
+                    <li><strong>Inconsistent Responses</strong> — Different team members give different answers to same questions</li>
+                    <li><strong>No Escalation Path</strong> — Complaints have no clear routing to the right person</li>
+                    <li><strong>Scaling Issues</strong> — As brand grows, manual approach won't scale</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 2. SOLUTION ============ -->
+<section class="section" id="solution" style="background: rgba(22,33,62,0.3);">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">2</div>
+        <h2>The Solution Architecture</h2>
+        <p>AI-powered triage + Automation + Human escalation — The best of both worlds</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <!-- Flow Diagram -->
+    <div class="flow-container">
+        <h4 style="text-align:center; margin-bottom:2rem; color:var(--gold);">🔄 End-to-End System Flow</h4>
+        
+        <div class="flow-row">
+            <div class="flow-node trigger">📱 Instagram Comments</div>
+            <div class="flow-node trigger">📘 Facebook Comments</div>
+            <div class="flow-node trigger">✉️ Instagram DMs</div>
+            <div class="flow-node trigger">💬 Messenger DMs</div>
+        </div>
+        <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+        <div class="flow-row">
+            <div class="flow-node" style="min-width:300px;">⚙️ n8n Automation Hub (Self-Hosted)</div>
+        </div>
+        <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+        <div class="flow-row">
+            <div class="flow-node ai" style="min-width:350px;">🧠 AI Classification Engine (Open-Source LLM via Groq/Ollama)</div>
+        </div>
+        <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+        <div class="flow-row">
+            <div class="flow-node action">🛒 Sales Lead</div>
+            <div class="flow-node action">📦 Order Query</div>
+            <div class="flow-node danger">😡 Complaint</div>
+            <div class="flow-node" style="background:rgba(0,200,83,0.12); border-color:rgba(0,200,83,0.3); color:var(--success);">🙏 Positive</div>
+            <div class="flow-node danger">🚫 Spam</div>
+        </div>
+        <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+        <div class="flow-row">
+            <div class="flow-node action">💬 Auto-Reply</div>
+            <div class="flow-node action">🔔 Team Alert</div>
+            <div class="flow-node danger">🗑️ Hide/Delete</div>
+            <div class="flow-node action">📊 Log to Dashboard</div>
+        </div>
+    </div>
+
+    <div class="highlight-box">
+        <h4>💡 Key Design Principles</h4>
+        <ul>
+            <li><strong>AI First, Human Backup</strong> — AI handles 70% automatically, team focuses on high-value conversations</li>
+            <li><strong>Zero Cost Infrastructure</strong> — Self-hosted n8n + free open-source AI models + Google Sheets = ₹0/month</li>
+            <li><strong>Speed</strong> — Comments classified in &lt;3 seconds, auto-replies within 5 minutes</li>
+            <li><strong>Bilingual</strong> — All templates in Hindi + English for Divine Hindu's audience</li>
+            <li><strong>Scalable</strong> — Works for 50 comments/day or 5000/day without changes</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ============ 3. AI CLASSIFICATION ============ -->
+<section class="section" id="classification">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">3</div>
+        <h2>AI Comment Classification</h2>
+        <p>How comments are automatically categorized and actioned</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Examples</th>
+                    <th>Auto Action</th>
+                    <th>Priority</th>
+                    <th>Response Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>🛒 Product Inquiry</strong></td>
+                    <td>"Yeh murti kitni badi hai?", "Material kya hai?", "Kya yeh brass hai?"</td>
+                    <td>Auto-reply + Route to Sales</td>
+                    <td><span class="badge badge-high">HIGH</span></td>
+                    <td>&lt; 15 min</td>
+                </tr>
+                <tr>
+                    <td><strong>💰 Price Question</strong></td>
+                    <td>"Price kya hai?", "Kitne ka hai?", "Rate batao"</td>
+                    <td>Auto-reply with catalog link</td>
+                    <td><span class="badge badge-high">HIGH</span></td>
+                    <td>&lt; 15 min</td>
+                </tr>
+                <tr>
+                    <td><strong>😡 Complaint</strong></td>
+                    <td>"Tuta hua aaya", "Wrong item bheja", "Refund do"</td>
+                    <td>Flag + Escalate to CS Manager</td>
+                    <td><span class="badge badge-critical">CRITICAL</span></td>
+                    <td>&lt; 10 min</td>
+                </tr>
+                <tr>
+                    <td><strong>📦 Order Query</strong></td>
+                    <td>"Mera order kab aayega?", "Tracking ID do", "Delivery status?"</td>
+                    <td>Auto-reply + Route to Order Team</td>
+                    <td><span class="badge badge-medium">MEDIUM</span></td>
+                    <td>&lt; 30 min</td>
+                </tr>
+                <tr>
+                    <td><strong>🚫 Spam</strong></td>
+                    <td>"DM for collab", random links, bot comments, irrelevant promos</td>
+                    <td>Auto-hide / Delete</td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>Instant</td>
+                </tr>
+                <tr>
+                    <td><strong>🗑️ Irrelevant</strong></td>
+                    <td>Random emojis only, "@friend tag", unrelated topics</td>
+                    <td>Ignore / Log only</td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><strong>🙏 Positive Feedback</strong></td>
+                    <td>"Bahut sundar!", "Amazing quality", "Jai Shri Ram 🙏"</td>
+                    <td>Like + Thank you reply</td>
+                    <td><span class="badge badge-low">LOW</span></td>
+                    <td>&lt; 1 hour</td>
+                </tr>
+                <tr>
+                    <td><strong>🤝 Collaboration</strong></td>
+                    <td>"Influencer collab?", "Brand partnership", "PR inquiry"</td>
+                    <td>Forward to Marketing team</td>
+                    <td><span class="badge badge-medium">MEDIUM</span></td>
+                    <td>&lt; 4 hours</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+        <h3><span class="icon">🧠</span> AI Classification Prompt (Actual)</h3>
+        <div class="code-block">
+<span class="comment">// System Prompt used in n8n workflow</span>
+<span class="keyword">SYSTEM:</span>
+You are a social media moderator for <span class="string">"Divine Hindu"</span>, a D2C Hindu religious 
+products brand (puja samagri, murtis, spiritual accessories).
+
+<span class="keyword">Classify</span> this comment into exactly ONE category:
+PRODUCT_INQUIRY | PRICE_QUESTION | COMPLAINT | ORDER_QUERY | 
+SPAM | IRRELEVANT | POSITIVE_FEEDBACK | COLLABORATION_REQUEST
+
+<span class="keyword">Determine action:</span>
+AUTO_REPLY | HIDE | DELETE | ESCALATE_SALES | ESCALATE_SUPPORT | 
+ESCALATE_MANAGER | LIKE_ONLY
+
+<span class="keyword">Return JSON:</span>
+{
+  "category": "...",
+  "action": "...",
+  "priority": 1-5,
+  "suggested_reply": "reply in Hindi (Roman script)",
+  "reasoning": "1-line explanation"
+}
+
+<span class="comment">// Context: Comments may be in Hindi, Hinglish, or English</span>
+<span class="comment">// Products: Murtis, Puja Thali, Rudraksha, Agarbatti, etc.</span>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 4. WORKFLOWS ============ -->
+<section class="section" id="workflows" style="background: rgba(22,33,62,0.3);">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">4</div>
+        <h2>n8n Automation Workflows</h2>
+        <p>Three production-ready workflows — importable JSON files included</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <!-- Workflow 1 -->
+    <div class="card">
+        <h3><span class="icon">⚡</span> Workflow 1: Comment Monitor & AI Classifier</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Runs every 5 minutes — fetches, classifies, and actions all new comments</p>
+        
+        <div class="flow-container" style="background: rgba(0,0,0,0.2);">
+            <div class="flow-row">
+                <div class="flow-node trigger">⏰ Cron Trigger<br><small>Every 5 min</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">📱 Fetch IG<br><small>Graph API</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">📘 Fetch FB<br><small>Graph API</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">🔀 Merge &<br><small>Deduplicate</small></div>
+            </div>
+            <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+            <div class="flow-row">
+                <div class="flow-node ai">🧠 AI Classify<br><small>LLM API</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">📋 Parse<br><small>Response</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node" style="min-width:200px;">🔀 Switch by Action</div>
+            </div>
+            <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+            <div class="flow-row">
+                <div class="flow-node danger">🗑️ Delete/<br>Hide Spam</div>
+                <div class="flow-node action">💬 Auto<br>Reply</div>
+                <div class="flow-node" style="background:rgba(255,179,0,0.12); border-color:rgba(255,179,0,0.3); color:var(--gold);">🔔 Sales<br>Alert</div>
+                <div class="flow-node danger">🚨 Escalate<br>Complaint</div>
+                <div class="flow-node action">❤️ Like<br>Comment</div>
+            </div>
+            <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+            <div class="flow-row">
+                <div class="flow-node action" style="min-width:300px;">📊 Log to Google Sheets Dashboard</div>
+            </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 1rem;">
+            <h4>📂 Importable n8n JSON File Included</h4>
+            <p style="color: var(--text-muted);">File: <code>workflows/comment-monitor-classifier.json</code> — Import directly into your n8n instance. Configure environment variables and you're live.</p>
+        </div>
+    </div>
+
+    <!-- Workflow 2 -->
+    <div class="card">
+        <h3><span class="icon">✉️</span> Workflow 2: DM Monitor & Smart Router</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Runs every 3 minutes — monitors DMs, classifies intent, routes to right team</p>
+        
+        <div class="flow-container" style="background: rgba(0,0,0,0.2);">
+            <div class="flow-row">
+                <div class="flow-node trigger">⏰ Cron<br><small>Every 3 min</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">📥 Fetch IG DMs<br><small>Conversations API</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">📥 Fetch Messenger<br><small>Conversations API</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">🆕 Filter New<br><small>Messages</small></div>
+            </div>
+            <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+            <div class="flow-row">
+                <div class="flow-node ai">🧠 Classify DM<br><small>Intent Detection</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">🔀 Route by<br><small>Category</small></div>
+            </div>
+            <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+            <div class="flow-row">
+                <div class="flow-node" style="background:rgba(255,23,68,0.12); border-color:rgba(255,23,68,0.3); color:#FF6D00;">🔥 Hot Lead<br><small>→ Sales Slack</small></div>
+                <div class="flow-node action">🛠️ Support<br><small>→ Support Queue</small></div>
+                <div class="flow-node" style="background:rgba(68,138,255,0.12); border-color:rgba(68,138,255,0.3); color:var(--info);">🤝 Collab<br><small>→ Marketing</small></div>
+                <div class="flow-node action">🤖 Auto<br><small>→ Template Reply</small></div>
+                <div class="flow-node danger">🚫 Spam<br><small>→ Archive</small></div>
+            </div>
+            <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+            <div class="flow-row">
+                <div class="flow-node action" style="min-width:300px;">📊 Log to DM Tracker Sheet</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workflow 3 -->
+    <div class="card">
+        <h3><span class="icon">📊</span> Workflow 3: Daily Report Generator</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Runs at 6 PM daily — generates comprehensive daily summary</p>
+        
+        <div class="flow-container" style="background: rgba(0,0,0,0.2);">
+            <div class="flow-row">
+                <div class="flow-node trigger">⏰ 6 PM Daily</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">📊 Read Sheets<br><small>Today's Data</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">🔢 Calculate<br><small>Metrics</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node ai">🧠 AI Summary<br><small>Generate Report</small></div>
+            </div>
+            <div class="flow-row"><span class="flow-arrow">⬇️</span></div>
+            <div class="flow-row">
+                <div class="flow-node action">📧 Email Report</div>
+                <div class="flow-node action">💬 Slack Report</div>
+                <div class="flow-node action">📊 Update Dashboard</div>
+            </div>
+        </div>
+
+        <div class="card" style="background: rgba(0,0,0,0.2); margin-top: 1rem;">
+            <h3 style="font-size: 1rem;"><span class="icon">📋</span> Sample Daily Report Output</h3>
+            <div class="code-block">
+<span class="keyword">📊 Divine Hindu — Daily Social Media Report</span>
+<span class="keyword">📅 Date:</span> 18 June 2026 | <span class="keyword">Generated:</span> 6:00 PM IST
+
+<span class="string">━━━ SUMMARY ━━━━━━━━━━━━━━━━━━━━━━</span>
+📬 Total Comments Processed: <span class="keyword">127</span>
+✉️ Total DMs Processed: <span class="keyword">34</span>
+⚡ Avg Response Time: <span class="keyword">4.2 min</span>
+✅ Auto-Resolved: <span class="keyword">89 (70%)</span>
+
+<span class="string">━━━ COMMENTS BREAKDOWN ━━━━━━━━━━━━</span>
+🛒 Product Inquiries: <span class="keyword">23</span> (18%)
+💰 Price Questions: <span class="keyword">18</span> (14%)
+😡 Complaints: <span class="keyword">5</span> (4%) ⚠️
+📦 Order Queries: <span class="keyword">12</span> (9%)
+🚫 Spam Hidden/Deleted: <span class="keyword">31</span> (24%)
+🙏 Positive Feedback: <span class="keyword">28</span> (22%)
+🤝 Collaboration: <span class="keyword">3</span> (2%)
+🗑️ Irrelevant: <span class="keyword">7</span> (6%)
+
+<span class="string">━━━ SALES PIPELINE ━━━━━━━━━━━━━━━</span>
+🔥 Hot Leads Generated: <span class="keyword">8</span>
+💰 Estimated Lead Value: <span class="keyword">₹12,400</span>
+📞 Follow-ups Pending: <span class="keyword">3</span>
+
+<span class="string">━━━ ACTION NEEDED ━━━━━━━━━━━━━━━━</span>
+⚠️ Unresolved Complaints: <span class="keyword">2</span>
+📌 Pending Escalations: <span class="keyword">1</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 5. DM MANAGEMENT ============ -->
+<section class="section" id="dm-management">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">5</div>
+        <h2>DM Management Strategy</h2>
+        <p>How customer DMs are categorized, prioritized, and handled</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3><span class="icon">📥</span> DM Categories</h3>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Category</th><th>Route To</th><th>Response</th></tr></thead>
+                    <tbody>
+                        <tr><td>🔥 <strong>Hot Lead</strong> — "Buy karna hai", "Order kaise karein"</td><td>Sales Team</td><td>Instant Slack alert + auto-ack</td></tr>
+                        <tr><td>💰 <strong>Price Inquiry</strong> — "Rate batao", "Kitne ka hai"</td><td>Auto + Sales</td><td>Auto-reply with catalog link</td></tr>
+                        <tr><td>📦 <strong>Order Status</strong> — "Mera order kab aayega"</td><td>Support</td><td>Auto-reply + ticket</td></tr>
+                        <tr><td>🛠️ <strong>Support Request</strong> — "Product broken", "Refund"</td><td>CS Manager</td><td>Urgent escalation</td></tr>
+                        <tr><td>🤝 <strong>Collaboration</strong> — "Influencer", "Partnership"</td><td>Marketing</td><td>Forward + template</td></tr>
+                        <tr><td>🚫 <strong>Spam/Bot</strong> — Random links, scams</td><td>Auto-archive</td><td>No reply</td></tr>
+                        <tr><td>💬 <strong>General</strong> — "Hi", "Good morning"</td><td>Auto-reply</td><td>Warm template</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card">
+            <h3><span class="icon">⚡</span> DM Response Strategy</h3>
+            <ul>
+                <li><strong>First Response &lt; 5 min</strong> — AI auto-acknowledges every DM immediately</li>
+                <li><strong>Hot Lead Alerts</strong> — Sales team gets instant Slack + WhatsApp notification with full conversation context</li>
+                <li><strong>Context Preservation</strong> — AI reads the entire conversation thread, not just the last message</li>
+                <li><strong>Handoff Protocol</strong> — When AI can't handle, it smoothly hands off to human: "Aapko humare team member se connect kar rahe hain 🙏"</li>
+                <li><strong>Follow-up Tracking</strong> — If no human response in 30 min, re-alert the team</li>
+                <li><strong>After-hours Auto-reply</strong> — "Namaste! Humari team kal subah 9 baje aapko reply karegi 🙏"</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 6. TEMPLATES ============ -->
+<section class="section" id="templates" style="background: rgba(22,33,62,0.3);">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">6</div>
+        <h2>Reply Templates</h2>
+        <p>35+ bilingual templates — ready to deploy, customizable with variables</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3><span class="icon">🛒</span> Product Inquiry</h3>
+            <div class="code-block" style="font-family: 'Inter', sans-serif; color: var(--text);">
+🙏 Namaste <span class="string">{{customer_name}}</span> ji!
+
+<span class="string">{{product_name}}</span> ke baare mein poochne ke liye dhanyavaad! 
+
+Yeh <span class="string">{{material}}</span> se bani hai aur iska size <span class="string">{{size}}</span> hai. 
+
+📸 Poori details ke liye humari website dekhein: <span class="string">{{product_link}}</span>
+
+Koi bhi sawaal ho toh DM karein, hum turant reply karenge! 🙏
+
+<span class="comment">— Divine Hindu Team</span>
+            </div>
+        </div>
+        <div class="card">
+            <h3><span class="icon">😡</span> Complaint Acknowledgment</h3>
+            <div class="code-block" style="font-family: 'Inter', sans-serif; color: var(--text);">
+🙏 Namaste <span class="string">{{customer_name}}</span> ji,
+
+Aapki pareshani ke liye hume bahut khed hai. Humari team aapki complaint ko priority pe le rahi hai.
+
+📋 Complaint ID: <span class="string">{{complaint_id}}</span>
+⏰ Expected Resolution: <span class="string">{{resolution_time}}</span>
+
+Humara customer care team <span class="string">{{contact_time}}</span> tak aapko contact karega.
+
+Agar urgent hai toh call karein: <span class="string">{{support_phone}}</span>
+
+🙏 Dhanyavaad aur kshama karein.
+<span class="comment">— Divine Hindu Customer Care</span>
+            </div>
+        </div>
+        <div class="card">
+            <h3><span class="icon">💰</span> Price Inquiry</h3>
+            <div class="code-block" style="font-family: 'Inter', sans-serif; color: var(--text);">
+🙏 Namaste <span class="string">{{customer_name}}</span> ji!
+
+<span class="string">{{product_name}}</span> ki price <span class="string">{{price}}</span> hai.
+
+🎉 Abhi <span class="string">{{discount_info}}</span> chal raha hai!
+
+🛒 Order karein: <span class="string">{{order_link}}</span>
+📞 Call for bulk orders: <span class="string">{{sales_phone}}</span>
+
+Free shipping on orders above ₹999! 🚚
+
+🙏 Jai Shri Ram!
+<span class="comment">— Divine Hindu</span>
+            </div>
+        </div>
+        <div class="card">
+            <h3><span class="icon">🙏</span> Positive Feedback</h3>
+            <div class="code-block" style="font-family: 'Inter', sans-serif; color: var(--text);">
+🙏 Bahut bahut dhanyavaad <span class="string">{{customer_name}}</span> ji!
+
+Aapke pyaar bhare shabd padhke bahut achha laga. 🙏✨
+
+Hum aapke trust ko hamesha banaaye rakhenge.
+
+Apne parivaar aur mitron ke saath zaroor share karein! 🕉️
+
+🙏 Jai Shri Ram!
+<span class="comment">— Divine Hindu Parivar</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="highlight-box">
+        <h4>📂 Full Template Library Included</h4>
+        <p style="color: var(--text-muted);">File: <code>templates/reply-templates.json</code> — 35+ templates with variables, categorized by type. Import into any system — Google Sheets, CRM, or directly into n8n.</p>
+    </div>
+</section>
+
+<!-- ============ 7. ESCALATION ============ -->
+<section class="section" id="escalation">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">7</div>
+        <h2>Escalation Matrix</h2>
+        <p>Clear 5-level escalation path — no query falls through the cracks</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="escalation-level l0">
+        <div class="level-badge">L0</div>
+        <div>
+            <h4 style="color:white; margin-bottom:0.25rem;">🤖 AI Auto-Response</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">
+                <strong>Response Time:</strong> Instant | <strong>Handles:</strong> Spam removal, positive replies, simple FAQ, price links, catalog redirects<br>
+                <strong>Authority:</strong> Auto-reply, hide/delete spam, like comments | <strong>~70% of all messages</strong>
+            </p>
+        </div>
+    </div>
+    <div class="escalation-level l1">
+        <div class="level-badge">L1</div>
+        <div>
+            <h4 style="color:white; margin-bottom:0.25rem;">👤 Social Media Executive</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">
+                <strong>Response Time:</strong> &lt; 15 min | <strong>Handles:</strong> Product inquiries, detailed questions, basic order issues, DM conversations<br>
+                <strong>Authority:</strong> Custom replies, basic troubleshooting, process orders | <strong>~20% of messages</strong>
+            </p>
+        </div>
+    </div>
+    <div class="escalation-level l2">
+        <div class="level-badge">L2</div>
+        <div>
+            <h4 style="color:white; margin-bottom:0.25rem;">👨‍💼 Team Lead / CS Manager</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">
+                <strong>Response Time:</strong> &lt; 30 min | <strong>Handles:</strong> Complex complaints, refund requests, negative reviews, repeat issues<br>
+                <strong>Authority:</strong> Process refunds up to ₹5000, offer discounts up to 20%, issue replacement | <strong>~7% of messages</strong>
+            </p>
+        </div>
+    </div>
+    <div class="escalation-level l3">
+        <div class="level-badge">L3</div>
+        <div>
+            <h4 style="color:white; margin-bottom:0.25rem;">📢 Manager / Head of CS</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">
+                <strong>Response Time:</strong> &lt; 1 hour | <strong>Handles:</strong> PR situations, influencer complaints, viral negative posts, legal mentions<br>
+                <strong>Authority:</strong> Full refund authority, public statements, partner with marketing | <strong>~2% of messages</strong>
+            </p>
+        </div>
+    </div>
+    <div class="escalation-level l4">
+        <div class="level-badge">L4</div>
+        <div>
+            <h4 style="color:white; margin-bottom:0.25rem;">🏢 Leadership / Founder</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">
+                <strong>Response Time:</strong> &lt; 2 hours | <strong>Handles:</strong> Legal threats, brand reputation crisis, media coverage, government/regulatory<br>
+                <strong>Authority:</strong> All decisions, crisis management, legal action | <strong>&lt;1% of messages</strong>
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 8. DASHBOARD ============ -->
+<section class="section" id="dashboard" style="background: rgba(22,33,62,0.3);">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">8</div>
+        <h2>Dashboard & Reporting</h2>
+        <p>Google Sheets-based live dashboard — zero cost, instant setup</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="card">
+        <h3><span class="icon">📊</span> Dashboard Structure (Google Sheets)</h3>
+        <div class="grid-2" style="margin-top: 1rem;">
+            <div>
+                <h4 style="color: var(--gold); margin-bottom: 0.75rem;">📋 Sheet 1: Master Comment Tracker</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Column</th><th>Data</th></tr></thead>
+                        <tbody>
+                            <tr><td>Timestamp</td><td>Auto-filled by n8n</td></tr>
+                            <tr><td>Platform</td><td>Instagram / Facebook</td></tr>
+                            <tr><td>Post ID</td><td>Link to original post</td></tr>
+                            <tr><td>Username</td><td>Commenter handle</td></tr>
+                            <tr><td>Comment Text</td><td>Full comment content</td></tr>
+                            <tr><td>AI Category</td><td>Product/Price/Complaint/etc.</td></tr>
+                            <tr><td>Priority</td><td>1 (Critical) → 5 (Low)</td></tr>
+                            <tr><td>Action Taken</td><td>Auto-reply/Hide/Escalate</td></tr>
+                            <tr><td>Assigned To</td><td>Team member name</td></tr>
+                            <tr><td>Status</td><td>Open/In Progress/Resolved</td></tr>
+                            <tr><td>Response Time</td><td>Minutes to first response</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <h4 style="color: var(--gold); margin-bottom: 0.75rem;">📈 Sheet 2: Daily Dashboard</h4>
+                <div class="grid-2" style="gap: 0.75rem;">
+                    <div class="stat-card" style="padding: 1rem;">
+                        <div class="stat-value" style="font-size:1.5rem;">127</div>
+                        <div class="stat-label">Total Comments</div>
+                    </div>
+                    <div class="stat-card" style="padding: 1rem;">
+                        <div class="stat-value" style="font-size:1.5rem;">4.2m</div>
+                        <div class="stat-label">Avg Response Time</div>
+                    </div>
+                    <div class="stat-card" style="padding: 1rem;">
+                        <div class="stat-value" style="font-size:1.5rem; color:var(--success);">89%</div>
+                        <div class="stat-label">Auto-Resolved</div>
+                    </div>
+                    <div class="stat-card" style="padding: 1rem;">
+                        <div class="stat-value" style="font-size:1.5rem; color:var(--danger);">2</div>
+                        <div class="stat-label">Open Complaints</div>
+                    </div>
+                </div>
+                <h4 style="color: var(--gold); margin: 1.5rem 0 0.75rem;">📊 Auto-generated Charts</h4>
+                <ul style="font-size: 0.85rem;">
+                    <li>Category breakdown pie chart</li>
+                    <li>Response time trend (7-day line chart)</li>
+                    <li>Volume by hour (bar chart)</li>
+                    <li>Sales leads conversion funnel</li>
+                    <li>Complaint resolution rate</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3><span class="icon">📱</span> Additional Reporting Channels</h3>
+        <div class="grid-3">
+            <div>
+                <h4 style="color: var(--info); margin-bottom: 0.5rem;">💬 Slack Alerts</h4>
+                <ul style="font-size: 0.85rem;">
+                    <li><strong>#sales-leads</strong> — Hot lead notifications</li>
+                    <li><strong>#complaints</strong> — Urgent escalations</li>
+                    <li><strong>#daily-report</strong> — End-of-day summary</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: var(--info); margin-bottom: 0.5rem;">📧 Email Reports</h4>
+                <ul style="font-size: 0.85rem;">
+                    <li>Daily summary to manager</li>
+                    <li>Weekly trends to leadership</li>
+                    <li>Instant alerts for L3+ escalations</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: var(--info); margin-bottom: 0.5rem;">📲 WhatsApp Alerts</h4>
+                <ul style="font-size: 0.85rem;">
+                    <li>Sales lead instant notifications</li>
+                    <li>Critical complaint alerts</li>
+                    <li>After-hours urgent alerts</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 9. DAILY SOP ============ -->
+<section class="section" id="sop">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">9</div>
+        <h2>Daily Operating Procedure (SOP)</h2>
+        <p>The complete daily workflow for the social media team</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-time">🌅 9:00 AM</div>
+        <div class="timeline-content">
+            <h4>Morning Review</h4>
+            <p>Check overnight auto-report in Slack. Review AI-flagged items that need human attention. Respond to any pending escalations. Check unresolved complaints from yesterday.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">📱 9-12 PM</div>
+        <div class="timeline-content">
+            <h4>Peak Hours — Active Monitoring</h4>
+            <p>AI runs every 5 min. Team monitors Slack for real-time alerts. Respond to hot leads within 15 min. Handle escalated complaints. Process sales inquiries.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">🍽️ 12-1 PM</div>
+        <div class="timeline-content">
+            <h4>Lunch Break — AI Takes Over</h4>
+            <p>AI continues auto-processing. Only critical complaints trigger phone alerts. Team member on rotation for urgent issues.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">📱 1-5 PM</div>
+        <div class="timeline-content">
+            <h4>Afternoon Session</h4>
+            <p>Continue monitoring. Review pending items. Follow up on morning leads. Update customer complaint statuses. Moderate new post comments.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">📊 5-6 PM</div>
+        <div class="timeline-content">
+            <h4>End-of-Day Wrap Up</h4>
+            <p>Review daily dashboard. Ensure all complaints have at least L1 response. Hand over pending items to next shift or AI. Clear Slack backlogs.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">🤖 6 PM</div>
+        <div class="timeline-content">
+            <h4>Auto Daily Report</h4>
+            <p>n8n generates and sends daily report to Slack + Email. Includes all KPIs, category breakdown, pending items, and AI-generated insights.</p>
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-time">🌙 After Hours</div>
+        <div class="timeline-content">
+            <h4>AI Continues Running</h4>
+            <p>AI auto-replies with "After hours" template. Spam continues to be cleaned. Critical complaints (detected by keywords like "legal", "media") trigger phone alert to manager.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 10. TOOLS ============ -->
+<section class="section" id="tools" style="background: rgba(22,33,62,0.3);">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">10</div>
+        <h2>Tools & Technology Stack</h2>
+        <p>All open-source/free — Zero monthly cost for core infrastructure</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="grid-4">
+        <div class="tool-card">
+            <div class="tool-icon">⚙️</div>
+            <div class="tool-name">n8n (Self-Hosted)</div>
+            <div class="tool-role">Automation Hub</div>
+            <div class="tool-cost">✅ Free (Self-Hosted)</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-icon">🧠</div>
+            <div class="tool-name">Groq / Ollama</div>
+            <div class="tool-role">AI Classification</div>
+            <div class="tool-cost">✅ Free Tier / Self-Hosted</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-icon">📊</div>
+            <div class="tool-name">Google Sheets</div>
+            <div class="tool-role">Dashboard & Tracking</div>
+            <div class="tool-cost">✅ Free</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-icon">📱</div>
+            <div class="tool-name">Meta Graph API</div>
+            <div class="tool-role">Instagram & Facebook</div>
+            <div class="tool-cost">✅ Free</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-icon">💬</div>
+            <div class="tool-name">Slack</div>
+            <div class="tool-role">Team Alerts</div>
+            <div class="tool-cost">✅ Free Tier</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-icon">📲</div>
+            <div class="tool-name">WhatsApp API</div>
+            <div class="tool-role">Sales Alerts</div>
+            <div class="tool-cost">Free (via webhook)</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-icon">🗄️</div>
+            <div class="tool-name">Google Apps Script</div>
+            <div class="tool-role">Sheet Automation</div>
+            <div class="tool-cost">✅ Free</div>
+        </div>
+        <div class="tool-card">
+            <div class="tool-icon">📞</div>
+            <div class="tool-name">VAPI</div>
+            <div class="tool-role">Voice AI (Future)</div>
+            <div class="tool-cost">Pay-per-use</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+        <h3><span class="icon">💰</span> Monthly Cost Breakdown</h3>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Tool</th><th>Purpose</th><th>Monthly Cost</th><th>Notes</th></tr></thead>
+                <tbody>
+                    <tr><td>n8n (Self-Hosted)</td><td>Workflow automation</td><td style="color:var(--success); font-weight:700;">₹0</td><td>On existing VPS/server</td></tr>
+                    <tr><td>Groq API (Free Tier)</td><td>AI classification</td><td style="color:var(--success); font-weight:700;">₹0</td><td>Free tier: 14,400 req/day</td></tr>
+                    <tr><td>Google Sheets</td><td>Dashboard & tracking</td><td style="color:var(--success); font-weight:700;">₹0</td><td>Part of Google Workspace</td></tr>
+                    <tr><td>Meta Graph API</td><td>IG/FB integration</td><td style="color:var(--success); font-weight:700;">₹0</td><td>Free with Meta Business</td></tr>
+                    <tr><td>Slack (Free)</td><td>Team notifications</td><td style="color:var(--success); font-weight:700;">₹0</td><td>Free tier sufficient</td></tr>
+                    <tr><td>VPS Server</td><td>Hosting n8n</td><td style="color:var(--gold); font-weight:700;">~₹500</td><td>If not already available</td></tr>
+                    <tr style="background: rgba(0,200,83,0.05);"><td colspan="2"><strong>TOTAL</strong></td><td style="color:var(--success); font-weight:800; font-size:1.2rem;">₹0 - ₹500/mo</strong></td><td></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 11. IMPLEMENTATION ============ -->
+<section class="section" id="implementation">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">11</div>
+        <h2>Step-by-Step Implementation</h2>
+        <p>Deploy the complete system in 5 days</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="process-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+            <h4>Day 1: Setup Infrastructure</h4>
+            <p>Configure Meta Business account → Get Graph API access tokens → Connect Instagram Business + Facebook Page → Setup n8n environment variables → Test API connections</p>
+        </div>
+    </div>
+    <div class="process-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+            <h4>Day 2: Deploy Automation Workflows</h4>
+            <p>Import n8n workflow JSONs → Configure LLM API endpoint (Groq/Ollama) → Test comment fetching → Test AI classification with real comments → Setup Google Sheets dashboard</p>
+        </div>
+    </div>
+    <div class="process-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+            <h4>Day 3: Configure Routing & Alerts</h4>
+            <p>Setup Slack workspace channels → Configure webhook alerts → Setup email notifications → Create escalation contacts → Test end-to-end flow with real data</p>
+        </div>
+    </div>
+    <div class="process-step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+            <h4>Day 4: Templates & Team Training</h4>
+            <p>Load reply templates into system → Train AI with Divine Hindu-specific examples → Brief team on SOP → Practice escalation scenarios → Document edge cases</p>
+        </div>
+    </div>
+    <div class="process-step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+            <h4>Day 5: Go Live & Monitor</h4>
+            <p>Enable production workflows → Monitor first 100 comments closely → Fine-tune AI classification prompt → Adjust auto-reply templates based on feedback → First daily report generated</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 12. CHALLENGES ============ -->
+<section class="section" id="challenges" style="background: rgba(22,33,62,0.3);">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">12</div>
+        <h2>Challenges & Solutions</h2>
+        <p>Anticipated problems and how we handle them</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3><span class="icon">⚠️</span> Challenge 1: AI Misclassification</h3>
+            <p style="color:var(--text-muted)"><strong>Problem:</strong> AI might classify a genuine complaint as positive feedback or miss sarcasm in Hindi comments.</p>
+            <p style="color:var(--success); margin-top:0.75rem;"><strong>Solution:</strong></p>
+            <ul>
+                <li>Add a "confidence score" to AI output — if below 70%, flag for human review</li>
+                <li>Weekly AI audit: sample 50 random classifications, check accuracy</li>
+                <li>Continuous prompt improvement with misclassified examples</li>
+                <li>Maintain a "feedback loop" sheet where team marks corrections</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3><span class="icon">⚠️</span> Challenge 2: Meta API Rate Limits</h3>
+            <p style="color:var(--text-muted)"><strong>Problem:</strong> Meta Graph API has rate limits — too many requests can get throttled.</p>
+            <p style="color:var(--success); margin-top:0.75rem;"><strong>Solution:</strong></p>
+            <ul>
+                <li>Batch requests — fetch all comments in one call, not individually</li>
+                <li>Cache processed comment IDs to avoid re-processing</li>
+                <li>Implement exponential backoff on API errors</li>
+                <li>Use webhook-based triggers where possible (Meta Webhooks)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3><span class="icon">⚠️</span> Challenge 3: Hindi/Hinglish Understanding</h3>
+            <p style="color:var(--text-muted)"><strong>Problem:</strong> Comments in mixed Hindi/English/slang might confuse the AI.</p>
+            <p style="color:var(--success); margin-top:0.75rem;"><strong>Solution:</strong></p>
+            <ul>
+                <li>Use models good at Hindi (Llama 3.1, Gemma 2 have strong multilingual support)</li>
+                <li>Include Hindi examples in the classification prompt</li>
+                <li>Build a "common phrases" dictionary for Divine Hindu context</li>
+                <li>Test with real Divine Hindu comments during setup</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3><span class="icon">⚠️</span> Challenge 4: Negative Viral Comments</h3>
+            <p style="color:var(--text-muted)"><strong>Problem:</strong> A complaint goes viral before team notices.</p>
+            <p style="color:var(--success); margin-top:0.75rem;"><strong>Solution:</strong></p>
+            <ul>
+                <li>AI detects "high engagement" complaints (many likes/replies on a comment)</li>
+                <li>Sentiment-based alerting — multiple negative comments on same post = alert</li>
+                <li>Instant L3 escalation for comments with 5+ replies</li>
+                <li>Pre-approved crisis response templates ready for quick deployment</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ============ 13. ROI ============ -->
+<section class="section" id="roi">
+    <div class="section-header">
+        <div class="section-number" style="display:inline-flex">13</div>
+        <h2>Expected ROI & Impact</h2>
+        <p>What this system delivers in the first 30 days</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="grid-3">
+        <div class="stat-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value">80%</div>
+            <div class="stat-label">Faster Response Time</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-value">0%</div>
+            <div class="stat-label">Missed Sales Leads</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🤖</div>
+            <div class="stat-value">70%</div>
+            <div class="stat-label">Auto-Resolved Queries</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🧹</div>
+            <div class="stat-value">100%</div>
+            <div class="stat-label">Spam Auto-Cleaned</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-value">Daily</div>
+            <div class="stat-label">Automated Reports</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value">₹0</div>
+            <div class="stat-label">Monthly Tool Cost*</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+        <h3><span class="icon">📈</span> 30-Day Impact Projection</h3>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Metric</th><th>Before (Manual)</th><th>After (AI System)</th><th>Improvement</th></tr></thead>
+                <tbody>
+                    <tr><td>Avg Response Time</td><td>2-4 hours</td><td>&lt; 5 minutes</td><td style="color:var(--success);">↑ 96% faster</td></tr>
+                    <tr><td>Sales Lead Capture</td><td>~70% captured</td><td>100% captured</td><td style="color:var(--success);">↑ 30% more leads</td></tr>
+                    <tr><td>Spam Comment Cleanup</td><td>Sporadic</td><td>Instant & automatic</td><td style="color:var(--success);">↑ Clean brand image</td></tr>
+                    <tr><td>Team Hours on Social</td><td>4-6 hrs/day</td><td>1-2 hrs/day</td><td style="color:var(--success);">↑ 60% time saved</td></tr>
+                    <tr><td>Complaint Resolution</td><td>24-48 hours</td><td>2-4 hours</td><td style="color:var(--success);">↑ 90% faster</td></tr>
+                    <tr><td>Daily Reporting</td><td>Manual (if done)</td><td>Fully automated</td><td style="color:var(--success);">↑ Zero effort</td></tr>
+                    <tr><td>Monthly Cost</td><td>₹15-25K (manual labor)</td><td>₹0-500 (tools)</td><td style="color:var(--success);">↑ 95% cost reduction</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Scalability -->
+    <div class="card" style="margin-top: 1.5rem;">
+        <h3><span class="icon">🚀</span> Scalability Roadmap</h3>
+        <div class="grid-3">
+            <div>
+                <h4 style="color: var(--gold);">Phase 2 (Month 2)</h4>
+                <ul style="font-size: 0.85rem;">
+                    <li>Add WhatsApp Business integration</li>
+                    <li>VAPI voice agent for phone support</li>
+                    <li>Sentiment trend analysis</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: var(--gold);">Phase 3 (Month 3)</h4>
+                <ul style="font-size: 0.85rem;">
+                    <li>AI-powered product recommendations in DMs</li>
+                    <li>Automated review collection</li>
+                    <li>Competitor comment monitoring</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: var(--gold);">Phase 4 (Quarter 2)</h4>
+                <ul style="font-size: 0.85rem;">
+                    <li>Full CRM integration</li>
+                    <li>Predictive analytics</li>
+                    <li>Multi-brand support</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ DELIVERABLES ============ -->
+<section class="section" style="background: rgba(22,33,62,0.3);">
+    <div class="section-header">
+        <h2>📦 Included Deliverables</h2>
+        <p>Production-ready files — import and deploy</p>
+        <div class="section-divider"></div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3><span class="icon">📂</span> Files Included</h3>
+            <div class="code-block" style="font-family: 'Inter', sans-serif;">
+divine-hindu-assignment/
+├── 📄 <span class="keyword">submission.html</span>          ← This document
+├── 📋 <span class="keyword">SOP.md</span>                   ← Operator guide
+├── 🔐 <span class="keyword">.env.example</span>             ← All env vars documented
+├── 📁 workflows/
+│   ├── ⚡ <span class="string">comment-monitor-classifier.json</span>  ← Production n8n workflow
+│   ├── ✉️ <span class="string">dm-monitor-router.json</span>           ← Production n8n workflow
+│   ├── 📊 <span class="string">daily-report-generator.json</span>      ← Production n8n workflow
+│   ├── 🧪 <span class="string">test-payloads.json</span>               ← Mock data for Pin Data testing
+│   └── 📖 <span class="string">testing-guide.md</span>                 ← Step-by-step test guide
+├── 📁 templates/
+│   ├── 💬 <span class="string">reply-templates.json</span>        ← 100+ Hindi/English templates
+│   ├── 📋 <span class="string">escalation-matrix.json</span>      ← 5-level escalation matrix
+│   └── 🏷️ <span class="string">comment-categories.json</span>     ← 8 category definitions
+└── 📁 dashboard/
+    ├── 📊 <span class="string">Divine_Hindu_Social_Media_Command_Center.xlsx</span>
+    ├── 📜 <span class="string">code.gs</span>                 ← Google Apps Script
+    └── 📖 <span class="string">dashboard-setup.md</span>      ← Google Sheets setup guide
+            </div>
+        </div>
+        <div class="card">
+            <h3><span class="icon">🚀</span> Quick Deploy Steps</h3>
+            <ol style="font-size: 0.9rem;">
+                <li><strong>Import workflows</strong> — n8n → Import from File → select all 3 JSON files</li>
+                <li><strong>Set env vars in n8n</strong> — Settings → Variables → add: <code>META_ACCESS_TOKEN</code>, <code>META_PAGE_ID</code>, <code>META_IG_USER_ID</code>, <code>LLM_BASE_URL</code>, <code>LLM_API_KEY</code>, <code>LLM_MODEL</code>, <code>GOOGLE_SHEETS_ID</code>, <code>GOOGLE_SHEETS_TOKEN</code>, <code>SLACK_WEBHOOK_URL</code></li>
+                <li><strong>SMTP Credential</strong> — n8n → Credentials → New → Email (SMTP) → link to Email Daily Report node</li>
+                <li><strong>Create Google Sheet</strong> — 3 tabs: MasterTracker, DMTracker, DailyReports</li>
+                <li><strong>Test & Setup Guide</strong> — Follow the comprehensive <code>workflows/testing-guide.md</code> to test using Mock Pin Data and setup real production endpoints (Meta App Access Tokens, GCP Service Accounts, etc.)</li>
+                <li><strong>Activate workflows</strong> — Toggle the 'Active' switch on all 3 workflows in n8n</li>
+                <li><strong>Monitor Executions</strong> — Inspect the n8n Executions log to verify live events flow successfully</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+    <p style="font-size: 1.2rem; color: white; margin-bottom: 0.5rem;">🙏 Jai Shri Ram</p>
+    <p>Built with ❤️ for Divine Hindu | AI Executive Assignment Submission</p>
+    <p style="margin-top: 1rem; font-size: 0.8rem;">* Monthly cost assumes existing server/VPS for n8n hosting. Groq free tier covers ~14,400 requests/day which is more than sufficient.</p>
+</footer>
+
+<!-- Smooth scroll -->
+<script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Intersection Observer for animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.card, .stat-card, .tool-card, .process-step, .escalation-level, .timeline-item').forEach(el => {
+        observer.observe(el);
+    });
+</script>
+
+</body>
+</html>
