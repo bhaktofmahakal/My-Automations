@@ -21,3 +21,21 @@ coverage/
 Icon?
 # Python virtual env
 *.egg-info/
+
+
+# GTM & GTM Agents Ignores
+PLAN.md
+PROGRESS.md
+CLAUDE.md
+*.private.md
+out/
+.next/
+.vercel/
+gtm-repo-export/
+inventory.json
+/.idx
+/examples
+secrets.json
+credentials.json
+*.key
+*.pem
