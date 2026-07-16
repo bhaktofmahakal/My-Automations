@@ -1,0 +1,36 @@
+# Internal/Private
+PLAN.md
+PROGRESS.md
+CLAUDE.md
+*.private.md
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+out/
+.next/
+.vercel/
+
+# Logs
+*.log
+npm-debug.log*
+.vercel
+gtm-repo-export/
