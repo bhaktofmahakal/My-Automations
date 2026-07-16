@@ -162,8 +162,8 @@ The ultimate operating system for agentic GTM, business operations, and automate
 
 ---
 
-### 📦 Curated Business n8n Templates
-Browse 20 pre-audited, high-leverage n8n templates inside [n8n-templates](n8n-templates/):
+### 📦  Business n8n Templates
+high-leverage n8n templates inside [n8n-templates](n8n-templates/):
 
 | File | Category / Use Case | Key Integrations |
 | :--- | :--- | :--- |
