@@ -11,10 +11,10 @@
 <p align="center">
   <img src="https://img.shields.io/github/stars/bhaktofmahakal/My-Automations?style=social" alt="GitHub Stars" /> 
   <img src="https://img.shields.io/github/forks/bhaktofmahakal/My-Automations?style=social" alt="GitHub Forks" /> 
-  <img src="https://img.shields.io/badge/templates-23-blue" alt="Templates" /> 
+  <img src="https://img.shields.io/badge/automation%20templates-43-blue" alt="Automation Templates" /> 
+  <img src="https://img.shields.io/badge/gtm%20agents-203-orange" alt="GTM Agents" /> 
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License" /> 
   <img src="https://img.shields.io/github/last-commit/bhaktofmahakal/My-Automations" alt="Last Commit" /> 
-  <img src="https://img.shields.io/badge/maintained-yes-brightgreen" alt="Maintained" />
 </p>
 
 <p align="center">
@@ -49,12 +49,11 @@
 
 ## 💡 What this is
 
-A curated, deployment-ready collection of **23 automations** covering lead generation, cold outreach, voice-based screening, AI content creation, and job hunting. Every automation is modular and ships with:
-
-- ✅ **`workflow.json`** — Unaltered export ready for instant import.
-- ✅ **`setup.md`** — Step-by-step guide for deployment and smoke-testing.
-- ✅ **`env.example`** — Pre-configured environment variables and secret placeholders.
-- ✅ **`README.md`** — Detailed documentation on intent, flow, and operations.
+The ultimate operating system for agentic GTM, business operations, and automated workflows. It consolidates:
+- 🚀 **Native Automations** — 23 modular, production-ready n8n/browser workflows and voice agent scripts.
+- 🛠️ **GTM MCP Server & Chrome Extension** — Native Node.js/TypeScript MCP tools to connect HubSpot and sales intelligence straight to Claude Desktop and Cursor.
+- 🤖 **GTM Agents Library** — 67 plugins, 203 agents, and 243 skills for Claude, OpenClaw, and next-gen agentic frameworks.
+- 📦 **Curated Business templates** — 20 high-value, pre-audited n8n templates solving CRM sync, RAG search, document Q&A, and candidate evaluation.
 
 ---
 
@@ -153,6 +152,33 @@ A curated, deployment-ready collection of **23 automations** covering lead gener
 | [job-finder-automation](automations/job-finder-automation/) | Scheduled | OpenRouter, Google Sheets |
 | [wellfound-auto-apply](automations/wellfound-auto-apply/) | Manual (browser console) | Browser JS |
 | [SOP/Resume](https://github.com/bhaktofmahakal/sop-agent) | Semi (Web) | Web |
+
+---
+
+### 🛠️ GTM MCP Server & Chrome Extension
+* **[GTM MCP Server](gtm/mcp-server/)** — TypeScript-based MCP server providing verified tools for HubSpot and lead enrichment.
+* **[Chrome Extension](gtm/extension/)** — Extension for live signal detection and direct workflow triggering.
+* **[GTM Agents & Plugins](gtm-agents/)** — 67 plugins and 243 skills for Claude, OpenClaw, and AgentRQ.
+
+---
+
+### 📦 Curated Business n8n Templates
+Browse 20 pre-audited, high-leverage n8n templates inside [n8n-templates](n8n-templates/):
+
+| File | Category / Use Case | Key Integrations |
+| :--- | :--- | :--- |
+| [Human-in-the-Loop Email Response](n8n-templates/A%20Very%20Simple%20_Human%20in%20the%20Loop_%20Email%20Response%20System%20Using%20AI%20and%20IMAP.json) | Customer Support / Email | IMAP, SMTP, OpenAI |
+| [Microsoft Outlook AI Email Assistant](n8n-templates/Microsoft%20Outlook%20AI%20Email%20Assistant%20with%20contact%20support%20from%20Monday%20and%20Airtable.json) | Ops / CRM Synchronization | Monday.com, Airtable, Outlook |
+| [LeadPilot Lite - Cold Email Writer](n8n-templates/LeadPilot%20Lite%20-%20AI%20Cold%20Email%20Writer.json) | GTM / Outbound | Gmail, Google Sheets, OpenAI |
+| [AI Agent to chat with Supabase/Postgres DB](n8n-templates/AI%20Agent%20to%20chat%20with%20Supabase_PostgreSQL%20DB.json) | Database / Data Operations | Postgres, Supabase, OpenAI |
+| [AI Web Researcher for Sales](n8n-templates/AI%20web%20researcher%20for%20sales.json) | Sales Intelligence / Enrichment | Tavily, Jina, OpenAI |
+| [Ask Human for Help Fallback](n8n-templates/Ask%20a%20human%20for%20help%20when%20the%20AI%20doesn_t%20know%20the%20answer.json) | Exception Handling | Slack, OpenAI |
+| [Automate Support Issue Resolution](n8n-templates/Automate%20Customer%20Support%20Issue%20Resolution%20using%20AI%20Text%20Classifier.json) | Support / Ticketing | Zendesk/Linear, OpenAI |
+| [DeepSeek V3 Chat & R1 Reasoning](n8n-templates/🐋DeepSeek%20V3%20Chat%20&%20R1%20Reasoning%20Quick%20Start.json) | Reasoning Agents | DeepSeek API |
+| [Automate LinkedIn Outreach](n8n-templates/Automate%20LinkedIn%20Outreach%20with%20Notion%20and%20OpenAI.json) | Outbound Sales | Notion, LinkedIn |
+| [WhatsApp Business RAG Chatbot](n8n-templates/Complete%20business%20WhatsApp%20AI-Powered%20RAG%20Chatbot%20using%20OpenAI.json) | Customer Support / Chat | WhatsApp, Supabase, OpenAI |
+| [vAssistant for HubSpot Chat](n8n-templates/vAssistant%20for%20Hubspot%20Chat%20using%20OpenAi%20and%20Airtable.json) | CRM / Customer Service | HubSpot, Airtable, OpenAI |
+| [CV Screening with OpenAI](n8n-templates/CV%20Screening%20with%20OpenAI.json) | HR / Recruitment | Google Sheets, OpenAI |
 
 
 ---
