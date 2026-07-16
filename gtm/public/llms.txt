@@ -13,7 +13,7 @@
 - Tools: Browser extension, MCP server, voice templates
 - API: REST endpoints for all resources
 - License: MIT (free for commercial use)
-- Maintained by: Utsav Mishra (https://utsav mishra.com)
+- Maintained by: Utsav Mishra (https://utsavmishra.me)
 
 ## Quick Links
 

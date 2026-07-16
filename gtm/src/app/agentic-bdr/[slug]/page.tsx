@@ -213,7 +213,7 @@ export default async function AgentPage({ params }: Props) {
               autonomous BDRs with human oversight.
             </p>
             <a
-              href={`https://utsav mishra.com?utm_source=gtm-skills&utm_content=agentic-${slug}`}
+              href={`https://utsavmishra.me?utm_source=gtm-skills&utm_content=agentic-${slug}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -363,7 +363,7 @@ export default async function AgentPage({ params }: Props) {
               research and personalization.
             </p>
             <a
-              href={`https://utsav mishra.com?utm_source=gtm-skills&utm_content=agentic-${slug}`}
+              href={`https://utsavmishra.me?utm_source=gtm-skills&utm_content=agentic-${slug}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -497,7 +497,7 @@ export default async function AgentPage({ params }: Props) {
             human oversight and continuous learning.
           </p>
           <a
-            href={`https://utsav mishra.com?utm_source=gtm-skills&utm_content=agentic-${slug}`}
+            href={`https://utsavmishra.me?utm_source=gtm-skills&utm_content=agentic-${slug}`}
             target="_blank"
             rel="noopener noreferrer"
           >

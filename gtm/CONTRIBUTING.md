@@ -366,7 +366,7 @@ Active contributors may receive:
 
 - Open a [GitHub Discussion](https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm/discussions)
 - Email: utsavmishraa005@gmail.com
-- Twitter: [@prospaboricua](https://twitter.com/prospaboricua)
+- Twitter: [@utsav_mishra1](https://twitter.com/utsav_mishra1)
 
 ### Found a Problem With This Guide?
 
@@ -414,5 +414,5 @@ Reach out at utsavmishraa005@gmail.com
 <p align="center">
   <b>Built by the community, for the community</b>
   <br>
-  Maintained by <a href="https://utsav mishra.com">Utsav Mishra</a>
+  Maintained by <a href="https://utsavmishra.me">Utsav Mishra</a>
 </p>

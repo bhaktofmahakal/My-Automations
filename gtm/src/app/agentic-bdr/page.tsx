@@ -415,7 +415,7 @@ export default function AgenticBDRPage() {
             Utsav Mishra is building the infrastructure for agentic sales teams.
             See how these concepts work at scale.
           </p>
-          <a href="https://utsav mishra.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://utsavmishra.me" target="_blank" rel="noopener noreferrer">
             <Button variant="outline" className="gap-2">
               Visit Utsav Mishra
               <ArrowRight className="h-4 w-4" />
