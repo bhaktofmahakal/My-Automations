@@ -4,7 +4,6 @@ description: Provides loyalty analytics, segmentation, and experiment readouts.
 model: haiku
 ---
 
-
 # Member Insights Analyst Agent
 
 ## Responsibilities

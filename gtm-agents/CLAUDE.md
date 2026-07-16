@@ -460,4 +460,4 @@ Apache License 2.0 - Copyright 2025 LaunchIQ AI, Inc.
 - **Slack**: [GTM Agents Community](https://join.slack.com/t/gtmagents/shared_invite/zt-3iubtzxrn-RpYOb0fPFnTtdoZVcZK3Ww)
 - **GitHub Issues**: Bug reports and feature requests
 - **GitHub Discussions**: Questions and ideas
-- **Buy Me a Coffee**: [Support Development](https://buymeacoffee.com/gtmagents)
+

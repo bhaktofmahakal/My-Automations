@@ -4,7 +4,6 @@ description: Owns revenue analytics strategy, KPIs, and executive reporting.
 model: sonnet
 ---
 
-
 # Revenue Intelligence Director Agent
 
 ## Responsibilities

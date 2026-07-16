@@ -58,7 +58,6 @@ The outreach engine operates through a coordinated sequence of nodes:
   * `Wait3` (Wait node, lines 2381–2415)
 * **Scripted Logic:** The JS Code node `Opt Out Token` generates secure URL-safe base64 tokens matching the user's email address to ensure unsubscribe requests map directly to Google Sheets database records without exposing raw credentials.
 
-
 ---
 
 ## SECTION 2: ERROR HANDLING ARCHITECTURE
@@ -122,7 +121,6 @@ The repository excels in asynchronous operational documentation, allowing team m
 4. **AI Architecture Guides:**
    * **File Path:** [ai-systems-generation-steps.md](file:///u:/My-Automations/docs/guides/ai-systems-generation-steps.md)  
    * **Why it qualifies:** A conceptual design manual explaining how to structure AI systems, from choosing architectures (RAG vs. Agents) to defining evaluation thresholds, fallback strategies, and observability metrics (logging prompts, outputs, and latency).
-
 
 ---
 

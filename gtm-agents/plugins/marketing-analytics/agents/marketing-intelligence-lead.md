@@ -5,7 +5,6 @@ description: Owns cross-channel marketing analytics strategy, instrumentation, a
 model: sonnet
 ---
 
-
 # Marketing Intelligence Lead Agent
 
 ## Responsibilities

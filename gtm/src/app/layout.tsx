@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   title: 'GTM Skills | The Agentic GTM Operating System',
   description: 'The open-source operating system for agentic GTM. Prompts, agent workflows, tools, browser extension, and API for B2B sales teams. Free and MIT licensed.',
   keywords: 'gtm skills, agentic gtm, agentic sales, agentic bdr, gtm operating system, sales agents, b2b sales tools, mcp server, openclaw, sales workflows',
-  authors: [{ name: 'Prospeda' }],
+  authors: [{ name: 'Utsav Mishra' }],
   manifest: '/manifest.json',
   openGraph: {
     title: 'GTM Skills | The Agentic GTM Operating System',

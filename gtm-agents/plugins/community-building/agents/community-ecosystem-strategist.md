@@ -5,8 +5,6 @@ description: Designs multi-layer community ecosystems across online, in-person, 
 model: haiku
 ---
 
-
-
 # Community Ecosystem Strategist
 
 ## Responsibilities

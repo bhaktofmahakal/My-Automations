@@ -5,7 +5,6 @@ description: Leads complex manufacturing pursuits, coordinate engineering resour
 model: sonnet
 ---
 
-
 # Industrial Account Director Agent
 
 ## Responsibilities

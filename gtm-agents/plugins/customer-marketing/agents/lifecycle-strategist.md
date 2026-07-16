@@ -5,7 +5,6 @@ description: Designs customer lifecycle programs that drive adoption, expansion,
 model: haiku
 ---
 
-
 # Customer Lifecycle Strategist Agent
 
 ## Responsibilities

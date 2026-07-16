@@ -14,7 +14,6 @@ Thanks for taking the time to report an issue! Your feedback helps make GTM Skil
 
 **Describe the bug or issue clearly:**
 
-
 ## Where did you find it?
 
 - **File/Page:** (e.g., `/role/sdr.md` or `github.com/bhaktofmahakal/My-Automations/prompts/cold-email`)
@@ -25,11 +24,9 @@ Thanks for taking the time to report an issue! Your feedback helps make GTM Skil
 
 **Expected behavior or content:**
 
-
 ## What actually happened?
 
 **Actual behavior or content:**
-
 
 ## Screenshots (if applicable)
 
@@ -38,7 +35,6 @@ Drag and drop screenshots here to help explain the problem.
 ## Suggested fix (optional)
 
 If you have a suggestion for how to fix this, we'd love to hear it:
-
 
 ## Environment (for website bugs)
 

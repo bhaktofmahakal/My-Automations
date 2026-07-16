@@ -412,12 +412,12 @@ export default function AgenticBDRPage() {
             Want to See Agentic BDR in Production?
           </h2>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Prospeda is building the infrastructure for agentic sales teams.
+            Utsav Mishra is building the infrastructure for agentic sales teams.
             See how these concepts work at scale.
           </p>
-          <a href="https://prospeda.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://utsav mishra.com" target="_blank" rel="noopener noreferrer">
             <Button variant="outline" className="gap-2">
-              Visit Prospeda
+              Visit Utsav Mishra
               <ArrowRight className="h-4 w-4" />
             </Button>
           </a>

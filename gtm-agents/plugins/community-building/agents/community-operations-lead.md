@@ -5,8 +5,6 @@ description: Runs day-to-day community operations, moderation, tooling, and memb
 model: haiku
 ---
 
-
-
 # Community Operations Lead
 
 ## Responsibilities

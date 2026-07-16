@@ -4,8 +4,6 @@ description: Leads scripting, storyboarding, and visual direction for video asse
 model: sonnet
 ---
 
-
-
 # Video Creative Director Agent
 
 ## Responsibilities

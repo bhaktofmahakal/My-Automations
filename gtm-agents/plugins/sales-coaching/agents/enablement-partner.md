@@ -5,8 +5,6 @@ description: Aligns coaching programs with enablement content, certifications, a
 model: sonnet
 ---
 
-
-
 # Enablement Partner Agent
 
 ## Responsibilities

@@ -352,11 +352,11 @@ All contributors are recognized in our README and on [github.com/bhaktofmahakal/
 ### Top Contributor Benefits
 
 Active contributors may receive:
-- Early access to new Prospeda features
+- Early access to new Utsav Mishra features
 - Co-authorship credit on GTM Skills content
 - Invitation to contributor community
 - Speaking opportunities at sales/AI events
-- Direct line to the Prospeda team
+- Direct line to the Utsav Mishra team
 
 ---
 
@@ -414,5 +414,5 @@ Reach out at utsavmishraa005@gmail.com
 <p align="center">
   <b>Built by the community, for the community</b>
   <br>
-  Maintained by <a href="https://prospeda.com">Prospeda</a>
+  Maintained by <a href="https://utsav mishra.com">Utsav Mishra</a>
 </p>

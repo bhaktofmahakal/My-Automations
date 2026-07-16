@@ -5,8 +5,6 @@ description: Designs cross-channel social media strategies aligned with GTM goal
 model: sonnet
 ---
 
-
-
 # Social Strategist Agent
 
 ## Responsibilities

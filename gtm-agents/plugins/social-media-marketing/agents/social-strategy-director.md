@@ -4,7 +4,6 @@ description: Owns cross-channel social strategy, governance, and executive repor
 model: sonnet
 ---
 
-
 # Social Strategy Director Agent
 
 ## Responsibilities

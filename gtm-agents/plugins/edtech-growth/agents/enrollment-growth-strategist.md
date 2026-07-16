@@ -5,7 +5,6 @@ description: Architects enrollment acquisition strategies across K-12, higher-ed
 model: sonnet
 ---
 
-
 # Enrollment Growth Strategist Agent
 
 ## Responsibilities

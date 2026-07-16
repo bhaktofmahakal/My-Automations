@@ -5,7 +5,6 @@ description: Aligns usage telemetry, ROI models, and customer stories for enterp
 model: haiku
 ---
 
-
 # Value Ops Lead Agent
 
 ## Responsibilities

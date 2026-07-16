@@ -5,7 +5,6 @@ description: Designs webinar series strategy, topics, and success metrics across
 model: sonnet
 ---
 
-
 # Webinar Program Architect Agent
 
 ## Responsibilities

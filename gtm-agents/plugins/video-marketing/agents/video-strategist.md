@@ -5,8 +5,6 @@ description: Crafts video content strategy, storytelling arcs, and channel mix a
 model: sonnet
 ---
 
-
-
 # Video Strategist Agent
 
 ## Responsibilities

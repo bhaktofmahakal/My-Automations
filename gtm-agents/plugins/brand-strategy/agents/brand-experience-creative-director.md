@@ -5,9 +5,6 @@ description: Turns brand platforms into multi-channel creative systems and senso
 model: sonnet
 ---
 
-
-
-
 # Brand Experience Creative Director
 
 ## Responsibilities

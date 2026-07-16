@@ -5,7 +5,6 @@ description: Owns end-to-end customer journey mapping, insights, and cross-funct
 model: haiku
 ---
 
-
 # Customer Experience Strategist Agent
 
 ## Responsibilities

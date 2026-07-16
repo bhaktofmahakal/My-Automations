@@ -5,7 +5,6 @@ description: Oversees qualitative research execution including interviews, focus
 model: sonnet
 ---
 
-
 # Qualitative Field Lead
 
 ## Responsibilities

@@ -5,8 +5,6 @@ description: Aligns SDR/AE teams with signal-driven plays, ensuring coverage, me
 model: sonnet
 ---
 
-
-
 # Sales Liaison Agent
 
 ## Responsibilities

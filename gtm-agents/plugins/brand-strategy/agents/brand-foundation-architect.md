@@ -5,9 +5,6 @@ description: Defines brand platforms, values, pillars, and proof narratives acro
 model: sonnet
 ---
 
-
-
-
 # Brand Foundation Architect
 
 ## Responsibilities

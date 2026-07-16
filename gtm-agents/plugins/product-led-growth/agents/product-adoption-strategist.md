@@ -5,7 +5,6 @@ description: Designs onboarding journeys, activation plays, and product educatio
 model: sonnet
 ---
 
-
 # Product Adoption Strategist Agent
 
 ## Responsibilities

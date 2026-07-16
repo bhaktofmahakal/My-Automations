@@ -9,7 +9,7 @@ Claude GTM Agents is a free, open-source collection of 67 specialized plugins fo
 **No!** Claude GTM Agents is designed for business users with zero coding experience. You simply type what you want to do in plain English, and the AI agents do the work for you.
 
 ### How much does it cost?
-**It's completely free!** Claude GTM Agents is open-source (MIT licensed), which means you can use it forever without paying anything. If you find it valuable, you can optionally [support the project](https://buymeacoffee.com/gtmagents).
+**It's completely free!** Claude GTM Agents is open-source (MIT licensed), which means you can use it forever without paying anything. If you find it valuable, you can optionally .
 
 ### What's the difference between Claude Code and Claude GTM Agents?
 - **Claude Code** is the platform (like a web browser)
@@ -383,6 +383,6 @@ Use our [ROI Calculator](docs/roi-calculator.md) to quantify value.
 - 📖 [Read the full documentation](docs/)
 - 💬 [Join the community discussion](https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm-agents/discussions)
 - 🐛 [Report an issue](https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm-agents/issues)
-- ☕ [Support the project](https://buymeacoffee.com/gtmagents)
+- ☕ 
 
 **Can't find your answer?** [Open a discussion](https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm-agents/discussions) and we'll help you out!

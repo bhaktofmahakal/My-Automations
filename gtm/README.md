@@ -25,7 +25,7 @@
   <a href="#-quick-start"><strong>Quick Start</strong></a> &#8226;
   <a href="#-mcp-server"><strong>MCP Server</strong></a> &#8226;
   <a href="#-contributing"><strong>Contributing</strong></a> &#8226;
-  <a href="https://prospeda.com"><strong>Powered by Prospeda</strong></a>
+  <a href="https://utsav mishra.com"><strong>Powered by Utsav Mishra</strong></a>
 </p>
 
 ---
@@ -334,14 +334,14 @@ Used by sales teams at companies like:
 
 **GTM Skills** is the open-source foundation.
 
-**[Prospeda](https://prospeda.com)** is the full platform:
+**[Utsav Mishra](https://utsav mishra.com)** is the full platform:
 
 - AI agents that run your entire sales workflow
 - CRM integration with automatic data enrichment
 - Personalized sequences at scale
 - Analytics and coaching insights
 
-[**Try Prospeda Free**](https://prospeda.com)
+[**Try Utsav Mishra Free**](https://utsav mishra.com)
 
 ---
 
@@ -388,9 +388,9 @@ See [LICENSE](./LICENSE) for details.
 | Resource | Link |
 |----------|------|
 | Website | [github.com/bhaktofmahakal/My-Automations](https://github.com/bhaktofmahakal/My-Automations) |
-| Full Platform | [prospeda.com](https://prospeda.com) |
+| Full Platform | [utsav mishra.com](https://utsav mishra.com) |
 | Twitter | [@prospaboricua](https://twitter.com/prospaboricua) |
-| LinkedIn | [Prospeda](https://linkedin.com/company/prospeda) |
+| LinkedIn | [Utsav Mishra](https://linkedin.com/company/utsav mishra) |
 | Email | utsavmishraa005@gmail.com |
 
 ---
@@ -402,5 +402,5 @@ See [LICENSE](./LICENSE) for details.
     <img src="https://img.shields.io/github/stars/bhaktofmahakal/My-Automations/tree/main/gtm?style=social" alt="Star on GitHub">
   </a>
   <br><br>
-  Built with care by <a href="https://prospeda.com">Prospeda</a>
+  Built with care by <a href="https://utsav mishra.com">Utsav Mishra</a>
 </p>

@@ -5,7 +5,6 @@ description: Orchestrates onsite merchandising, offers, and experimentation for 
 model: sonnet
 ---
 
-
 # Growth Merchandising Director Agent
 
 ## Responsibilities

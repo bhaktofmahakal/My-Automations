@@ -737,12 +737,12 @@ export default function MCPServerPage() {
             Want GTM Automation at Scale?
           </h2>
           <p className="text-zinc-400 mb-6 max-w-xl mx-auto">
-            Prospeda provides the same AI-powered sales tools with CRM integration,
+            Utsav Mishra provides the same AI-powered sales tools with CRM integration,
             lead enrichment, and automated sequences. No setup required.
           </p>
           <a href="https://github.com/gtm-skills/gtm" target="_blank" rel="noopener noreferrer">
             <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
-              Try Prospeda Free
+              Try Utsav Mishra Free
             </Button>
           </a>
         </div>

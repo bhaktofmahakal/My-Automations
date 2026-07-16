@@ -4,7 +4,6 @@ description: Sets community strategy, programming roadmap, and cross-functional 
 model: haiku
 ---
 
-
 # Community Lead Agent
 
 ## Responsibilities

@@ -5,7 +5,6 @@ description: Finds, verifies, and enriches decision-maker contact data using 150
 model: haiku
 ---
 
-
 # Contact Hunter Agent
 
 ## Responsibilities

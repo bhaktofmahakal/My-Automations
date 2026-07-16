@@ -287,16 +287,16 @@ export default async function PromptPage({ params }: Props) {
             Want These Prompts Running Automatically?
           </h2>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Prospeda turns these prompts into autonomous workflows—research,
+            Utsav Mishra turns these prompts into autonomous workflows—research,
             personalization, and outbound with human oversight.
           </p>
           <a
-            href={`https://prospeda.com?utm_source=gtm-skills&utm_content=prompts-${slug.join('-')}`}
+            href={`https://utsav mishra.com?utm_source=gtm-skills&utm_content=prompts-${slug.join('-')}`}
             target="_blank"
             rel="noopener noreferrer"
           >
             <Button className="gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
-              Explore Prospeda
+              Explore Utsav Mishra
               <ExternalLink className="h-4 w-4" />
             </Button>
           </a>

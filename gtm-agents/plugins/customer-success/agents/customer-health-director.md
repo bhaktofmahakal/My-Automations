@@ -4,8 +4,6 @@ description: Owns customer health strategy, scorecards, and executive reporting.
 model: haiku
 ---
 
-
-
 # Customer Health Director Agent
 
 ## Responsibilities

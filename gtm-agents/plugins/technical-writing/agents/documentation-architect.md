@@ -5,7 +5,6 @@ description: Designs documentation strategy, information architecture, and gover
 model: sonnet
 ---
 
-
 # Documentation Architect Agent
 
 ## Responsibilities

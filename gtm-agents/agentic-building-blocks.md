@@ -324,7 +324,6 @@ Ready to build with Skills? Here's how to start:
 
 *   Install Skills via [plugin marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
 *   Check out our [skills cookbook](https://github.com/anthropics/claude-cookbooks/tree/main/skills)  
-    
 
 No items found.
 
@@ -509,7 +508,6 @@ Write
     Hi Claude! Could you brainstorm creative ideas? If you need more information from me, ask me 1-2 key questions right away. If you think I should upload any documents that would help you do a better job, let me know. You can use the tools you have access to— like Google Drive, web search, etc.—if they’ll help you better accomplish this task. Do not use analysis tool. Please keep your responses friendly, brief and conversational.  
       
     Please execute the task as soon as you can—an artifact would be great if it makes sense. If using an artifact, consider what kind of artifact (interactive, visual, checklist, etc.) might be most helpful for this specific task. Thanks for your help!
-    
 
 Learn
 
@@ -536,7 +534,6 @@ Learn
     Hi Claude! Could you prepare for an exam or interview? If you need more information from me, ask me 1-2 key questions right away. If you think I should upload any documents that would help you do a better job, let me know. You can use the tools you have access to— like Google Drive, web search, etc.—if they’ll help you better accomplish this task. Do not use analysis tool. Please keep your responses friendly, brief and conversational.  
       
     Please execute the task as soon as you can—an artifact would be great if it makes sense. If using an artifact, consider what kind of artifact (interactive, visual, checklist, etc.) might be most helpful for this specific task. Thanks for your help!
-    
 
 Code
 
@@ -563,7 +560,6 @@ Code
     Hi Claude! Could you vibe code with me? If you need more information from me, ask me 1-2 key questions right away. If you think I should upload any documents that would help you do a better job, let me know. You can use the tools you have access to— like Google Drive, web search, etc.—if they’ll help you better accomplish this task. Do not use analysis tool. Please keep your responses friendly, brief and conversational.  
       
     Please execute the task as soon as you can—an artifact would be great if it makes sense. If using an artifact, consider what kind of artifact (interactive, visual, checklist, etc.) might be most helpful for this specific task. Thanks for your help!
-    
 
 More
 
@@ -586,7 +582,6 @@ More
     [](#)
     
     this is a test
-    
 
 [Anthropic](https://www.anthropic.com/)Anthropic
 
@@ -625,7 +620,6 @@ Products
 *   Log in
     
     [Log in](https://claude.ai/redirect/claudedotcom.v1.28d4c42e-0be5-4102-bb74-8ed5dbfd1c88/login)Log in
-    
 
 Features
 
@@ -636,7 +630,6 @@ Features
 *   Claude in Excel
     
     [Claude in Excel](/claude-for-excel)Claude in Excel
-    
 
 Models
 
@@ -651,7 +644,6 @@ Models
 *   Haiku
     
     [Haiku](https://www.anthropic.com/claude/haiku)Haiku
-    
 
 Solutions
 
@@ -686,7 +678,6 @@ Solutions
 *   Life sciences
     
     [Life sciences](/solutions/life-sciences)Life sciences
-    
 
 Claude Developer Platform
 
@@ -713,7 +704,6 @@ Claude Developer Platform
 *   Console login
     
     [Console login](https://console.anthropic.com/)Console login
-    
 
 Learn
 
@@ -756,7 +746,6 @@ Learn
 *   Startups program
     
     [Startups program](/programs/startups)Startups program
-    
 
 Company
 
@@ -791,7 +780,6 @@ Company
 *   Transparency
     
     [Transparency](https://anthropic.com/transparency)Transparency
-    
 
 Help and security
 
@@ -806,7 +794,6 @@ Help and security
 *   Support center
     
     [Support center](https://support.claude.com/en/)Support center
-    
 
 Terms and policies
 
@@ -831,7 +818,6 @@ Terms and policies
 *   Usage policy
     
     [Usage policy](https://www.anthropic.com/legal/aup)Usage policy
-    
 
 [x.com](https://x.com/claudeai)x.com
 

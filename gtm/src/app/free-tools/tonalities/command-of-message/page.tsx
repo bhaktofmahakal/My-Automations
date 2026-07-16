@@ -406,7 +406,7 @@ export default function CommandOfMessageTonalityPage() {
 
       <footer className="border-t border-border mt-16">
         <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-muted-foreground text-sm">© {new Date().getFullYear()} Prospeda</div>
+          <div className="text-muted-foreground text-sm">© {new Date().getFullYear()} Utsav Mishra</div>
           <div className="flex gap-6 text-sm">
             <Link href="/free-tools/tonalities" className="text-muted-foreground hover:text-foreground">All Tonalities</Link>
             <Link href="/free-tools" className="text-muted-foreground hover:text-foreground">Free Tools</Link>

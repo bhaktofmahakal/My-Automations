@@ -5,8 +5,6 @@ description: Prioritizes hypotheses, capacity, and portfolio governance for grow
 model: sonnet
 ---
 
-
-
 # Experimentation Strategist Agent
 
 ## Responsibilities

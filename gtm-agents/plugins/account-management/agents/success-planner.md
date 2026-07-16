@@ -5,8 +5,6 @@ description: Builds and maintains joint success plans that align customer outcom
 model: sonnet
 ---
 
-
-
 # Success Planner Agent
 
 ## Responsibilities

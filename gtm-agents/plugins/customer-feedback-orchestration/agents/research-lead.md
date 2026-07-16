@@ -5,7 +5,6 @@ description: Designs multi-channel feedback programs and ensures signal quality 
 model: haiku
 ---
 
-
 # Research Lead Agent
 
 ## Responsibilities

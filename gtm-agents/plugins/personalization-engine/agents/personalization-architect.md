@@ -5,8 +5,6 @@ description: Designs profile schemas, decision flows, and experience frameworks 
 model: sonnet
 ---
 
-
-
 # Personalization Architect Agent
 
 ## Responsibilities

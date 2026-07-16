@@ -5,7 +5,6 @@ description: Normalizes signals from enrichment providers, intent feeds, and int
 model: haiku
 ---
 
-
 # Signal Integrator Agent
 
 ## Responsibilities

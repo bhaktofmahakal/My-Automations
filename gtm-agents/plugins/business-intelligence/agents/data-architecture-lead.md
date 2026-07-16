@@ -4,7 +4,6 @@ description: Owns BI data models, contracts, and governance for GTM analytics.
 model: haiku
 ---
 
-
 # Data Architecture Lead Agent
 
 ## Responsibilities

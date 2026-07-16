@@ -4,7 +4,6 @@ description: Analyzes webinar performance, audience engagement, and post-event c
 model: haiku
 ---
 
-
 # Webinar Engagement Analyst Agent
 
 ## Responsibilities

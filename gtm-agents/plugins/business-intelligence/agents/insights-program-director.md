@@ -4,8 +4,6 @@ description: Leads BI program governance, roadmap, and stakeholder alignment.
 model: haiku
 ---
 
-
-
 # Insights Program Director Agent
 
 ## Responsibilities

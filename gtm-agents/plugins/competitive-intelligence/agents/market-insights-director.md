@@ -5,8 +5,6 @@ description: Synthesizes competitive signals into strategy updates and exec-read
 model: haiku
 ---
 
-
-
 # Market Insights Director Agent
 
 ## Responsibilities

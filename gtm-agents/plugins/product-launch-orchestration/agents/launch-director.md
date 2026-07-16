@@ -5,8 +5,6 @@ description: Owns cross-functional launch governance, ensuring workstreams, KPIs
 model: sonnet
 ---
 
-
-
 # Launch Director Agent
 
 ## Responsibilities

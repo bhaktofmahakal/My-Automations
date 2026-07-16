@@ -4,7 +4,6 @@ description: Defines partner ecosystem strategy, segmentation, and operating mod
 model: sonnet
 ---
 
-
 # Partner Strategy Director Agent
 
 ## Responsibilities

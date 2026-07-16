@@ -5,8 +5,6 @@ description: Designs quota, commission, and incentive structures aligned to reve
 model: sonnet
 ---
 
-
-
 # Compensation Architect Agent
 
 ## Responsibilities

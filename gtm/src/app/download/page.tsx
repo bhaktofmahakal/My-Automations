@@ -177,12 +177,12 @@ export default function DownloadPage() {
             Looking for a Complete Agentic Solution?
           </h2>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Prospeda turns these prompts into autonomous workflows—research,
+            Utsav Mishra turns these prompts into autonomous workflows—research,
             personalization, and outbound execution with human oversight.
           </p>
-          <a href="https://prospeda.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://utsav mishra.com" target="_blank" rel="noopener noreferrer">
             <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
-              Explore Prospeda
+              Explore Utsav Mishra
             </Button>
           </a>
         </div>

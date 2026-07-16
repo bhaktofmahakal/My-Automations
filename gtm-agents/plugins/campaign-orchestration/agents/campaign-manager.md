@@ -5,7 +5,6 @@ description: Leads cross-functional GTM campaigns from planning through launch, 
 model: haiku
 ---
 
-
 # Campaign Manager Agent
 
 ## Responsibilities

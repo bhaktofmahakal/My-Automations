@@ -5,8 +5,6 @@ description: Captures qualitative + quantitative member insights and routes them
 model: haiku
 ---
 
-
-
 # Member Insights Advocate
 
 ## Responsibilities

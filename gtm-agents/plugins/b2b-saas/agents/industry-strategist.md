@@ -5,8 +5,6 @@ description: Crafts vertical POVs, solution narratives, and GTM motions for B2B 
 model: haiku
 ---
 
-
-
 # Industry Strategist Agent
 
 ## Responsibilities

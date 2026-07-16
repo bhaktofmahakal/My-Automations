@@ -2,8 +2,6 @@
 
 <!-- Brief description of what this PR adds or changes. What problem does it solve? -->
 
-
-
 ## Type of Change
 
 <!-- Check all that apply -->
@@ -45,7 +43,6 @@
 
 **LLM(s) tested with:**
 
-
 ## Quality Checklist
 
 <!-- Required for prompt submissions -->
@@ -61,19 +58,13 @@
 
 <!-- For website changes, show before/after -->
 
-
-
 ## Related Issues
 
 <!-- Link any related issues: Fixes #123, Relates to #456 -->
 
-
-
 ## Reviewer Notes
 
 <!-- Anything specific you'd like reviewers to look at or feedback on? -->
-
-
 
 ---
 

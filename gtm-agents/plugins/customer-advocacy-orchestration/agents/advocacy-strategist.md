@@ -5,7 +5,6 @@ description: Builds customer advocacy roadmap spanning references, communities, 
 model: haiku
 ---
 
-
 # Advocacy Strategist Agent
 
 ## Responsibilities

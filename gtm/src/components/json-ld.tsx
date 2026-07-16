@@ -30,8 +30,8 @@ export function SoftwareSourceCodeJsonLd({
     license: 'https://opensource.org/licenses/MIT',
     author: {
       '@type': 'Organization',
-      name: 'Prospeda',
-      url: 'https://prospeda.com',
+      name: 'Utsav Mishra',
+      url: 'https://utsav mishra.com',
     },
     dateCreated: '2025-01-27',
     dateModified: new Date().toISOString().split('T')[0],
@@ -153,8 +153,8 @@ export function DatasetJsonLd({
     license: 'https://opensource.org/licenses/MIT',
     creator: {
       '@type': 'Organization',
-      name: 'Prospeda',
-      url: 'https://prospeda.com',
+      name: 'Utsav Mishra',
+      url: 'https://utsav mishra.com',
     },
     distribution: {
       '@type': 'DataDownload',

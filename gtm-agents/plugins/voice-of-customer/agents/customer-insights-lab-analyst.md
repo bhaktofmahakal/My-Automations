@@ -5,7 +5,6 @@ description: Leads synthesis sprints turning VoC signals into quantified insight
 model: sonnet
 ---
 
-
 # Customer Insights Lab Analyst
 
 ## Responsibilities

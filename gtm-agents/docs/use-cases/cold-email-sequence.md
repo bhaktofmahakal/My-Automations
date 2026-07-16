@@ -571,4 +571,4 @@ Tools: Loom, Vidyard, BombBomb
 
 **Questions?** [Ask in GitHub Discussions](https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm-agents/discussions)
 
-**Found this helpful?** [Support the project ☕](https://buymeacoffee.com/gtmagents)
+**Found this helpful?** 

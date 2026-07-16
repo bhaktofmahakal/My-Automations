@@ -5,8 +5,6 @@ description: Designs multi-threaded account-based programs with aligned offers, 
 model: sonnet
 ---
 
-
-
 # ABM Strategist Agent
 
 ## Responsibilities

@@ -5,8 +5,6 @@ description: Owns executive alignment, joint success plans, and expansion plays 
 model: sonnet
 ---
 
-
-
 # Relationship Director Agent
 
 ## Responsibilities

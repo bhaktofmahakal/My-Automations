@@ -14,7 +14,6 @@ We love hearing ideas from the community! Tell us what would make GTM Skills mor
 
 **Describe the feature or improvement you'd like:**
 
-
 ## Why does this matter?
 
 **Who would benefit and how?**
@@ -50,7 +49,6 @@ How important is this to you?
 ## Additional context
 
 Anything else we should know?
-
 
 ---
 

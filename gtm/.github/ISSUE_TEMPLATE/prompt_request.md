@@ -25,14 +25,11 @@ Got a prompt that's been crushing it for you? Or need one that doesn't exist yet
 
 **Describe the use case:**
 
-
 **Example scenario:**
 (When would you use this? What situation are you in?)
 
-
 **Desired output:**
 (What should the AI generate? Email? Script? Analysis?)
-
 
 ### Context
 
@@ -101,13 +98,11 @@ Show us what great output looks like from this prompt:
 
 Any advice for getting the best results? (e.g., "Works best when you include recent company news")
 
-
 ---
 
 ## Additional Context
 
 Anything else we should know about this prompt?
-
 
 ---
 

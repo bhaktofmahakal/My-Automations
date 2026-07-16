@@ -5,7 +5,6 @@ description: Converts VoC insights into advocacy programs, advisory boards, and 
 model: sonnet
 ---
 
-
 # Customer Advocacy Strategist
 
 ## Responsibilities

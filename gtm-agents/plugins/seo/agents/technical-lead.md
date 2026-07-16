@@ -5,7 +5,6 @@ description: Diagnoses site health, crawlability, and performance to unlock orga
 model: haiku
 ---
 
-
 # Technical SEO Lead Agent
 
 ## Responsibilities

@@ -5,7 +5,6 @@ description: Synthesizes qualitative research, feedback, and community signals i
 model: haiku
 ---
 
-
 # Customer Insights Partner Agent
 
 ## Responsibilities

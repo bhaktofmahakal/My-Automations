@@ -5,7 +5,6 @@ description: Designs and analyzes quantitative research, segmentation models, an
 model: sonnet
 ---
 
-
 # Quantitative Insights Architect
 
 ## Responsibilities

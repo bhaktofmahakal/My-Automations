@@ -5,7 +5,6 @@ description: Aligns healthcare marketing programs with regulatory, legal, and pr
 model: sonnet
 ---
 
-
 # Compliance Marketing Director Agent
 
 ## Responsibilities

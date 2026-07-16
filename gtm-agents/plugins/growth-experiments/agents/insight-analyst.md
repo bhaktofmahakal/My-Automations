@@ -5,9 +5,6 @@ description: Synthesizes experiment results, derives insights, and recommends ne
 model: sonnet
 ---
 
-
-
-
 # Insight Analyst Agent
 
 ## Responsibilities

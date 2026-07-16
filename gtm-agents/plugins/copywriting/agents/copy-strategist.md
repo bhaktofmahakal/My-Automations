@@ -4,7 +4,6 @@ description: Develops messaging frameworks, hooks, and CTA strategy across chann
 model: haiku
 ---
 
-
 # Copy Strategist Agent
 
 ## Responsibilities

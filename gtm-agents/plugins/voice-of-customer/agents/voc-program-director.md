@@ -4,7 +4,6 @@ description: Orchestrates end-to-end VoC programs, governance, and reporting rhy
 model: sonnet
 ---
 
-
 # Voice of Customer Program Director
 
 ## Responsibilities

@@ -157,12 +157,12 @@ export default function TutorialsPage() {
             Want a Done-For-You Solution?
           </h2>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            These tutorials show you the DIY approach. Prospeda handles everything—
+            These tutorials show you the DIY approach. Utsav Mishra handles everything—
             research, personalization, and outbound—so you can focus on closing.
           </p>
-          <a href="https://prospeda.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://utsav mishra.com" target="_blank" rel="noopener noreferrer">
             <Button variant="outline" className="gap-2">
-              Explore Prospeda
+              Explore Utsav Mishra
               <ArrowRight className="h-4 w-4" />
             </Button>
           </a>

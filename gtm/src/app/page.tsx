@@ -48,7 +48,7 @@ const faqs = [
   },
   {
     question: 'Is GTM Skills really free?',
-    answer: 'Yes, GTM Skills is 100% free and open source under the MIT license. There are no paywalls, no signup required to copy prompts, and no usage limits. You can use it commercially or personally. The project is maintained by Prospeda.',
+    answer: 'Yes, GTM Skills is 100% free and open source under the MIT license. There are no paywalls, no signup required to copy prompts, and no usage limits. You can use it commercially or personally. The project is maintained by Utsav Mishra.',
   },
   {
     question: 'What makes GTM Skills different?',
@@ -609,7 +609,7 @@ Rules:
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <a href="https://prospeda.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://utsav mishra.com" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" className="gap-2">
                     See It In Action
                   </Button>

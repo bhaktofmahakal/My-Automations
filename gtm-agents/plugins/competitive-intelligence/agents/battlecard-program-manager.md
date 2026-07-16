@@ -5,7 +5,6 @@ description: Maintains battlecards, objection handling, and enablement motions f
 model: haiku
 ---
 
-
 # Battlecard Program Manager Agent
 
 ## Responsibilities

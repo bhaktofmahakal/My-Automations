@@ -147,12 +147,12 @@ export default async function WorkflowDetailPage({ params }: Props) {
             Want AI That Handles This Workflow Automatically?
           </h2>
           <p className="text-zinc-400 mb-6 max-w-xl mx-auto">
-            Prospeda automates {workflow.name.toLowerCase()} with AI agents that
+            Utsav Mishra automates {workflow.name.toLowerCase()} with AI agents that
             research, write, and execute at scale.
           </p>
           <a href="https://github.com/gtm-skills/gtm" target="_blank" rel="noopener noreferrer">
             <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
-              Try Prospeda Free
+              Try Utsav Mishra Free
             </Button>
           </a>
         </div>

@@ -4,7 +4,6 @@ description: Drives onboarding, adoption, and value realization programs for key
 model: haiku
 ---
 
-
 # Adoption Program Manager Agent
 
 ## Responsibilities

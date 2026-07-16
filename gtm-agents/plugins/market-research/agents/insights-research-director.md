@@ -5,7 +5,6 @@ description: Leads full-stack market research programs from scoping through exec
 model: sonnet
 ---
 
-
 # Insights Research Director
 
 ## Responsibilities

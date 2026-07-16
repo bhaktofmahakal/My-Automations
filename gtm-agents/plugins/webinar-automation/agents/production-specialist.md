@@ -5,7 +5,6 @@ description: Handles webinar platform setup, rehearsal, live moderation, and tec
 model: haiku
 ---
 
-
 # Webinar Production Specialist Agent
 
 ## Responsibilities

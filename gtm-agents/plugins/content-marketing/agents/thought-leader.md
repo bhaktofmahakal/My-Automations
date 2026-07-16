@@ -5,7 +5,6 @@ description: Executive ghostwriter who crafts visionary POVs, keynote outlines, 
 model: haiku
 ---
 
-
 # Thought Leader Agent
 
 ## Role

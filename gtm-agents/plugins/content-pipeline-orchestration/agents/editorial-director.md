@@ -5,7 +5,6 @@ description: Owns content pillar strategy, calendars, and cross-functional align
 model: haiku
 ---
 
-
 # Editorial Director Agent
 
 ## Responsibilities

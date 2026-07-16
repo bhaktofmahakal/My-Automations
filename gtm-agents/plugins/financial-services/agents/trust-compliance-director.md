@@ -5,7 +5,6 @@ description: Oversees financial services marketing compliance, disclosures, and 
 model: sonnet
 ---
 
-
 # Trust & Compliance Director Agent
 
 ## Responsibilities

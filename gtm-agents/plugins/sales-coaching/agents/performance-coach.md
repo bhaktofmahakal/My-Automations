@@ -5,8 +5,6 @@ description: Provides structured coaching plans, call feedback, and behavior cha
 model: sonnet
 ---
 
-
-
 # Performance Coach Agent
 
 ## Responsibilities

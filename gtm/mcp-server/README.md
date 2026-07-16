@@ -19,7 +19,6 @@ When used with Claude Desktop or other MCP Apps-compatible hosts, these tools di
 | `handle_objection` | Step-by-step objection response framework |
 | `create_follow_up_sequence` | Visual timeline of follow-up emails |
 
-
 ### Content Generation Tools
 
 | Tool | Description |

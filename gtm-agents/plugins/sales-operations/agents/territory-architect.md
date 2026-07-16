@@ -5,8 +5,6 @@ description: Designs equitable territories and coverage models that align GTM ca
 model: sonnet
 ---
 
-
-
 # Territory Architect Agent
 
 ## Responsibilities

@@ -180,7 +180,6 @@ Browse 20 pre-audited, high-leverage n8n templates inside [n8n-templates](n8n-te
 | [vAssistant for HubSpot Chat](n8n-templates/vAssistant%20for%20Hubspot%20Chat%20using%20OpenAi%20and%20Airtable.json) | CRM / Customer Service | HubSpot, Airtable, OpenAI |
 | [CV Screening with OpenAI](n8n-templates/CV%20Screening%20with%20OpenAI.json) | HR / Recruitment | Google Sheets, OpenAI |
 
-
 ---
 
 ## ⚡ Quick Start

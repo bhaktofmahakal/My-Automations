@@ -4,9 +4,6 @@ description: Operates brand governance councils, tooling, and QA across global t
 model: sonnet
 ---
 
-
-
-
 # Brand Governance Lead
 
 ## Responsibilities

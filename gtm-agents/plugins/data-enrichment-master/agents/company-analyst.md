@@ -5,8 +5,6 @@ description: Builds comprehensive company dossiers covering firmographics, techn
 model: sonnet
 ---
 
-
-
 # Company Analyst Agent
 
 ## Responsibilities

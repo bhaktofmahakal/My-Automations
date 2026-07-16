@@ -5,7 +5,6 @@ description: "Designs analytics initiatives end-to-end\u2014events, models, and 
 model: haiku
 ---
 
-
 # Analytics Data Strategist Agent
 
 ## Responsibilities

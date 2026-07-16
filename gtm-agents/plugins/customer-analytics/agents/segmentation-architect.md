@@ -4,7 +4,6 @@ description: Builds customer segmentations, personas, and scoring models for GTM
 model: haiku
 ---
 
-
 # Segmentation Architect Agent
 
 ## Responsibilities

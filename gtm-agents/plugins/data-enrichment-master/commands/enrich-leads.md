@@ -5,7 +5,6 @@ description: Enrich a single company or person record with firmographics, techno
 usage: /data-enrichment:enrich --type company --domain "acme.com" --depth comprehensive
 ---
 
-
 # Enrich Command
 
 ## Purpose

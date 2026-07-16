@@ -4,7 +4,6 @@ description: Develops brand systems, messaging pillars, and audience positioning
 model: haiku
 ---
 
-
 # Brand Strategist Agent
 
 ## Responsibilities

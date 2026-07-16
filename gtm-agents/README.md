@@ -2,7 +2,6 @@
 
 **Free AI automation for sales, marketing, and growth teams. No coding required.**
 
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-yellow?logo=buy-me-a-coffee)](https://buymeacoffee.com/gtmagents)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ---
@@ -654,8 +653,6 @@ Copyright 2025 LaunchIQ AI, Inc.
 ## ☕ Support This Project
 
 This project is free and open-source. If you find it valuable, consider supporting its development:
-
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-yellow?logo=buy-me-a-coffee&style=for-the-badge)](https://buymeacoffee.com/gtmagents)
 
 Your support helps:
 - 🔧 Maintain and improve existing plugins
