@@ -171,7 +171,7 @@ Every agent:
 
 Inspired by [@dr_cintas](https://twitter.com/dr_cintas)'s Mission Control architecture for running multiple AI agents 24/7.
 
-Built by [Utsav Mishra](https://utsavmishra.me). Ship deals, not features.
+Built by [Utsav Mishra](https://www.utsavmishra.me/). Ship deals, not features.
 
 ---
 

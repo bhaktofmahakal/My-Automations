@@ -160,7 +160,7 @@ export default function TutorialsPage() {
             These tutorials show you the DIY approach. Utsav Mishra handles everything—
             research, personalization, and outbound—so you can focus on closing.
           </p>
-          <a href="https://utsavmishra.me" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.utsavmishra.me/" target="_blank" rel="noopener noreferrer">
             <Button variant="outline" className="gap-2">
               Explore Utsav Mishra
               <ArrowRight className="h-4 w-4" />

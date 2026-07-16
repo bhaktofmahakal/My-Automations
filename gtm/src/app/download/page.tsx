@@ -180,7 +180,7 @@ export default function DownloadPage() {
             Utsav Mishra turns these prompts into autonomous workflows—research,
             personalization, and outbound execution with human oversight.
           </p>
-          <a href="https://utsavmishra.me" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.utsavmishra.me/" target="_blank" rel="noopener noreferrer">
             <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
               Explore Utsav Mishra
             </Button>

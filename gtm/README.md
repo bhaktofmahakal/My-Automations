@@ -25,7 +25,7 @@
   <a href="#-quick-start"><strong>Quick Start</strong></a> &#8226;
   <a href="#-mcp-server"><strong>MCP Server</strong></a> &#8226;
   <a href="#-contributing"><strong>Contributing</strong></a> &#8226;
-  <a href="https://utsavmishra.me"><strong>Powered by Utsav Mishra</strong></a>
+  <a href="https://www.utsavmishra.me/"><strong>Powered by Utsav Mishra</strong></a>
 </p>
 
 ---
@@ -334,14 +334,14 @@ Used by sales teams at companies like:
 
 **GTM Skills** is the open-source foundation.
 
-**[Utsav Mishra](https://utsavmishra.me)** is the full platform:
+**[Utsav Mishra](https://www.utsavmishra.me/)** is the full platform:
 
 - AI agents that run your entire sales workflow
 - CRM integration with automatic data enrichment
 - Personalized sequences at scale
 - Analytics and coaching insights
 
-[**Try Utsav Mishra Free**](https://utsavmishra.me)
+[**Try Utsav Mishra Free**](https://www.utsavmishra.me/)
 
 ---
 
@@ -388,9 +388,9 @@ See [LICENSE](./LICENSE) for details.
 | Resource | Link |
 |----------|------|
 | Website | [github.com/bhaktofmahakal/My-Automations](https://github.com/bhaktofmahakal/My-Automations) |
-| Full Platform | [utsavmishra.me](https://utsavmishra.me) |
+| Full Platform | [www.utsavmishra.me/](https://www.utsavmishra.me/) |
 | Twitter | [@utsav_mishra1](https://twitter.com/utsav_mishra1) |
-| LinkedIn | [Utsav Mishra](https://linkedin.com/in/utsav-mishra1) |
+| LinkedIn | [Utsav Mishra](https://www.linkedin.com/in/utsav-mishra1/) |
 | Email | utsavmishraa005@gmail.com |
 
 ---
@@ -402,5 +402,5 @@ See [LICENSE](./LICENSE) for details.
     <img src="https://img.shields.io/github/stars/bhaktofmahakal/My-Automations?style=social" alt="Star on GitHub">
   </a>
   <br><br>
-  Built with care by <a href="https://utsavmishra.me">Utsav Mishra</a>
+  Built with care by <a href="https://www.utsavmishra.me/">Utsav Mishra</a>
 </p>

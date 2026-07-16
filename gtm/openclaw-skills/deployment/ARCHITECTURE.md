@@ -373,4 +373,4 @@ clawdbot cron add --name "standup" --cron "30 23 * * *" \
 
 ---
 
-*Built by [Utsav Mishra](https://utsavmishra.me). Ship deals, not features.*
+*Built by [Utsav Mishra](https://www.utsavmishra.me/). Ship deals, not features.*

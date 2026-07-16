@@ -31,7 +31,7 @@ export function SoftwareSourceCodeJsonLd({
     author: {
       '@type': 'Organization',
       name: 'Utsav Mishra',
-      url: 'https://utsavmishra.me',
+      url: 'https://www.utsavmishra.me/',
     },
     dateCreated: '2025-01-27',
     dateModified: new Date().toISOString().split('T')[0],
@@ -154,7 +154,7 @@ export function DatasetJsonLd({
     creator: {
       '@type': 'Organization',
       name: 'Utsav Mishra',
-      url: 'https://utsavmishra.me',
+      url: 'https://www.utsavmishra.me/',
     },
     distribution: {
       '@type': 'DataDownload',

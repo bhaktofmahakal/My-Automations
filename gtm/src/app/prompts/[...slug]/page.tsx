@@ -291,7 +291,7 @@ export default async function PromptPage({ params }: Props) {
             personalization, and outbound with human oversight.
           </p>
           <a
-            href={`https://utsavmishra.me?utm_source=gtm-skills&utm_content=prompts-${slug.join('-')}`}
+            href={`https://www.utsavmishra.me/?utm_source=gtm-skills&utm_content=prompts-${slug.join('-')}`}
             target="_blank"
             rel="noopener noreferrer"
           >

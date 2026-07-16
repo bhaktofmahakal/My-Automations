@@ -414,5 +414,5 @@ Reach out at utsavmishraa005@gmail.com
 <p align="center">
   <b>Built by the community, for the community</b>
   <br>
-  Maintained by <a href="https://utsavmishra.me">Utsav Mishra</a>
+  Maintained by <a href="https://www.utsavmishra.me/">Utsav Mishra</a>
 </p>

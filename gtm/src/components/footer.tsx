@@ -61,7 +61,7 @@ export function Footer() {
                 <Twitter className="h-5 w-5" />
               </a>
               <a
-                href="https://linkedin.com/in/utsav-mishra1"
+                href="https://www.linkedin.com/in/utsav-mishra1/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -113,7 +113,7 @@ export function Footer() {
             <span>
               Made by{' '}
               <a
-                href="https://utsavmishra.me"
+                href="https://www.utsavmishra.me/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-foreground hover:underline"

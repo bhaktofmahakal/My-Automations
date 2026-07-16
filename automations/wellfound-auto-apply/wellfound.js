@@ -36,7 +36,7 @@ Testing: Jest, Pytest, Playwright, Cypress
 
 Links to trust me:
 GitHub: https://github.com/bhaktofmahakal
-LinkedIn: https://linkedin.com/in/utsav-mishra1
+LinkedIn: https://www.linkedin.com/in/utsav-mishra1/
 Website: https://mishra-dynamics.vercel.app/
 
 Hope this fits what you’re looking for.
