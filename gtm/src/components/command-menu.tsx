@@ -46,7 +46,7 @@ const searchItems: SearchItem[] = [
 
   // Other
   { title: 'API Documentation', description: 'REST API reference', href: '/developers', icon: FileText, category: 'Developers' },
-  { title: 'GitHub Repository', description: 'Source code & contribute', href: 'https://github.com/gtm-skills/gtm', icon: Github, category: 'External' },
+  { title: 'GitHub Repository', description: 'Source code & contribute', href: 'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm', icon: Github, category: 'External' },
 ];
 
 export function CommandMenu() {

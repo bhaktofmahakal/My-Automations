@@ -65,7 +65,7 @@ export default function PromptsIndexPage() {
               </Button>
             </Link>
             <a
-              href="https://github.com/gtm-skills/gtm/issues"
+              href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm/issues"
               target="_blank"
               rel="noopener noreferrer"
             >

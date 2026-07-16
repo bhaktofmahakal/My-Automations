@@ -11,7 +11,7 @@ import { Code, Copy, Check, ExternalLink, FileCode, Bot, Github } from 'lucide-r
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const codeExample = `curl -X GET "https://gtm-skills.com/api/v1/prompts/recommend" \\
+const codeExample = `curl -X GET "https://github.com/bhaktofmahakal/My-Automations/api/v1/prompts/recommend" \\
   -H "Content-Type: application/json" \\
   -d '{
     "role": "sdr",
@@ -23,7 +23,7 @@ const resources = [
   { label: 'API Docs', href: '/developers', icon: Code },
   { label: 'OpenAPI Spec', href: '/openapi.json', icon: FileCode },
   { label: 'llms.txt', href: '/llms.txt', icon: Bot },
-  { label: 'GitHub', href: 'https://github.com/gtm-skills/gtm', icon: Github, external: true },
+  { label: 'GitHub', href: 'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm', icon: Github, external: true },
 ];
 
 export function DevelopersSection() {

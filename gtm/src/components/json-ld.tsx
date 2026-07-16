@@ -25,7 +25,7 @@ export function SoftwareSourceCodeJsonLd({
     name,
     description: `${promptCount}+ prompts. ${description}`,
     url,
-    codeRepository: 'https://github.com/gtm-skills/gtm',
+    codeRepository: 'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm',
     programmingLanguage: 'Markdown',
     license: 'https://opensource.org/licenses/MIT',
     author: {
@@ -159,7 +159,7 @@ export function DatasetJsonLd({
     distribution: {
       '@type': 'DataDownload',
       encodingFormat: 'application/json',
-      contentUrl: 'https://gtm-skills.com/prompts.json',
+      contentUrl: 'https://github.com/bhaktofmahakal/My-Automations/prompts.json',
     },
     keywords: ['GTM prompts', 'sales AI', 'B2B sales', category],
     size: `${promptCount}+ prompts`,

@@ -245,9 +245,9 @@ const installSteps = [
   {
     number: '01',
     title: 'Clone the Repository',
-    content: `git clone https://github.com/gtm-skills/gtm.git
+    content: `git clone https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm.git
 cd gtm-skills/mcp-server`,
-    copyable: `git clone https://github.com/gtm-skills/gtm.git && cd gtm-skills/mcp-server`,
+    copyable: `git clone https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm.git && cd gtm-skills/mcp-server`,
   },
   {
     number: '02',
@@ -373,7 +373,7 @@ export default function MCPServerPage() {
               <span>6 Agentic Workflows</span>
             </div>
             <a
-              href="https://github.com/gtm-skills/gtm"
+              href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-cyan-400 hover:text-cyan-300"
@@ -740,7 +740,7 @@ export default function MCPServerPage() {
             Utsav Mishra provides the same AI-powered sales tools with CRM integration,
             lead enrichment, and automated sequences. No setup required.
           </p>
-          <a href="https://github.com/gtm-skills/gtm" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm" target="_blank" rel="noopener noreferrer">
             <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
               Try Utsav Mishra Free
             </Button>

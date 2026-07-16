@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "OpenClaw GTM Skills - Agentic Sales Team",
     description: "Scout finds. Rep engages. Closer closes.",
-    url: "https://gtm-skills.com/openclaw",
+    url: "https://github.com/bhaktofmahakal/My-Automations/openclaw",
   },
 };
 
@@ -21,7 +21,7 @@ export default function OpenClawPage() {
       role: 'Research & Intelligence',
       icon: Search,
       color: 'text-blue-400',
-      install: 'gtm-skills/scout',
+      install: 'bhaktofmahakal/My-Automations',
       does: ['Find prospects 24/7', 'Company research', 'Buying signals'],
     },
     {
@@ -30,7 +30,7 @@ export default function OpenClawPage() {
       role: 'Sales Copy & Content',
       icon: Zap,
       color: 'text-yellow-400',
-      install: 'gtm-skills/writer',
+      install: 'bhaktofmahakal/My-Automations',
       does: ['Elite cold emails', 'LinkedIn posts', 'Follow-up sequences'],
     },
     {
@@ -39,7 +39,7 @@ export default function OpenClawPage() {
       role: 'Outreach & Engagement',
       icon: MessageSquare,
       color: 'text-green-400',
-      install: 'gtm-skills/rep',
+      install: 'bhaktofmahakal/My-Automations',
       does: ['Cold emails', 'Elite voicemails', 'Objection handling'],
     },
     {
@@ -48,7 +48,7 @@ export default function OpenClawPage() {
       role: 'Deals & Revenue',
       icon: Target,
       color: 'text-purple-400',
-      install: 'gtm-skills/closer',
+      install: 'bhaktofmahakal/My-Automations',
       does: ['Proposals', 'Negotiations', 'Close deals'],
     },
   ];
@@ -71,7 +71,7 @@ export default function OpenClawPage() {
             <div className="mx-auto max-w-xl rounded-xl border border-orange-500/30 bg-zinc-900 p-5 mb-6">
               <div className="text-sm text-zinc-500 mb-2">Install the full team:</div>
               <code className="block text-lg text-orange-400 font-mono">
-                npx clawdhub install gtm-skills/scout gtm-skills/writer gtm-skills/rep gtm-skills/closer
+                npx clawdhub install bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations
               </code>
             </div>
 
@@ -276,7 +276,7 @@ export default function OpenClawPage() {
         <div className="mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">
           <div className="rounded-xl border border-orange-500/30 bg-zinc-900 p-6 mb-6">
             <code className="block text-lg text-orange-400 font-mono">
-              npx clawdhub install gtm-skills/scout gtm-skills/writer gtm-skills/rep gtm-skills/closer
+              npx clawdhub install bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations
             </code>
           </div>
 
@@ -289,7 +289,7 @@ export default function OpenClawPage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
             <a
-              href="https://github.com/gtm-skills/gtm/tree/main/openclaw-skills"
+              href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm/tree/main/openclaw-skills"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg bg-zinc-800 border border-zinc-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-zinc-700 transition-colors"

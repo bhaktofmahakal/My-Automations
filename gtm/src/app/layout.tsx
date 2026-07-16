@@ -14,13 +14,13 @@ const websiteJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'GTM Skills',
-  url: 'https://gtm-skills.com',
+  url: 'https://github.com/bhaktofmahakal/My-Automations',
   description: 'The open-source operating system for agentic GTM. Prompts, agent workflows, tools, browser extension, and API. Free and MIT licensed.',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://gtm-skills.com/search?q={search_term_string}',
+      urlTemplate: 'https://github.com/bhaktofmahakal/My-Automations/search?q={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
@@ -30,10 +30,10 @@ const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'GTM Skills',
-  url: 'https://gtm-skills.com',
-  logo: 'https://gtm-skills.com/logo.svg',
+  url: 'https://github.com/bhaktofmahakal/My-Automations',
+  logo: 'https://github.com/bhaktofmahakal/My-Automations/logo.svg',
   sameAs: [
-    'https://github.com/gtm-skills/gtm',
+    'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm',
   ],
 };
 
@@ -56,12 +56,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'GTM Skills | The Agentic GTM Operating System',
     description: 'The open-source operating system for agentic GTM. Prompts, agent workflows, tools, and API for B2B sales.',
-    url: 'https://gtm-skills.com',
+    url: 'https://github.com/bhaktofmahakal/My-Automations',
     siteName: 'GTM Skills',
     type: 'website',
     images: [
       {
-        url: 'https://gtm-skills.com/og-image.png',
+        url: 'https://github.com/bhaktofmahakal/My-Automations/og-image.png',
         width: 1200,
         height: 630,
         alt: 'GTM Skills - The Agentic GTM Operating System',
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
   },
-  metadataBase: new URL('https://gtm-skills.com'),
+  metadataBase: new URL('https://github.com/bhaktofmahakal/My-Automations'),
 };
 
 export default function RootLayout({

@@ -24,7 +24,7 @@ const agents = [
     id: 'scout',
     name: 'Scout',
     role: 'Research & Intelligence',
-    email: 'scout@gtm-skills.com',
+    email: 'scout@github.com/bhaktofmahakal/My-Automations',
     icon: Search,
     color: 'text-blue-400',
     bgColor: 'bg-blue-500/10',
@@ -43,7 +43,7 @@ const agents = [
       { name: 'Role Prompts', url: '/role' },
       { name: 'Agentic BDR', url: '/agentic-bdr' },
     ],
-    install: 'npx clawdhub install gtm-skills/scout',
+    install: 'npx clawdhub install bhaktofmahakal/My-Automations',
     example: `You: "Find me SaaS companies hiring SDRs"
 Scout: "On it. What size? What stage? VP level or Director?"
 
@@ -55,7 +55,7 @@ Scout: "Found 10. Top pick is Sarah Chen at Acme - just raised $25M,
     id: 'writer',
     name: 'Writer',
     role: 'Sales Copy & Content',
-    email: 'writer@gtm-skills.com',
+    email: 'writer@github.com/bhaktofmahakal/My-Automations',
     icon: PenTool,
     color: 'text-yellow-400',
     bgColor: 'bg-yellow-500/10',
@@ -74,7 +74,7 @@ Scout: "Found 10. Top pick is Sarah Chen at Acme - just raised $25M,
       { name: 'Alex Hormozi Style', url: '/free-tools/tonalities/alex-hormozi' },
       { name: 'Hemingway Style', url: '/free-tools/tonalities/hemingway' },
     ],
-    install: 'npx clawdhub install gtm-skills/writer',
+    install: 'npx clawdhub install bhaktofmahakal/My-Automations',
     example: `You: "Write a cold email to Sarah - she's hiring SDRs"
 Writer: "Got it. What's the angle - ramp time, quota attainment, or turnover?
         And what's your one sentence value prop?"
@@ -89,7 +89,7 @@ Writer: [Writes email] "Done. Subject line A/B options:
     id: 'rep',
     name: 'Rep',
     role: 'Outreach & Engagement',
-    email: 'rep@gtm-skills.com',
+    email: 'rep@github.com/bhaktofmahakal/My-Automations',
     icon: MessageSquare,
     color: 'text-green-400',
     bgColor: 'bg-green-500/10',
@@ -108,7 +108,7 @@ Writer: [Writes email] "Done. Subject line A/B options:
       { name: 'Voice Templates', url: '/voice-templates' },
       { name: 'Voicemail Scripts', url: '/voice-templates?category=voicemail' },
     ],
-    install: 'npx clawdhub install gtm-skills/rep',
+    install: 'npx clawdhub install bhaktofmahakal/My-Automations',
     example: `You: "Email Sarah - she's hiring SDRs"
 Rep: "Got it from Scout. What tone - direct, challenger, blunt?"
 
@@ -120,7 +120,7 @@ Rep: [Writes email] "Ready. Want a voicemail to drop same day?
     id: 'closer',
     name: 'Closer',
     role: 'Deals & Revenue',
-    email: 'closer@gtm-skills.com',
+    email: 'closer@github.com/bhaktofmahakal/My-Automations',
     icon: Target,
     color: 'text-purple-400',
     bgColor: 'bg-purple-500/10',
@@ -139,7 +139,7 @@ Rep: [Writes email] "Ready. Want a voicemail to drop same day?
       { name: 'Workflows', url: '/workflow' },
       { name: 'Chris Voss Tonality', url: '/free-tools/tonalities/chris-voss' },
     ],
-    install: 'npx clawdhub install gtm-skills/closer',
+    install: 'npx clawdhub install bhaktofmahakal/My-Automations',
     example: `You: "She wants a proposal"
 Closer: "Great. Before I write this - who else needs to approve?
         And what did she say the main pain is?"
@@ -192,13 +192,13 @@ export default function AgentsPage() {
             </div>
             <div className="flex flex-col gap-2">
               <code className="bg-black/50 rounded-lg px-4 py-2 text-orange-400 font-mono text-sm">
-                npx clawdhub install gtm-skills/scout gtm-skills/writer gtm-skills/rep gtm-skills/closer
+                npx clawdhub install bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations
               </code>
               <Button
                 variant="outline"
                 size="sm"
                 className="w-full"
-                onClick={() => handleCopy('npx clawdhub install gtm-skills/scout gtm-skills/writer gtm-skills/rep gtm-skills/closer', 'all')}
+                onClick={() => handleCopy('npx clawdhub install bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations bhaktofmahakal/My-Automations', 'all')}
               >
                 {copiedId === 'all' ? (
                   <>

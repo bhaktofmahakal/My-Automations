@@ -163,7 +163,7 @@ export default function FreeToolsPage() {
             Love these free tools? Help others discover them.
           </p>
           <a
-            href="https://github.com/gtm-skills/gtm"
+            href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm"
             target="_blank"
             rel="noopener noreferrer"
             className="text-orange-400 hover:text-orange-300 font-medium inline-flex items-center gap-2"

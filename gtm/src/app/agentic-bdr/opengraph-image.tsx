@@ -117,7 +117,7 @@ export default async function Image() {
           }}
         >
           <span style={{ fontSize: '24px', fontWeight: 600, color: '#fafafa' }}>
-            gtm-skills.com/agentic-bdr
+            github.com/bhaktofmahakal/My-Automations/agentic-bdr
           </span>
         </div>
       </div>

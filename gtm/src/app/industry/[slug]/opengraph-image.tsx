@@ -119,7 +119,7 @@ export default async function Image({ params }: Props) {
           }}
         >
           <span style={{ fontSize: '24px', fontWeight: 600, color: '#fafafa' }}>
-            gtm-skills.com
+            github.com/bhaktofmahakal/My-Automations
           </span>
           <span style={{ fontSize: '24px', color: '#52525b' }}>•</span>
           <span style={{ fontSize: '20px', color: '#71717a' }}>

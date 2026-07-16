@@ -27,7 +27,7 @@ export function TonalityGate({ children, tonalityName }: TonalityGateProps) {
 
   const handleStarClick = () => {
     track('github_star_clicked', { tonality: tonalityName, location: 'tonality_gate' });
-    window.open('https://github.com/gtm-skills/gtm', '_blank');
+    window.open('https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm', '_blank');
 
     // Show confirm button after delay
     setTimeout(() => {

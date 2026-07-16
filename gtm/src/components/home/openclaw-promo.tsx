@@ -86,7 +86,7 @@ export function OpenClawPromo() {
           <div className="inline-flex items-center gap-2 bg-zinc-900/80 border border-zinc-800 rounded-lg px-4 py-2 font-mono text-sm">
             <span className="text-zinc-500">$</span>
             <span className="text-orange-400">
-              npx clawdhub install gtm-skills/gtm-prompts
+              npx clawdhub install bhaktofmahakal/My-Automations/tree/main/gtm-prompts
             </span>
           </div>
         </div>

@@ -36,7 +36,7 @@ export function SocialProof() {
   const [forks, setForks] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('https://api.github.com/repos/gtm-skills/gtm', { next: { revalidate: 300 } })
+    fetch('https://api.github.com/repos/bhaktofmahakal/My-Automations/tree/main/gtm', { next: { revalidate: 300 } })
       .then((res) => res.json())
       .then((data) => {
         if (data.stargazers_count) setStars(data.stargazers_count);
@@ -62,7 +62,7 @@ export function SocialProof() {
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Open Source</p>
             <div className="flex items-center gap-6">
               <a
-                href="https://github.com/gtm-skills/gtm"
+                href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-foreground hover:text-orange-400 transition-colors group"

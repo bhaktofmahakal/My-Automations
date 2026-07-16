@@ -71,7 +71,7 @@ const navigation: NavItem[] = [
       { name: 'API Docs', href: '/developers', icon: Code, description: 'REST API reference' },
       { name: 'Agents API', href: '/developers#agents-api', icon: Users, description: 'Agent skills & orchestrator' },
       { name: 'OpenAPI Spec', href: '/openapi.json', icon: FileCode, description: 'Download spec' },
-      { name: 'GitHub', href: 'https://github.com/gtm-skills/gtm', icon: Github, description: 'Source code' },
+      { name: 'GitHub', href: 'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm', icon: Github, description: 'Source code' },
     ],
   },
 ];
@@ -188,14 +188,14 @@ export function Header() {
           <SearchButton />
           <ThemeToggle />
           <a
-            href="https://github.com/gtm-skills/gtm"
+            href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm"
             target="_blank"
             rel="noopener noreferrer"
           >
             <Button variant="outline" size="sm" className="gap-2">
               <Github className="h-4 w-4" />
               Star
-              <GitHubStars repo="gtm-skills/gtm" className="text-xs" />
+              <GitHubStars repo="bhaktofmahakal/My-Automations/tree/main/gtm" className="text-xs" />
             </Button>
           </a>
           <Link href="/download">
@@ -291,7 +291,7 @@ export function Header() {
             {/* Mobile CTAs */}
             <div className="mt-8 pt-6 border-t border-border space-y-3">
               <a
-                href="https://github.com/gtm-skills/gtm"
+                href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block"
@@ -299,7 +299,7 @@ export function Header() {
                 <Button variant="outline" className="w-full h-12 gap-2 text-base">
                   <Star className="h-5 w-5 text-yellow-400" />
                   Star on GitHub
-                  <GitHubStars repo="gtm-skills/gtm" className="text-sm ml-auto" />
+                  <GitHubStars repo="bhaktofmahakal/My-Automations/tree/main/gtm" className="text-sm ml-auto" />
                 </Button>
               </a>
               <Link href="/download" className="block" onClick={() => setMobileMenuOpen(false)}>

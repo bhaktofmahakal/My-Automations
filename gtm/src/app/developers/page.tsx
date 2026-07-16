@@ -122,14 +122,14 @@ const resources = [
   {
     title: 'GitHub Repository',
     description: 'Source code, examples, and contributions',
-    href: 'https://github.com/gtm-skills/gtm',
+    href: 'https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm',
     icon: Github,
     badge: 'MIT',
   },
 ];
 
 const codeExamples = {
-  curl: `curl "https://gtm-skills.com/api/v1/prompts/recommend" \\
+  curl: `curl "https://github.com/bhaktofmahakal/My-Automations/api/v1/prompts/recommend" \\
   -H "Content-Type: application/json" \\
   -d '{
     "role": "sdr",
@@ -176,7 +176,7 @@ export default function DevelopersPage() {
                   Download OpenAPI Spec
                 </Button>
               </a>
-              <a href="https://github.com/gtm-skills/gtm" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm" target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="gap-2">
                   <Github className="h-4 w-4" />
                   View on GitHub
@@ -244,7 +244,7 @@ export default function DevelopersPage() {
                 <Badge className="font-mono text-xs bg-emerald-500/20 text-emerald-400 border-emerald-500/30">GET</Badge>
               </div>
               <pre className="p-4 text-sm overflow-x-auto">
-                <code className="text-emerald-400 font-mono">curl https://gtm-skills.com/api/v1/agents</code>
+                <code className="text-emerald-400 font-mono">curl https://github.com/bhaktofmahakal/My-Automations/api/v1/agents</code>
               </pre>
             </div>
 
@@ -255,7 +255,7 @@ export default function DevelopersPage() {
                 <Badge className="font-mono text-xs bg-emerald-500/20 text-emerald-400 border-emerald-500/30">GET</Badge>
               </div>
               <pre className="p-4 text-sm overflow-x-auto">
-                <code className="text-emerald-400 font-mono">curl https://gtm-skills.com/api/v1/agents/writer/skill</code>
+                <code className="text-emerald-400 font-mono">curl https://github.com/bhaktofmahakal/My-Automations/api/v1/agents/writer/skill</code>
               </pre>
             </div>
           </div>
@@ -274,7 +274,7 @@ export default function DevelopersPage() {
                 </p>
                 <div className="bg-black/50 rounded-lg p-4 mb-4 overflow-x-auto">
                   <pre className="text-sm">
-                    <code className="text-orange-400 font-mono">{`curl -X POST "https://gtm-skills.com/api/v1/agents/orchestrate" \\
+                    <code className="text-orange-400 font-mono">{`curl -X POST "https://github.com/bhaktofmahakal/My-Automations/api/v1/agents/orchestrate" \\
   -H "Content-Type: application/json" \\
   -d '{"message": "Find SaaS companies and write cold emails"}'`}</code>
                   </pre>
@@ -436,7 +436,7 @@ export default function DevelopersPage() {
           <p className="text-muted-foreground mb-6">
             Official SDKs for TypeScript and Python are in development. Star the repo to get notified.
           </p>
-          <a href="https://github.com/gtm-skills/gtm" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm" target="_blank" rel="noopener noreferrer">
             <Button variant="outline" className="gap-2">
               <Github className="h-4 w-4" />
               Watch on GitHub

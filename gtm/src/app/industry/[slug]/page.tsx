@@ -47,16 +47,16 @@ export default async function IndustryDetailPage({ params }: Props) {
       <SoftwareSourceCodeJsonLd
         name={`${industry.name} Prompts - GTM Skills`}
         description={industry.description}
-        url={`https://gtm-skills.com/industry/${slug}`}
+        url={`https://github.com/bhaktofmahakal/My-Automations/industry/${slug}`}
         category={industry.name}
         promptCount={industry.count}
         keywords={['sales prompts', industry.name.toLowerCase(), 'GTM prompts', 'B2B']}
       />
       <BreadcrumbJsonLd
         items={[
-          { name: 'Home', url: 'https://gtm-skills.com' },
-          { name: 'Industries', url: 'https://gtm-skills.com/industry' },
-          { name: industry.name, url: `https://gtm-skills.com/industry/${slug}` },
+          { name: 'Home', url: 'https://github.com/bhaktofmahakal/My-Automations' },
+          { name: 'Industries', url: 'https://github.com/bhaktofmahakal/My-Automations/industry' },
+          { name: industry.name, url: `https://github.com/bhaktofmahakal/My-Automations/industry/${slug}` },
         ]}
       />
       <div className="py-12 md:py-20">
@@ -196,7 +196,7 @@ export default async function IndustryDetailPage({ params }: Props) {
             Utsav Mishra is an AI sales team that finds leads in {industry.name.toLowerCase()},
             researches them, and writes personalized outreach.
           </p>
-          <a href="https://github.com/gtm-skills/gtm" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm" target="_blank" rel="noopener noreferrer">
             <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
               Try Utsav Mishra Free
             </Button>

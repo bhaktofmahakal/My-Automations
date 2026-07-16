@@ -213,7 +213,7 @@ export default function LeaderboardPage() {
 
   // Share prompt
   const handleShare = (prompt: LeaderboardPrompt) => {
-    const url = `https://gtm-skills.com/leaderboard?prompt=${prompt.id}`;
+    const url = `https://github.com/bhaktofmahakal/My-Automations/leaderboard?prompt=${prompt.id}`;
     const text = `Check out this GTM prompt: "${prompt.title}" - ${prompt.score} points on GTM Skills`;
 
     if (navigator.share) {

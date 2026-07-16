@@ -229,7 +229,7 @@ function HubSpotEmbedContent() {
           </p>
         </div>
         <a
-          href="https://gtm-skills.com/prompts?utm_source=hubspot"
+          href="https://github.com/bhaktofmahakal/My-Automations/prompts?utm_source=hubspot"
           target="_blank"
           rel="noopener noreferrer"
         >

@@ -198,14 +198,14 @@ export default function Home() {
             {/* Primary CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <a
-                href="https://github.com/gtm-skills/gtm"
+                href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Button size="lg" className="h-12 px-8 gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
                   <Star className="h-4 w-4" />
                   Star on GitHub
-                  <GitHubStars repo="gtm-skills/gtm" className="text-sm ml-1" />
+                  <GitHubStars repo="bhaktofmahakal/My-Automations/tree/main/gtm" className="text-sm ml-1" />
                 </Button>
               </a>
               <Link href="/prompts">
@@ -674,12 +674,12 @@ Rules:
             <p className="text-muted-foreground mb-8">
               Star us on GitHub to help other sales professionals discover these resources.
             </p>
-            <a href="https://github.com/gtm-skills/gtm" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="h-12 px-8 gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700">
                 <Github className="h-5 w-5" />
                 <Star className="h-4 w-4 text-yellow-400" />
                 Star on GitHub
-                <GitHubStars repo="gtm-skills/gtm" className="text-sm text-zinc-400 ml-1" />
+                <GitHubStars repo="bhaktofmahakal/My-Automations/tree/main/gtm" className="text-sm text-zinc-400 ml-1" />
               </Button>
             </a>
             <p className="text-xs text-muted-foreground mt-4">
@@ -741,7 +741,7 @@ Rules:
               <p className="text-zinc-400 max-w-xl mx-auto mb-8">
                 GTM Skills is 100% free and open source under the MIT license. Star the repo to help other sales teams discover it.
               </p>
-              <a href="https://github.com/gtm-skills/gtm" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/bhaktofmahakal/My-Automations/tree/main/gtm" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="h-12 px-8 gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
                   <Github className="h-5 w-5" />
                   Star on GitHub
