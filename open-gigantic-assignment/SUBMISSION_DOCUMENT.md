@@ -3,7 +3,8 @@
 **Candidate Name:** Utsav Mishra  
 **Submission Date:** August 18, 2026  
 **Project Name:** OmniGraph Studio  
-**Live Deployment (Vercel):** [https://omnigraph-studio.vercel.app](https://omnigraph-studio.vercel.app)  
+**Live Production URL (Vercel):** [https://omnigraph-app-kohl.vercel.app](https://omnigraph-app-kohl.vercel.app)  
+**Deployment Preview URL:** [https://omnigraph-50ybho55j-utsavs-projects-5c4e1539.vercel.app](https://omnigraph-50ybho55j-utsavs-projects-5c4e1539.vercel.app)  
 **GitHub Repository:** [https://github.com/bhaktofmahakal/omnigraph-studio](https://github.com/bhaktofmahakal/omnigraph-studio)  
 **Monorepo Workspace:** [https://github.com/bhaktofmahakal/open-gigantic-assignment](https://github.com/bhaktofmahakal/open-gigantic-assignment)  
 
@@ -32,6 +33,7 @@ Synthesized from the reference design guidelines (Cursor timeline stages, Linear
 
 ### Technical Stack
 * **Framework:** Next.js 16 (App Router + Turbopack), React 19, TypeScript
+* **Deployment:** Vercel Production (`iad1` edge compute)
 * **State Management:** Zustand (`useOmniStore`) with reactive dispatch
 * **Graph Canvas:** `@xyflow/react` with custom AST nodes
 * **Editor:** `@monaco-editor/react` with syntax tokenization and surgical diff views
@@ -39,25 +41,29 @@ Synthesized from the reference design guidelines (Cursor timeline stages, Linear
 
 ---
 
-## 3. Benchmark & Verification Logs
+## 3. Verified Production Deployment & Build Logs
 
 ```text
 ▲ Next.js 16.3.1 (Turbopack)
-✓ Running next.config.ts took 103ms
+✓ Running next.config.ts took 112ms
 Creating an optimized production build ...
-✓ Compiled successfully in 687ms
+✓ Compiled successfully in 2.8s
 Running TypeScript ...
-Finished TypeScript in 4.4s ...
-Collecting page data using 8 workers ...
-✓ Generating static pages using 8 workers (7/7) in 2.5s
+Finished TypeScript in 2.8s ...
+Collecting page data using 1 worker ...
+✓ Generating static pages using 1 worker (7/7) in 144ms
 Finalizing page optimization ...
 
 Route (app)
 ┌ ○ /                              [Static 2x2 Showcase + Agent Timeline Strip + 15-Screen Suite]
 ├ ○ /_not-found                    [Static 404]
-├ ƒ /api/agents/psmas-run          [Dynamic API - Agent execution]
+├ ƒ /api/agents/psmas-run          [Dynamic API - Agent execution & streaming]
 ├ ƒ /api/graph/traverse            [Dynamic API - Subgraph traversal]
 └ ƒ /api/tokens/benchmark          [Dynamic API - Token telemetry]
+
+Deploying outputs...
+Production: https://omnigraph-50ybho55j-utsavs-projects-5c4e1539.vercel.app
+Aliased:    https://omnigraph-app-kohl.vercel.app
 
 ✓ ZERO TypeScript errors
 ✓ ZERO lint warnings
@@ -91,9 +97,9 @@ Route (app)
 ---
 
 ## 5. Repository & Deployment Links
+* **Live Production URL:** [https://omnigraph-app-kohl.vercel.app](https://omnigraph-app-kohl.vercel.app)
 * **GitHub Repository:** [https://github.com/bhaktofmahakal/omnigraph-studio](https://github.com/bhaktofmahakal/omnigraph-studio)
-* **Live Vercel Preview:** [https://omnigraph-studio.vercel.app](https://omnigraph-studio.vercel.app)
-* **Assignment Guidelines & Specifications:** Located in root markdown documents (`PRD.md`, `ARCHITECTURE.md`, `IMPLEMENTATION_PLAN.md`).
+* **Monorepo Workspace:** [https://github.com/bhaktofmahakal/open-gigantic-assignment](https://github.com/bhaktofmahakal/open-gigantic-assignment)
 
 ---
 *Ready for founder evaluation by Mohit Dubey & Premraj Kungar.*
