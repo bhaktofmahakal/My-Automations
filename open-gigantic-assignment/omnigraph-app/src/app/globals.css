@@ -1,0 +1,114 @@
+@import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+
+:root {
+  --background: #08090d;
+  --foreground: #f4f4f6;
+  --surface-1: #0e1017;
+  --surface-2: #141722;
+  --surface-3: #1a1e2d;
+  --hairline: #222638;
+  --hairline-strong: #333852;
+  --accent-iris: #5e6ad2;
+  --accent-cyan: #38bdf8;
+  --accent-emerald: #34d399;
+  --accent-amber: #fbbf24;
+  --accent-rose: #f43f5e;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* Custom developer scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #08090d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222638;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333852;
+}
+
+/* ReactFlow Canvas custom dark mode styling */
+.react-flow__pane {
+  background: #08090d !important;
+}
+
+.react-flow__controls {
+  background: #0e1017 !important;
+  border: 1px solid #222638 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.react-flow__controls-button {
+  background: #0e1017 !important;
+  border-bottom: 1px solid #222638 !important;
+  color: #94a3b8 !important;
+  fill: #94a3b8 !important;
+}
+
+.react-flow__controls-button:hover {
+  background: #141722 !important;
+  color: #f4f4f6 !important;
+  fill: #f4f4f6 !important;
+}
+
+.react-flow__edge-path {
+  stroke: #333852 !important;
+  stroke-width: 1.5px !important;
+  transition: stroke 0.3s ease, stroke-width 0.3s ease;
+}
+
+.react-flow__edge.active .react-flow__edge-path,
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke: #38bdf8 !important;
+  stroke-width: 2.5px !important;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
+}
+
+.react-flow__attribution {
+  display: none !important;
+}
+
+/* Pulse animation for active AST nodes */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+/* Radar rotation sweep */
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-radar-sweep {
+  animation: radar-sweep 8s linear infinite;
+}
