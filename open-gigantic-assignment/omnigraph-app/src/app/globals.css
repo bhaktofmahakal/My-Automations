@@ -2,26 +2,50 @@
 @import "@xyflow/react/dist/style.css";
 
 :root {
-  --background: #08090d;
-  --foreground: #f4f4f6;
-  --surface-1: #0e1017;
-  --surface-2: #141722;
-  --surface-3: #1a1e2d;
-  --hairline: #222638;
-  --hairline-strong: #333852;
-  --accent-iris: #5e6ad2;
-  --accent-cyan: #38bdf8;
-  --accent-emerald: #34d399;
-  --accent-amber: #fbbf24;
-  --accent-rose: #f43f5e;
+  /* Canvas & Surface (GitHub-dark inspired, from reference screenshots) */
+  --bg-canvas: #0d1117;
+  --bg-surface: #161b22;
+  --bg-surface-elevated: #1c2128;
+  --bg-surface-inset: #010409;
+  --bg-overlay: #30363db3;
+
+  /* Borders & Hairlines */
+  --border-default: #30363d;
+  --border-muted: #21262d;
+  --border-subtle: rgba(240, 246, 252, 0.1);
+
+  /* Ink / Text */
+  --fg-default: #e6edf3;
+  --fg-muted: #8b949e;
+  --fg-subtle: #6e7681;
+  --fg-on-emphasis: #ffffff;
+
+  /* Accent Palette (matched to reference pixel colors) */
+  --accent-cyan: #58a6ff;
+  --accent-teal: #3fb950;
+  --accent-emerald: #3fb950;
+  --accent-red: #f85149;
+  --accent-orange: #d29922;
+  --accent-purple: #bc8cff;
+  --accent-pink: #f778ba;
+
+  /* Agent Timeline Stage Colors (from Cursor reference) */
+  --stage-thinking: #bc8cff;    /* Purple - Thinking/Planning */
+  --stage-reading: #58a6ff;     /* Blue - Reading/Scanning */
+  --stage-grepping: #f0883e;    /* Orange - Grepping/Searching */
+  --stage-editing: #3fb950;     /* Green - Editing/Patching */
+  --stage-validating: #d29922;  /* Amber - Validating/Testing */
+  --stage-complete: #3fb950;    /* Green - Complete/Done */
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-canvas);
+  color: var(--fg-default);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   overflow-x: hidden;
   user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom developer scrollbars */
@@ -31,84 +55,108 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #08090d;
+  background: var(--bg-canvas);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #222638;
+  background: var(--border-default);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #333852;
+  background: var(--fg-subtle);
 }
 
-/* ReactFlow Canvas custom dark mode styling */
+/* ReactFlow Canvas dark mode */
 .react-flow__pane {
-  background: #08090d !important;
+  background: var(--bg-canvas) !important;
 }
 
 .react-flow__controls {
-  background: #0e1017 !important;
-  border: 1px solid #222638 !important;
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-default) !important;
   border-radius: 8px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
 }
 
 .react-flow__controls-button {
-  background: #0e1017 !important;
-  border-bottom: 1px solid #222638 !important;
-  color: #94a3b8 !important;
-  fill: #94a3b8 !important;
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border-default) !important;
+  color: var(--fg-muted) !important;
+  fill: var(--fg-muted) !important;
 }
 
 .react-flow__controls-button:hover {
-  background: #141722 !important;
-  color: #f4f4f6 !important;
-  fill: #f4f4f6 !important;
+  background: var(--bg-surface-elevated) !important;
+  color: var(--fg-default) !important;
+  fill: var(--fg-default) !important;
 }
 
 .react-flow__edge-path {
-  stroke: #333852 !important;
+  stroke: var(--border-default) !important;
   stroke-width: 1.5px !important;
-  transition: stroke 0.3s ease, stroke-width 0.3s ease;
+  stroke-dasharray: 6 4 !important;
+  transition: stroke 0.3s ease;
 }
 
 .react-flow__edge.active .react-flow__edge-path,
 .react-flow__edge.animated .react-flow__edge-path {
-  stroke: #38bdf8 !important;
-  stroke-width: 2.5px !important;
-  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
+  stroke: var(--accent-cyan) !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: none !important;
+  filter: drop-shadow(0 0 4px rgba(88, 166, 255, 0.4));
 }
 
 .react-flow__attribution {
   display: none !important;
 }
 
-/* Pulse animation for active AST nodes */
+/* Pulse glow animation for active nodes */
 @keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
-  }
+  0%, 100% { box-shadow: 0 0 8px rgba(88, 166, 255, 0.15); }
+  50% { box-shadow: 0 0 16px rgba(88, 166, 255, 0.45); }
 }
 
 .animate-pulse-glow {
   animation: pulse-glow 2s infinite ease-in-out;
 }
 
-/* Radar rotation sweep */
+/* Radar sweep rotation */
 @keyframes radar-sweep {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .animate-radar-sweep {
   animation: radar-sweep 8s linear infinite;
+}
+
+/* Agent timeline slide-in */
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slide-in-right 0.4s ease-out forwards;
+}
+
+/* Donut chart pulse for token telemetry */
+@keyframes donut-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(63, 185, 80, 0.2)); }
+  50% { filter: drop-shadow(0 0 14px rgba(63, 185, 80, 0.5)); }
+}
+
+.animate-donut-pulse {
+  animation: donut-pulse 3s infinite ease-in-out;
+}
+
+/* Live badge blink */
+@keyframes live-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-live {
+  animation: live-blink 1.5s infinite ease-in-out;
 }

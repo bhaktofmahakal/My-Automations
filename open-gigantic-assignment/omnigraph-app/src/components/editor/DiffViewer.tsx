@@ -1,197 +1,200 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { FileDiff, AlertTriangle, Check, X, Scissors } from 'lucide-react';
 import { useOmniStore } from '@/lib/store/useOmniStore';
-import { DiffHunk } from '@/lib/types';
-import { Check, X, GitCommit, Split, ArrowRight, ShieldCheck, Cpu, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const DiffViewer: React.FC = () => {
-  const diffHunks = useOmniStore(state => state.diffHunks);
-  const activeFileTab = useOmniStore(state => state.activeFileTab);
-  const acceptHunk = useOmniStore(state => state.acceptHunk);
-  const rejectHunk = useOmniStore(state => state.rejectHunk);
-  const acceptAllHunks = useOmniStore(state => state.acceptAllHunks);
-  const rejectAllHunks = useOmniStore(state => state.rejectAllHunks);
+  const [hunkStatus, setHunkStatus] = useState<'pending' | 'accepted' | 'rejected'>('pending');
   const openApprovalModal = useOmniStore(state => state.openApprovalModal);
 
-  // Filter hunks for the active tab, or show all
-  const visibleHunks = diffHunks.filter(h => h.file === activeFileTab);
-  const pendingCount = visibleHunks.filter(h => h.status === 'pending').length;
-  const acceptedCount = visibleHunks.filter(h => h.status === 'accepted').length;
-
-  const handleAcceptWithFx = (id: string) => {
-    acceptHunk(id);
+  const handleAccept = () => {
+    setHunkStatus('accepted');
     confetti({
-      particleCount: 25,
-      spread: 40,
+      particleCount: 30,
+      spread: 50,
       origin: { y: 0.8 },
-      colors: ['#34d399', '#38bdf8', '#818cf8'],
+      colors: ['#3fb950', '#58a6ff', '#bc8cff'],
     });
   };
 
+  const handleReject = () => {
+    setHunkStatus('rejected');
+  };
+
   return (
-    <div className="flex flex-col h-full bg-[#090a0f] border border-[#222638] rounded-xl overflow-hidden shadow-2xl font-mono">
-      {/* Diff Toolbar */}
-      <div className="flex items-center justify-between px-3 py-2 bg-[#0e1017] border-b border-[#222638]">
-        <div className="flex items-center gap-2">
-          <Split className="w-4 h-4 text-emerald-400" />
-          <span className="text-xs font-semibold text-zinc-200">
-            Surgical Hunk Cherry-Picker ({activeFileTab})
-          </span>
-          <span className="text-[10px] text-zinc-500 bg-[#141722] px-1.5 py-0.5 rounded border border-[#222638]">
-            {visibleHunks.length} hunks ({acceptedCount} accepted)
-          </span>
+    <div className="flex flex-col h-full bg-[#161b22] text-[#e6edf3] font-sans overflow-hidden select-none">
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between px-5 py-3 border-b border-[#30363d]">
+        <div className="flex items-center gap-2.5">
+          <FileDiff className="w-4 h-4 text-[#e6edf3]" />
+          <h2 className="text-sm font-semibold text-[#e6edf3] tracking-tight">
+            Surgical Diff Picker
+          </h2>
         </div>
 
-        {/* Global Batch Controls */}
-        <div className="flex items-center gap-2 text-xs">
-          <button
-            onClick={acceptAllHunks}
-            className="flex items-center gap-1 px-2 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-colors text-[11px]"
-          >
-            <Check className="w-3 h-3" />
-            <span>Accept All</span>
-          </button>
-          <button
-            onClick={rejectAllHunks}
-            className="flex items-center gap-1 px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors text-[11px]"
-          >
-            <X className="w-3 h-3" />
-            <span>Reject All</span>
-          </button>
-          <button
-            onClick={openApprovalModal}
-            className="flex items-center gap-1 px-3 py-1 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 text-zinc-950 font-bold hover:brightness-110 shadow-lg text-xs"
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Apply Approved</span>
-          </button>
+        {/* Human Review Required Pill */}
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#2e2316] border border-[#9e6a03] text-[#d29922] text-xs font-semibold">
+          <AlertTriangle className="w-3.5 h-3.5 text-[#d29922]" />
+          <span className="tracking-wide">HUMAN REVIEW REQUIRED</span>
         </div>
       </div>
 
-      {/* Hunks Container */}
-      <div className="flex-1 p-3 overflow-y-auto space-y-4 text-xs select-text">
-        {visibleHunks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-zinc-600 space-y-2">
-            <Check className="w-8 h-8 text-emerald-500/40" />
-            <p>No surgical diffs pending for {activeFileTab}. Working tree is clean.</p>
+      {/* ── File Subtitle ── */}
+      <div className="px-5 pt-2 pb-1 text-xs font-mono text-[#8b949e]">
+        src/engine/runner.ts
+      </div>
+
+      {/* ── Main Split Diff Content ── */}
+      <div className="flex-1 px-5 py-2 grid grid-cols-2 gap-3 font-mono text-xs overflow-hidden relative">
+
+        {/* ── Left Box: - REMOVED ── */}
+        <div className="flex flex-col bg-[#0d1117] rounded-lg border border-[#30363d] overflow-hidden">
+          {/* Box Header */}
+          <div className="flex items-center justify-between px-3 py-1.5 bg-[#21262d] border-b border-[#30363d] text-[11px]">
+            <span className="text-[#f85149] font-bold">&minus; REMOVED</span>
+            <span className="text-[#8b949e]">Lines 42-48</span>
           </div>
-        ) : (
-          visibleHunks.map((hunk, index) => {
-            const isAccepted = hunk.status === 'accepted';
-            const isRejected = hunk.status === 'rejected';
 
-            return (
-              <div
-                key={hunk.id}
-                className={`rounded-lg border transition-all ${
-                  isAccepted
-                    ? 'border-emerald-500/60 bg-[#0b1411]'
-                    : isRejected
-                    ? 'border-rose-500/40 bg-[#140b0d] opacity-60'
-                    : 'border-[#222638] bg-[#0e1017]'
-                }`}
-              >
-                {/* Hunk Header */}
-                <div className="flex items-center justify-between px-3 py-2 border-b border-[#222638] bg-[#12141e]">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-zinc-400 font-bold bg-[#1a1e2d] px-1.5 py-0.5 rounded">
-                      Hunk #{index + 1}
-                    </span>
-                    <span className="text-cyan-400 font-semibold">{hunk.header}</span>
-                    {hunk.astNodeId && (
-                      <span className="text-[10px] text-zinc-500 flex items-center gap-1">
-                        <Cpu className="w-3 h-3 text-zinc-500" />
-                        {hunk.astNodeId}
-                      </span>
-                    )}
-                  </div>
+          {/* Code lines */}
+          <div className="p-3 text-[11px] leading-relaxed font-mono space-y-1 select-text">
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">42</span>
+              <span className="text-[#e6edf3]">const result = await runAgent(</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">43</span>
+              <span className="text-[#e6edf3] pl-4">input,</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e] bg-[#3c1e22]/50 rounded px-0.5">
+              <span className="w-4 text-right select-none text-[#f85149]">44</span>
+              <span className="text-[#f85149] pl-4 font-semibold">context</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">45</span>
+              <span className="text-[#e6edf3]">);</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">46</span>
+              <span className="text-[#8b949e]">&nbsp;</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">47</span>
+              <span className="text-[#8b949e]">&nbsp;</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">48</span>
+              <span className="text-[#e6edf3]">return result;</span>
+            </div>
+          </div>
+        </div>
 
-                  {/* Status & Hunk Action Buttons */}
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className={`text-[9px] uppercase px-1.5 py-0.5 rounded font-bold ${
-                        isAccepted
-                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                          : isRejected
-                          ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                          : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                      }`}
-                    >
-                      {hunk.status}
-                    </span>
+        {/* ── Right Box: + ADDED ── */}
+        <div className="flex flex-col bg-[#0d1117] rounded-lg border border-[#30363d] overflow-hidden">
+          {/* Box Header */}
+          <div className="flex items-center justify-between px-3 py-1.5 bg-[#21262d] border-b border-[#30363d] text-[11px]">
+            <span className="text-[#3fb950] font-bold">&#43; ADDED</span>
+            <span className="text-[#8b949e]">Lines 42-48</span>
+          </div>
 
-                    <button
-                      onClick={() => handleAcceptWithFx(hunk.id)}
-                      className={`p-1 rounded transition-colors ${
-                        isAccepted
-                          ? 'bg-emerald-500 text-zinc-950'
-                          : 'bg-[#1a1e2d] hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30'
-                      }`}
-                      title="Accept this Hunk"
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                    </button>
+          {/* Code lines */}
+          <div className="p-3 text-[11px] leading-relaxed font-mono space-y-1 select-text">
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">42</span>
+              <span className="text-[#e6edf3]">const result = await runAgent(</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">43</span>
+              <span className="text-[#e6edf3] pl-4">input,</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e] bg-[#16291e] rounded px-0.5">
+              <span className="w-4 text-right select-none text-[#3fb950]">44</span>
+              <span className="text-[#3fb950] pl-4 font-semibold">compressedContext</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">45</span>
+              <span className="text-[#e6edf3]">);</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">46</span>
+              <span className="text-[#8b949e]">&nbsp;</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">47</span>
+              <span className="text-[#8b949e]">&nbsp;</span>
+            </div>
+            <div className="flex gap-3 text-[#8b949e]">
+              <span className="w-4 text-right select-none text-[#6e7681]">48</span>
+              <span className="text-[#e6edf3]">return result;</span>
+            </div>
+          </div>
+        </div>
 
-                    <button
-                      onClick={() => rejectHunk(hunk.id)}
-                      className={`p-1 rounded transition-colors ${
-                        isRejected
-                          ? 'bg-rose-500 text-zinc-950'
-                          : 'bg-[#1a1e2d] hover:bg-rose-500/30 text-rose-400 border border-rose-500/30'
-                      }`}
-                      title="Reject this Hunk"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
+        {/* ── Connecting SVG Arrow between diff markers ── */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
+          <path
+            d="M 230 115 C 265 115, 275 115, 290 115"
+            fill="none"
+            stroke="#f85149"
+            strokeWidth="1.5"
+            strokeDasharray="3 3"
+          />
+          <path
+            d="M 285 115 C 290 115, 300 115, 310 115"
+            fill="none"
+            stroke="#3fb950"
+            strokeWidth="1.5"
+            strokeDasharray="3 3"
+          />
+        </svg>
+      </div>
 
-                {/* Hunk Rationale / First-Principles Explanation */}
-                <div className="px-3 py-1.5 bg-[#141724] border-b border-[#222638] text-[11px] text-zinc-300 flex items-start gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-zinc-500 font-semibold">RATIONALE: </span>
-                    <span>{hunk.explanation}</span>
-                  </div>
-                </div>
+      {/* ── Footer / Hunk Controls ── */}
+      <div className="mt-auto px-5 py-3 border-t border-[#30363d] bg-[#161b22] flex items-center justify-between">
+        {/* Left Hunk Position */}
+        <div className="text-xs font-mono">
+          <span className="text-[#e6edf3] font-medium block">Hunk 1 of 1</span>
+          <span className="text-[#8b949e] text-[11px]">42-48 of 142 lines</span>
+        </div>
 
-                {/* Diff Lines Rendering */}
-                <div className="p-2 space-y-0.5 overflow-x-auto text-[11.5px] leading-snug">
-                  {hunk.lines.map((line, lIdx) => {
-                    const isAddition = line.type === 'addition';
-                    const isDeletion = line.type === 'deletion';
+        {/* Right Actions */}
+        <div className="flex items-center gap-2">
+          {/* Accept Hunk (Green) */}
+          <button
+            onClick={handleAccept}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-medium text-xs transition-all ${
+              hunkStatus === 'accepted'
+                ? 'bg-[#238636] text-white shadow-[0_0_12px_rgba(63,185,80,0.4)]'
+                : 'bg-[#1b3127] hover:bg-[#238636] text-[#3fb950] hover:text-white border border-[#238636]'
+            }`}
+          >
+            <Check className="w-4 h-4" />
+            <span>Accept Hunk</span>
+          </button>
 
-                    return (
-                      <div
-                        key={lIdx}
-                        className={`flex items-center font-mono rounded px-1.5 py-0.5 ${
-                          isAddition
-                            ? 'bg-emerald-950/40 text-emerald-300 border-l-2 border-emerald-400'
-                            : isDeletion
-                            ? 'bg-rose-950/40 text-rose-300 border-l-2 border-rose-500'
-                            : 'text-zinc-400'
-                        }`}
-                      >
-                        <span className="w-8 text-[10px] text-zinc-600 select-none text-right pr-2">
-                          {line.oldLineNo || ''}
-                        </span>
-                        <span className="w-8 text-[10px] text-zinc-600 select-none text-right pr-2">
-                          {line.newLineNo || ''}
-                        </span>
-                        <span className="w-4 select-none text-zinc-500">
-                          {isAddition ? '+' : isDeletion ? '-' : ' '}
-                        </span>
-                        <span className="flex-1 whitespace-pre">{line.content.replace(/^[+-]/, '')}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })
-        )}
+          {/* Reject Hunk (Red) */}
+          <button
+            onClick={handleReject}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-medium text-xs transition-all ${
+              hunkStatus === 'rejected'
+                ? 'bg-[#da3633] text-white shadow-[0_0_12px_rgba(248,81,73,0.4)]'
+                : 'bg-[#2d191e] hover:bg-[#da3633] text-[#f85149] hover:text-white border border-[#f85149]/60'
+            }`}
+          >
+            <X className="w-4 h-4" />
+            <span>Reject Hunk</span>
+          </button>
+
+          {/* Cherry-pick Button */}
+          <button
+            onClick={openApprovalModal}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-[#e6edf3] font-medium text-xs transition-colors"
+          >
+            <Scissors className="w-3.5 h-3.5 text-[#8b949e]" />
+            <span>Cherry-pick</span>
+          </button>
+        </div>
       </div>
     </div>
   );

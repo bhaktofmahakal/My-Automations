@@ -1,73 +1,81 @@
 'use client';
 
 import React from 'react';
+import { BarChart2 } from 'lucide-react';
 import { useOmniStore } from '@/lib/store/useOmniStore';
-import { FlaskConical, CheckCircle2, Trophy, BarChart2, ShieldCheck, Zap } from 'lucide-react';
 
 export const SWEBenchCard: React.FC = () => {
-  const activeScenario = useOmniStore(state => state.activeScenario);
-  const meta = activeScenario.sweBenchMetadata;
-
   return (
-    <div className="bg-[#0e1017] border border-[#222638] rounded-xl p-4 text-white shadow-xl font-mono space-y-3">
-      {/* Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-[#222638]">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            <Trophy className="w-4 h-4" />
+    <div className="flex flex-col h-full bg-[#161b22] text-[#e6edf3] font-sans overflow-hidden select-none">
+      {/* ── Header ── */}
+      <div className="px-5 py-3 border-b border-[#30363d]">
+        <div className="flex items-center gap-2.5">
+          <BarChart2 className="w-4 h-4 text-[#e6edf3]" />
+          <h2 className="text-sm font-semibold text-[#e6edf3] tracking-tight">
+            SWE-bench Lite
+          </h2>
+        </div>
+        <p className="text-xs text-[#8b949e] mt-0.5">
+          Median execution cost (USD)
+        </p>
+      </div>
+
+      {/* ── Main Comparison Bars ── */}
+      <div className="flex-1 flex flex-col justify-center px-5 py-3 space-y-4">
+
+        {/* 1. Claude Code baseline Bar */}
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-[#8b949e] font-medium">Claude Code baseline</span>
+            <span className="text-xs font-mono font-bold text-[#f85149]">$0.104</span>
           </div>
-          <div>
-            <h3 className="text-xs font-bold text-zinc-100 uppercase tracking-wider">
-              SWE-bench Lite Rigor
-            </h3>
-            <p className="text-[10px] text-zinc-400">
-              Django 10 Bugs Evaluation Benchmark
-            </p>
+
+          <div className="relative h-3 w-full bg-[#0d1117] rounded-full overflow-hidden border border-[#30363d]">
+            <div
+              className="h-full bg-[#f85149] rounded-full transition-all duration-700"
+              style={{ width: `${(0.104 / 0.12) * 100}%` }}
+            />
+          </div>
+
+          <div className="flex justify-between text-[10px] text-[#6e7681] font-mono px-0.5">
+            <span>0</span>
+            <span>0.12</span>
           </div>
         </div>
 
-        <span className="flex items-center gap-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/20">
-          <CheckCircle2 className="w-3 h-3" /> {meta.status}
-        </span>
-      </div>
+        {/* 2. OmniGraph Studio Bar */}
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-[#8b949e] font-medium">OmniGraph Studio</span>
+            <span className="text-xs font-mono font-bold text-[#3fb950]">$0.065</span>
+          </div>
 
-      {/* Benchmark Task Details */}
-      <div className="p-2.5 rounded-lg bg-[#141722] border border-[#222638] text-xs space-y-1">
-        <div className="flex justify-between text-zinc-400">
-          <span>Benchmark Task:</span>
-          <span className="text-zinc-200 font-bold">{meta.id}</span>
-        </div>
-        <div className="flex justify-between text-zinc-400">
-          <span>Target Module:</span>
-          <span className="text-cyan-400 truncate max-w-[170px]">{meta.module}</span>
-        </div>
-        <div className="flex justify-between text-zinc-400">
-          <span>Passing Assertions:</span>
-          <span className="text-emerald-400 font-bold">
-            {meta.testAssertionsPassed} / {meta.testAssertionsTotal} (100%)
-          </span>
-        </div>
-      </div>
+          <div className="relative h-3 w-full bg-[#0d1117] rounded-full overflow-hidden border border-[#30363d]">
+            <div
+              className="h-full bg-[#3fb950] rounded-full transition-all duration-700"
+              style={{ width: `${(0.065 / 0.12) * 100}%` }}
+            />
+          </div>
 
-      {/* Comparison Grid */}
-      <div className="grid grid-cols-2 gap-2 text-[11px]">
-        <div className="p-2 rounded bg-[#090a0f] border border-emerald-500/30">
-          <span className="text-zinc-500 block text-[9px]">SUPERBRAIN PSMAS</span>
-          <div className="text-emerald-400 font-bold">{meta.superbrainTokens.toLocaleString()} tokens</div>
-          <div className="text-[10px] text-zinc-400">${meta.superbrainCost.toFixed(3)} USD</div>
-        </div>
-
-        <div className="p-2 rounded bg-[#090a0f] border border-[#222638]">
-          <span className="text-zinc-500 block text-[9px]">CLAUDE CODE BASELINE</span>
-          <div className="text-zinc-400 font-bold">{meta.rawClaudeTokens.toLocaleString()} tokens</div>
-          <div className="text-[10px] text-zinc-500">${meta.rawClaudeCost.toFixed(3)} USD</div>
+          <div className="flex justify-between text-[10px] text-[#6e7681] font-mono px-0.5">
+            <span>0</span>
+            <span>0.12</span>
+          </div>
         </div>
       </div>
 
-      {/* Resolve Rate Benchmark Pill */}
-      <div className="pt-2 border-t border-[#222638] flex items-center justify-between text-[10px] text-zinc-400">
-        <span>Django 10 Bugs Resolve Rate:</span>
-        <span className="text-cyan-400 font-bold">7 / 10 Resolved (70%)</span>
+      {/* ── Savings Summary Box ── */}
+      <div className="mt-auto px-5 py-3 border-t border-[#30363d] bg-[#161b22] flex items-center justify-between">
+        <div className="text-xs font-medium text-[#e6edf3]">
+          Savings
+        </div>
+
+        <div className="text-right">
+          <div className="text-lg font-bold text-[#3fb950] font-mono leading-none">
+            37.5%
+          </div>
+          <span className="text-[10px] text-[#8b949e]">Lower median cost</span>
+        </div>
       </div>
     </div>
   );
