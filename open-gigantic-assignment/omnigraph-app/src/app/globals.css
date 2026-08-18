@@ -67,6 +67,24 @@ body {
   background: var(--fg-subtle);
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6e7681;
+}
+
 /* ReactFlow Canvas dark mode */
 .react-flow__pane {
   background: var(--bg-canvas) !important;

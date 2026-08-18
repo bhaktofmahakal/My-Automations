@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -16,9 +16,11 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  X,
+  Sparkles,
   Zap,
-  LayoutGrid
 } from 'lucide-react';
+import { useOmniStore } from '@/lib/store/useOmniStore';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Workspace Home', icon: Home, badge: 'Overview' },
@@ -36,79 +38,165 @@ const NAV_ITEMS = [
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const isMobileSidebarOpen = useOmniStore(state => state.isMobileSidebarOpen);
+  const closeMobileSidebar = useOmniStore(state => state.closeMobileSidebar);
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    closeMobileSidebar();
+  }, [pathname, closeMobileSidebar]);
 
   return (
-    <aside
-      className={`h-screen bg-[#0d1117] border-r border-[#30363d] flex flex-col transition-all duration-300 z-30 select-none ${
-        collapsed ? 'w-16' : 'w-64'
-      }`}
-    >
-      {/* Brand Header */}
-      <div className="h-12 flex items-center justify-between px-3 border-b border-[#30363d]">
-        {!collapsed && (
+    <>
+      {/* ── Mobile Overlay Backdrop ── */}
+      {isMobileSidebarOpen && (
+        <div
+          onClick={closeMobileSidebar}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden animate-fade-in transition-opacity"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* ── Mobile Slide-Over Drawer ── */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-[#0d1117] border-r border-[#30363d] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out md:hidden select-none ${
+          isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Mobile Header */}
+        <div className="h-14 flex items-center justify-between px-4 border-b border-[#30363d]">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-[#3fb950] animate-pulse" />
-            <span className="font-bold text-xs tracking-tight font-mono text-[#e6edf3]">
-              OMNIGRAPH
-            </span>
-            <span className="text-[9px] text-[#8b949e] font-mono bg-[#161b22] px-1 py-0.5 rounded border border-[#30363d]">
-              v1.0
+            <span className="font-bold text-sm tracking-tight font-mono text-[#e6edf3]">
+              OMNIGRAPH STUDIO
             </span>
           </div>
-        )}
 
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1 rounded-md bg-[#161b22] hover:bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3] border border-[#30363d] transition-colors ml-auto"
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
-      </div>
+          <button
+            onClick={closeMobileSidebar}
+            className="p-1.5 rounded-lg bg-[#161b22] text-[#8b949e] hover:text-[#e6edf3] border border-[#30363d] transition-colors"
+            aria-label="Close navigation"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
-      {/* Navigation List */}
-      <nav className="flex-1 p-2 space-y-1 overflow-y-auto font-mono text-xs">
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
+        {/* Mobile Navigation List */}
+        <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto font-mono text-xs">
+          {NAV_ITEMS.map((item) => {
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-2.5 py-2 rounded-lg transition-all ${
-                isActive
-                  ? 'bg-[#1f2937] text-[#58a6ff] border border-[#38bdf8]/40 shadow-[0_0_12px_rgba(56,189,248,0.2)] font-semibold'
-                  : 'text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#161b22]'
-              }`}
-              title={collapsed ? item.label : undefined}
-            >
-              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#58a6ff]' : 'text-[#8b949e]'}`} />
-              {!collapsed && (
-                <div className="flex items-center justify-between w-full">
-                  <span className="truncate">{item.label}</span>
-                  <span className="text-[9px] text-[#6e7681] bg-[#0d1117] px-1.5 py-0.5 rounded border border-[#30363d]">
-                    {item.badge}
-                  </span>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={closeMobileSidebar}
+                className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition-all min-h-[42px] ${
+                  isActive
+                    ? 'bg-[#1f2937] text-[#58a6ff] border border-[#38bdf8]/40 shadow-[0_0_12px_rgba(56,189,248,0.2)] font-semibold'
+                    : 'text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#161b22]'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#58a6ff]' : 'text-[#8b949e]'}`} />
+                  <span className="text-xs">{item.label}</span>
                 </div>
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+                <span className="text-[10px] text-[#6e7681] bg-[#0d1117] px-1.5 py-0.5 rounded border border-[#30363d]">
+                  {item.badge}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
 
-      {/* Footer System Status */}
-      {!collapsed && (
-        <div className="p-3 border-t border-[#30363d] bg-[#161b22] text-[10px] font-mono text-[#8b949e] space-y-1">
+        {/* Mobile Footer Status */}
+        <div className="p-4 border-t border-[#30363d] bg-[#161b22] text-xs font-mono text-[#8b949e] space-y-1.5">
           <div className="flex items-center justify-between">
             <span>Engine:</span>
             <span className="text-[#3fb950] font-bold">Superbrain v1.0</span>
           </div>
           <div className="flex items-center justify-between">
-            <span>Context:</span>
-            <span className="text-[#58a6ff]">TokenFold Enabled</span>
+            <span>Compression:</span>
+            <span className="text-[#58a6ff]">TokenFold (72% Off)</span>
           </div>
         </div>
-      )}
-    </aside>
+      </aside>
+
+      {/* ── Desktop Permanent Sidebar ── */}
+      <aside
+        className={`hidden md:flex h-screen bg-[#0d1117] border-r border-[#30363d] flex-col transition-all duration-300 z-30 select-none shrink-0 ${
+          collapsed ? 'w-16' : 'w-60 lg:w-64'
+        }`}
+      >
+        {/* Brand Header */}
+        <div className="h-12 flex items-center justify-between px-3 border-b border-[#30363d]">
+          {!collapsed && (
+            <div className="flex items-center gap-2 truncate">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#3fb950] animate-pulse shrink-0" />
+              <span className="font-bold text-xs tracking-tight font-mono text-[#e6edf3] truncate">
+                OMNIGRAPH
+              </span>
+              <span className="text-[9px] text-[#8b949e] font-mono bg-[#161b22] px-1 py-0.5 rounded border border-[#30363d] shrink-0">
+                v1.0
+              </span>
+            </div>
+          )}
+
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="p-1.5 rounded-md bg-[#161b22] hover:bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3] border border-[#30363d] transition-colors ml-auto shrink-0"
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
+        </div>
+
+        {/* Navigation List */}
+        <nav className="flex-1 p-2 space-y-1 overflow-y-auto font-mono text-xs custom-scrollbar">
+          {NAV_ITEMS.map((item) => {
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-2.5 py-2 rounded-lg transition-all min-h-[38px] ${
+                  isActive
+                    ? 'bg-[#1f2937] text-[#58a6ff] border border-[#38bdf8]/40 shadow-[0_0_12px_rgba(56,189,248,0.2)] font-semibold'
+                    : 'text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#161b22]'
+                }`}
+                title={collapsed ? item.label : undefined}
+              >
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#58a6ff]' : 'text-[#8b949e]'}`} />
+                {!collapsed && (
+                  <div className="flex items-center justify-between w-full min-w-0">
+                    <span className="truncate">{item.label}</span>
+                    <span className="text-[9px] text-[#6e7681] bg-[#0d1117] px-1.5 py-0.5 rounded border border-[#30363d] shrink-0 ml-1">
+                      {item.badge}
+                    </span>
+                  </div>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer System Status */}
+        {!collapsed && (
+          <div className="p-3 border-t border-[#30363d] bg-[#161b22] text-[10px] font-mono text-[#8b949e] space-y-1 shrink-0">
+            <div className="flex items-center justify-between">
+              <span>Engine:</span>
+              <span className="text-[#3fb950] font-bold">Superbrain v1.0</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Context:</span>
+              <span className="text-[#58a6ff]">TokenFold Enabled</span>
+            </div>
+          </div>
+        )}
+      </aside>
+    </>
   );
 };

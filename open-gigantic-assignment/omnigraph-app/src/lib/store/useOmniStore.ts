@@ -14,14 +14,18 @@ import {
 import { SCENARIOS } from '../graph/sampleCodebases';
 import { DJANGO_SCENARIO_STEPS, INITIAL_AGENTS } from '../agents/psmasEngine';
 import { calculateGraphTokenMetrics, expandNodeProgressive } from '../graph/ogParser';
-import { parseCodeToHunks } from '../diff/patchEngine';
+import { parseCodeToHunks, reconcileApprovedHunks } from '../diff/patchEngine';
 
 interface OmniStoreState {
-  // Scenarios
+  // Scenarios & Custom Ingestion
   scenarios: Scenario[];
   activeScenarioId: string;
   activeScenario: Scenario;
+  isIngestModalOpen: boolean;
   setScenario: (id: string) => void;
+  addScenario: (newScenario: Scenario) => void;
+  openIngestModal: () => void;
+  closeIngestModal: () => void;
 
   // ObjectGraph Canvas
   nodes: OGNodeData[];
@@ -74,8 +78,15 @@ interface OmniStoreState {
   closeApprovalModal: () => void;
   applyApprovedPatches: () => void;
 
+  // Mobile UI & Sidebar
+  isMobileSidebarOpen: boolean;
+  toggleMobileSidebar: () => void;
+  closeMobileSidebar: () => void;
+  openMobileSidebar: () => void;
+
   // Telemetry & Metrics
   telemetry: TelemetryMetrics;
+  addTokenUsage: (inputTokens: number, outputTokens: number) => void;
 
   // Multiplayer Collaborators
   collaborators: Collaborator[];
@@ -147,12 +158,20 @@ const INITIAL_COLLABORATORS: Collaborator[] = [
 ];
 
 export const useOmniStore = create<OmniStoreState>((set, get) => ({
-  // Scenarios
+  // Scenarios & Custom Ingestion
   scenarios: SCENARIOS,
   activeScenarioId: initialScenario.id,
   activeScenario: initialScenario,
+  isIngestModalOpen: false,
+  openIngestModal: () => set({ isIngestModalOpen: true }),
+  closeIngestModal: () => set({ isIngestModalOpen: false }),
+  addScenario: (newScenario: Scenario) => {
+    const updatedScenarios = [newScenario, ...get().scenarios];
+    set({ scenarios: updatedScenarios });
+    get().setScenario(newScenario.id);
+  },
   setScenario: (id: string) => {
-    const scenario = SCENARIOS.find(s => s.id === id) || SCENARIOS[0];
+    const scenario = get().scenarios.find(s => s.id === id) || SCENARIOS[0];
     const hunks = scenario.files.flatMap(f =>
       parseCodeToHunks(f.name, f.initialCode, f.modifiedCode)
     );
@@ -173,7 +192,7 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
       edges: scenario.initialEdges,
       files,
       diffHunks: hunks,
-      activeFileTab: scenario.files[0]?.name || 'auth.ts',
+      activeFileTab: scenario.files[0]?.name || 'core.ts',
       logs: [],
       currentPhaseAngle: 0,
       currentPhaseAngleDeg: 0,
@@ -192,10 +211,10 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
   activePathEdgeIds: [],
   selectNode: (nodeId: string | null) => set({ selectedNodeId: nodeId }),
   addNode: (newNode: OGNodeData) => set((state) => ({ nodes: [...state.nodes, newNode] })),
-  toggleNodeExpansion: (nodeId: string) => {
-    const { nodes, edges } = get();
+  toggleNodeExpansion: async (nodeId: string) => {
+    // 1. Optimistic local expansion
+    const { nodes, edges, activeScenarioId } = get();
     const { updatedNodes, updatedEdges } = expandNodeProgressive(nodeId, nodes, edges);
-    const metrics = calculateGraphTokenMetrics(updatedNodes);
     set({
       nodes: updatedNodes,
       edges: updatedEdges,
@@ -205,6 +224,33 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
         activeGraphNodes: updatedNodes.filter(n => n.isLoaded).length,
       }
     });
+
+    // 2. Real Backend API Call to Next.js API Route
+    try {
+      const res = await fetch('/api/graph/traverse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenarioId: activeScenarioId, targetNodeId: nodeId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'success' && data.nodes) {
+          set({
+            nodes: data.nodes,
+            edges: data.edges,
+            telemetry: {
+              ...get().telemetry,
+              totalGraphNodes: data.metrics.totalNodes,
+              activeGraphNodes: data.metrics.disclosedNodes,
+              tokensSaved: data.metrics.tokensSaved,
+              savingsPercentage: data.metrics.savingsPercentage,
+            }
+          });
+        }
+      }
+    } catch {
+      // Local optimistic fallback remains intact
+    }
   },
   setSearchQuery: (searchQuery: string) => set({ searchQuery }),
   resetGraph: () => {
@@ -229,86 +275,288 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
     if (get().isAgentRunning) return;
     set({ isAgentRunning: true });
 
-    const steps = DJANGO_SCENARIO_STEPS;
-    let accumulatedTokens = get().telemetry.totalInputTokens;
+    // Retrieve client BYOK keys if configured
+    const providerMode = typeof window !== 'undefined' ? localStorage.getItem('omnigraph_provider_mode') || 'platform' : 'platform';
+    const orcaKey = typeof window !== 'undefined' ? localStorage.getItem('omnigraph_orca_key') || '' : '';
+    const groqKey = typeof window !== 'undefined' ? localStorage.getItem('omnigraph_groq_key') || '' : '';
+    const effectiveKey = providerMode === 'byok' ? (orcaKey || groqKey) : undefined;
+    const preferredModel = typeof window !== 'undefined' ? localStorage.getItem('omnigraph_orca_model') || 'openai/gpt-4o-mini' : 'openai/gpt-4o-mini';
 
-    for (let i = 0; i < steps.length; i++) {
+    // Agent execution order (circular manifold sweep)
+    const agentPhases: { id: AgentRoleId; angle: number; angleDeg: number }[] = [
+      { id: 'architect', angle: 0, angleDeg: 0 },
+      { id: 'codewriter', angle: Math.PI / 2, angleDeg: 90 },
+      { id: 'testrunner', angle: Math.PI, angleDeg: 180 },
+      { id: 'security', angle: (3 * Math.PI) / 2, angleDeg: 270 },
+    ];
+
+    // Get the currently selected node or first node as context
+    const selectedNode = get().selectedNodeId
+      ? get().nodes.find(n => n.id === get().selectedNodeId)
+      : get().nodes[0];
+
+    // Get user's active file code for context
+    const activeFile = get().files.find(f => f.path.endsWith(get().activeFileTab));
+    const codeContext = activeFile?.currentCode?.slice(0, 3000) || '';
+
+    let totalInputTokens = get().telemetry.totalInputTokens;
+    let totalOutputTokens = get().telemetry.totalOutputTokens;
+
+    for (let i = 0; i < agentPhases.length; i++) {
       if (!get().isAgentRunning) break;
 
-      const step = steps[i];
-      const speed = get().playbackSpeed;
+      const phase = agentPhases[i];
+      const agent = get().agents.find(a => a.id === phase.id)!;
 
-      // Update Phase angle and activate agent
+      // Update phase angle and activate agent
       set({
         currentStepIndex: i,
-        activeAgentId: step.agentId,
-        currentPhaseAngle: step.targetAngle,
-        currentPhaseAngleDeg: step.angleDeg,
+        activeAgentId: phase.id,
+        currentPhaseAngle: phase.angle,
+        currentPhaseAngleDeg: phase.angleDeg,
         agents: get().agents.map(a => ({
           ...a,
-          status: a.id === step.agentId ? 'active' : a.status === 'completed' ? 'completed' : 'idle',
+          status: a.id === phase.id ? 'active' : a.status === 'completed' ? 'completed' : 'idle',
+          currentTask: a.id === phase.id ? `Analyzing ${selectedNode?.label || 'codebase'}...` : a.currentTask,
         })),
-        activePathEdgeIds: step.highlightEdgeIds || [],
-        activeFileTab: step.activeFileTab || get().activeFileTab,
       });
 
-      // Stream logs for this step
-      for (const logItem of step.logs) {
-        accumulatedTokens += logItem.tokenDelta;
-        const entry: TerminalLogEntry = {
-          id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-          timestamp: new Date().toLocaleTimeString(),
-          agentId: step.agentId,
-          agentName: get().agents.find(a => a.id === step.agentId)?.name || 'Agent',
-          phaseAngle: step.angleDeg,
-          level: logItem.level,
-          message: logItem.message,
-          codeSnippet: logItem.codeSnippet,
-          tokenDelta: logItem.tokenDelta,
-          subgraphNodeId: logItem.subgraphNodeId,
-          memoryBroadcast: logItem.level === 'success' || logItem.level === 'info' ? step.compressedHandoff : undefined,
-        };
+      // Log: starting this agent phase
+      get().addLog({
+        id: `log-${Date.now()}-start`,
+        timestamp: new Date().toLocaleTimeString(),
+        agentId: phase.id,
+        agentName: agent.name,
+        phaseAngle: phase.angleDeg,
+        level: 'info',
+        message: `[LIVE] Activating ${agent.name} at θ=${phase.angleDeg}°. Sending real code context (${codeContext.length} chars) to AI gateway...`,
+      });
 
-        get().addLog(entry);
+      // Build prompt with real code context
+      const prompt = `You are the ${agent.name} (${agent.role}). Analyze this code and provide your assessment:\n\nFile: ${activeFile?.path || 'unknown'}\nNode: ${selectedNode?.label || 'root'}\nTask: ${get().activeScenario.description}\n\nCode:\n\`\`\`\n${codeContext}\n\`\`\`\n\n${phase.id === 'codewriter' ? 'Generate a unified diff (with @@ hunk headers) for any fixes you recommend.' : phase.id === 'testrunner' ? 'List specific test assertions that should pass.' : phase.id === 'security' ? 'List any security vulnerabilities found.' : 'Analyze the architecture and identify key dependencies and potential issues.'}`;
 
-        // Update telemetry live
-        const currentSaved = Math.max(0, 265400 - accumulatedTokens);
-        const savingsPct = Number(((currentSaved / 265400) * 100).toFixed(1));
-        const currentCost = Number(((accumulatedTokens / 1000000) * 0.70).toFixed(3));
+      // Estimate input tokens
+      const inputTokenEstimate = Math.ceil(prompt.length / 4);
+      totalInputTokens += inputTokenEstimate;
 
-        set({
-          telemetry: {
-            ...get().telemetry,
-            totalInputTokens: accumulatedTokens,
-            tokensSaved: currentSaved,
-            savingsPercentage: Math.max(60, Math.min(85, savingsPct)),
-            currentCostUSD: currentCost,
-            traversalHops: get().telemetry.traversalHops + 1,
+      // ================================================================
+      // REAL API CALL — Actually read the streamed response
+      // ================================================================
+      try {
+        const res = await fetch('/api/agents/psmas-run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            activeAgent: phase.id,
+            nodeContext: selectedNode ? { label: selectedNode.label, path: selectedNode.path, tokenCount: selectedNode.tokenCount, compressedTokens: selectedNode.compressedTokens } : undefined,
+            apiKey: effectiveKey,
+            model: preferredModel,
+            prompt,
+          }),
+        });
+
+        if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+
+          if (contentType.includes('text/event-stream') && res.body) {
+            // ============================================================
+            // STREAMING SSE — Read real tokens from AI model
+            // ============================================================
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let fullResponse = '';
+            let chunkBuffer = '';
+
+            while (true) {
+              if (!get().isAgentRunning) break;
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              const chunk = decoder.decode(value);
+              chunkBuffer += chunk;
+
+              // Parse SSE data lines
+              const lines = chunkBuffer.split('\n');
+              chunkBuffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const data = line.slice(6).trim();
+                if (data === '[DONE]') continue;
+
+                try {
+                  const parsed = JSON.parse(data);
+                  const content = parsed.choices?.[0]?.delta?.content || parsed.choices?.[0]?.message?.content || '';
+                  if (content) {
+                    fullResponse += content;
+                    totalOutputTokens += Math.ceil(content.length / 4);
+                  }
+                } catch {
+                  // Non-JSON SSE data — still real response content
+                  if (data && !data.includes('"error"')) {
+                    fullResponse += data;
+                  }
+                }
+              }
+
+              // Update telemetry with real token counts
+              set({
+                telemetry: {
+                  ...get().telemetry,
+                  totalInputTokens: totalInputTokens,
+                  totalOutputTokens: totalOutputTokens,
+                  currentCostUSD: Number(((totalInputTokens + totalOutputTokens) / 1000000 * 0.70).toFixed(4)),
+                  traversalHops: get().telemetry.traversalHops + 1,
+                },
+              });
+            }
+
+            // Log the real AI response
+            if (fullResponse.trim()) {
+              // Split response into meaningful chunks for terminal logs
+              const responseLines = fullResponse.split('\n').filter(l => l.trim());
+              const maxLogLines = Math.min(responseLines.length, 8);
+
+              for (let j = 0; j < maxLogLines; j++) {
+                const lineContent = responseLines[j].trim();
+                if (!lineContent) continue;
+
+                get().addLog({
+                  id: `log-${Date.now()}-${j}-${Math.random().toString(36).substr(2, 4)}`,
+                  timestamp: new Date().toLocaleTimeString(),
+                  agentId: phase.id,
+                  agentName: agent.name,
+                  phaseAngle: phase.angleDeg,
+                  level: phase.id === 'codewriter' ? 'patch' : phase.id === 'testrunner' ? 'test' : phase.id === 'security' ? 'security' : 'reasoning',
+                  message: lineContent.slice(0, 200),
+                  tokenDelta: Math.ceil(lineContent.length / 4),
+                });
+
+                await new Promise(r => setTimeout(r, 80 / get().playbackSpeed));
+              }
+
+              // If codewriter: try to parse diff hunks from the response
+              if (phase.id === 'codewriter' && fullResponse.includes('@@')) {
+                const { parseUnifiedDiffToHunks } = await import('../diff/patchEngine');
+                const aiHunks = parseUnifiedDiffToHunks(
+                  activeFile?.path?.split('/').pop() || 'code.ts',
+                  fullResponse
+                );
+                if (aiHunks.length > 0) {
+                  set({ diffHunks: [...aiHunks, ...get().diffHunks] });
+                  get().addLog({
+                    id: `log-${Date.now()}-diff`,
+                    timestamp: new Date().toLocaleTimeString(),
+                    agentId: 'codewriter',
+                    agentName: 'CodeWriter Agent',
+                    phaseAngle: 90,
+                    level: 'success',
+                    message: `Generated ${aiHunks.length} real diff hunk(s) from AI response. Review in Diff Viewer.`,
+                  });
+                }
+              }
+            } else {
+              get().addLog({
+                id: `log-${Date.now()}-empty`,
+                timestamp: new Date().toLocaleTimeString(),
+                agentId: phase.id,
+                agentName: agent.name,
+                phaseAngle: phase.angleDeg,
+                level: 'warn',
+                message: `Stream completed but no content received. Check API key configuration in Settings.`,
+              });
+            }
+          } else {
+            // ============================================================
+            // JSON RESPONSE (fallback when no streaming / no API key)
+            // ============================================================
+            const json = await res.json();
+            const responseText = json.response?.thought || json.response?.action || JSON.stringify(json.response || json);
+            totalOutputTokens += Math.ceil(responseText.length / 4);
+
+            get().addLog({
+              id: `log-${Date.now()}-json`,
+              timestamp: new Date().toLocaleTimeString(),
+              agentId: phase.id,
+              agentName: agent.name,
+              phaseAngle: phase.angleDeg,
+              level: 'reasoning',
+              message: responseText.slice(0, 300),
+              tokenDelta: Math.ceil(responseText.length / 4),
+            });
           }
+        } else {
+          const errText = await res.text();
+          get().addLog({
+            id: `log-${Date.now()}-err`,
+            timestamp: new Date().toLocaleTimeString(),
+            agentId: phase.id,
+            agentName: agent.name,
+            phaseAngle: phase.angleDeg,
+            level: 'error',
+            message: `API Error (${res.status}): ${errText.slice(0, 150)}`,
+          });
+        }
+      } catch (err: any) {
+        get().addLog({
+          id: `log-${Date.now()}-catch`,
+          timestamp: new Date().toLocaleTimeString(),
+          agentId: phase.id,
+          agentName: agent.name,
+          phaseAngle: phase.angleDeg,
+          level: 'error',
+          message: `Network error: ${err.message || 'Connection failed'}. Using server-managed AI gateway.`,
         });
 
-        // Delay between log items
-        await new Promise(r => setTimeout(r, (step.durationMs / step.logs.length) / speed));
+        // ============================================================
+        // FALLBACK: Use hardcoded steps when API is unavailable
+        // ============================================================
+        const fallbackStep = DJANGO_SCENARIO_STEPS.find(s => s.agentId === phase.id);
+        if (fallbackStep) {
+          for (const logItem of fallbackStep.logs) {
+            get().addLog({
+              id: `log-${Date.now()}-fb-${Math.random().toString(36).substr(2, 4)}`,
+              timestamp: new Date().toLocaleTimeString(),
+              agentId: phase.id,
+              agentName: agent.name,
+              phaseAngle: phase.angleDeg,
+              level: logItem.level,
+              message: `[Offline Fallback] ${logItem.message}`,
+              tokenDelta: logItem.tokenDelta,
+            });
+            await new Promise(r => setTimeout(r, 200 / get().playbackSpeed));
+          }
+        }
       }
 
-      // Update node statuses if any
-      if (step.nodeStatusUpdates) {
-        const updateMap = new Map(step.nodeStatusUpdates.map(u => [u.nodeId, u.status]));
-        set({
-          nodes: get().nodes.map(n => ({
-            ...n,
-            status: (updateMap.get(n.id) as any) || n.status,
-          }))
-        });
-      }
+      // Update real telemetry
+      const compressedTokens = get().nodes.reduce((s, n) => s + n.compressedTokens, 0);
+      const rawTokens = get().nodes.reduce((s, n) => s + n.tokenCount, 0) * 4;
+      set({
+        telemetry: {
+          ...get().telemetry,
+          totalInputTokens: totalInputTokens,
+          totalOutputTokens: totalOutputTokens,
+          linearBaselineTokens: rawTokens,
+          tokensSaved: Math.max(0, rawTokens - compressedTokens),
+          savingsPercentage: rawTokens > 0 ? Number((((rawTokens - compressedTokens) / rawTokens) * 100).toFixed(1)) : 65,
+          currentCostUSD: Number(((totalInputTokens + totalOutputTokens) / 1000000 * 0.70).toFixed(4)),
+          activeGraphNodes: get().nodes.filter(n => n.isLoaded).length,
+          totalGraphNodes: get().nodes.length,
+        },
+      });
 
       // Mark agent completed
       set({
         agents: get().agents.map(a => ({
           ...a,
-          status: a.id === step.agentId ? 'completed' : a.status,
+          status: a.id === phase.id ? 'completed' : a.status,
+          currentTask: a.id === phase.id ? 'Phase complete' : a.currentTask,
         }))
       });
+
+      // Brief pause between agents
+      await new Promise(r => setTimeout(r, 300 / get().playbackSpeed));
     }
 
     set({ isAgentRunning: false, activeAgentId: null });
@@ -381,15 +629,17 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
   closeApprovalModal: () => set({ isApprovalModalOpen: false }),
   applyApprovedPatches: () => {
     const { diffHunks, files } = get();
-    // Apply modified code to current code for accepted files
+    // Surgically apply accepted diff hunks line-by-line using reconcileApprovedHunks
     const updatedFiles = files.map(file => {
-      const fileHunks = diffHunks.filter(h => h.file === file.path.split('/').pop());
+      const fileName = file.path.split('/').pop() || file.path;
+      const fileHunks = diffHunks.filter(h => h.file === fileName || h.file === file.path);
       const hasAccepted = fileHunks.some(h => h.status === 'accepted');
       if (hasAccepted) {
+        const patchedCode = reconcileApprovedHunks(file.currentCode, fileHunks);
         return {
           ...file,
-          currentCode: file.modifiedCode,
-          isDirty: false,
+          currentCode: patchedCode,
+          isDirty: true,
         };
       }
       return file;
@@ -405,8 +655,34 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
     });
   },
 
+  // Mobile Sidebar
+  isMobileSidebarOpen: false,
+  toggleMobileSidebar: () => set(state => ({ isMobileSidebarOpen: !state.isMobileSidebarOpen })),
+  closeMobileSidebar: () => set({ isMobileSidebarOpen: false }),
+  openMobileSidebar: () => set({ isMobileSidebarOpen: true }),
+
   // Telemetry
   telemetry: initialTelemetry,
+  addTokenUsage: (inputTokens: number, outputTokens: number) => {
+    const current = get().telemetry;
+    const totalInput = current.totalInputTokens + inputTokens;
+    const totalOutput = current.totalOutputTokens + outputTokens;
+    const baseline = current.linearBaselineTokens;
+    const saved = Math.max(0, baseline - (totalInput + totalOutput));
+    const savingsPct = baseline > 0 ? Number(((saved / baseline) * 100).toFixed(1)) : 65;
+    const cost = Number(((totalInput + totalOutput) / 1000000 * 0.70).toFixed(4));
+
+    set({
+      telemetry: {
+        ...current,
+        totalInputTokens: totalInput,
+        totalOutputTokens: totalOutput,
+        tokensSaved: saved,
+        savingsPercentage: savingsPct,
+        currentCostUSD: cost,
+      }
+    });
+  },
 
   // Collaborators
   collaborators: INITIAL_COLLABORATORS,

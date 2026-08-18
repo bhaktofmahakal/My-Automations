@@ -87,7 +87,7 @@ export const FileNode: React.FC<NodeProps> = ({ id, data, selected }) => {
             e.stopPropagation();
             toggleNodeExpansion(id);
           }}
-          className="w-full flex items-center justify-center gap-1 py-0.5 rounded bg-[#141722] hover:bg-[#1a1e2d] text-[9px] font-mono text-zinc-300 transition-colors border border-[#222638]"
+          className="nodrag w-full flex items-center justify-center gap-1 py-0.5 rounded bg-[#141722] hover:bg-[#1a1e2d] text-[9px] font-mono text-zinc-300 transition-colors border border-[#222638]"
         >
           {data.isExpanded ? (
             <>

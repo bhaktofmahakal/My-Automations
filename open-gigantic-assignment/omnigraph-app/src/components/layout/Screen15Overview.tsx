@@ -16,7 +16,6 @@ import {
   Settings, 
   History, 
   PlaySquare, 
-  ShieldCheck,
   X
 } from 'lucide-react';
 
@@ -48,30 +47,31 @@ export const Screen15Overview: React.FC<Screen15OverviewProps> = ({ isOpen, onCl
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0d1117]/90 backdrop-blur-md flex items-center justify-center p-6 select-none">
-      <div className="bg-[#161b22] border border-[#30363d] rounded-2xl w-full max-w-6xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-[#0d1117]/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 select-none animate-in fade-in">
+      <div className="bg-[#161b22] border border-[#30363d] rounded-2xl w-full max-w-6xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden min-w-0">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#30363d] bg-[#0d1117]">
-          <div>
-            <h2 className="text-base font-bold text-[#e6edf3] flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#3fb950]" />
-              OmniGraph Studio &mdash; 15 Core System Screens (Design Spec 1)
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-[#30363d] bg-[#0d1117] gap-2">
+          <div className="min-w-0">
+            <h2 className="text-sm sm:text-base font-bold text-[#e6edf3] flex items-center gap-2 truncate">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#3fb950] shrink-0" />
+              <span className="truncate">OmniGraph Studio &mdash; 15 Core System Screens</span>
             </h2>
-            <p className="text-xs text-[#8b949e] mt-0.5">
+            <p className="text-[11px] sm:text-xs text-[#8b949e] mt-0.5 truncate">
               Reference architecture synthesized from Linear, Cursor, OpenCode &amp; Expo design systems
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-[#21262d] hover:bg-[#30363d] text-[#8b949e] hover:text-[#e6edf3] border border-[#30363d] transition-colors"
+            className="p-1.5 rounded-lg bg-[#21262d] hover:bg-[#30363d] text-[#8b949e] hover:text-[#e6edf3] border border-[#30363d] transition-colors shrink-0"
+            aria-label="Close overview"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* 15 Screens Grid */}
-        <div className="flex-1 p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="flex-1 p-3 sm:p-6 overflow-y-auto custom-scrollbar grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {SCREENS.map(screen => {
             const Icon = screen.icon;
             return (
@@ -81,21 +81,21 @@ export const Screen15Overview: React.FC<Screen15OverviewProps> = ({ isOpen, onCl
                   if (onSelectScreen) onSelectScreen(screen.id);
                   onClose();
                 }}
-                className="group cursor-pointer p-4 rounded-xl bg-[#0d1117] border border-[#30363d] hover:border-[#58a6ff] transition-all flex flex-col justify-between hover:shadow-[0_0_16px_rgba(88,166,255,0.2)]"
+                className="group cursor-pointer p-3.5 sm:p-4 rounded-xl bg-[#0d1117] border border-[#30363d] hover:border-[#58a6ff] transition-all flex flex-col justify-between hover:shadow-[0_0_16px_rgba(88,166,255,0.2)]"
               >
                 <div>
-                  <div className="w-8 h-8 rounded-lg bg-[#161b22] border border-[#30363d] group-hover:border-[#58a6ff] flex items-center justify-center text-[#58a6ff] mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#161b22] border border-[#30363d] group-hover:border-[#58a6ff] flex items-center justify-center text-[#58a6ff] mb-2 sm:mb-3 shrink-0">
                     <Icon className="w-4 h-4" />
                   </div>
                   <h3 className="text-xs font-bold text-[#e6edf3] group-hover:text-[#58a6ff] transition-colors">
                     {screen.title}
                   </h3>
-                  <p className="text-[11px] text-[#8b949e] mt-1 line-clamp-3 leading-relaxed">
+                  <p className="text-[10px] sm:text-[11px] text-[#8b949e] mt-1 line-clamp-3 leading-relaxed">
                     {screen.desc}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-2 border-t border-[#21262d] flex items-center justify-between text-[10px] text-[#6e7681]">
+                <div className="mt-3 sm:mt-4 pt-2 border-t border-[#21262d] flex items-center justify-between text-[10px] text-[#6e7681]">
                   <span className="font-mono">SCREEN #{screen.id}</span>
                   <span className="text-[#3fb950] font-medium">VIEW &rarr;</span>
                 </div>
@@ -105,11 +105,11 @@ export const Screen15Overview: React.FC<Screen15OverviewProps> = ({ isOpen, onCl
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-[#30363d] bg-[#0d1117] flex items-center justify-between text-xs text-[#8b949e]">
-          <span>Full fidelity suite conforming strictly to pixel specifications</span>
+        <div className="px-4 sm:px-6 py-3 border-t border-[#30363d] bg-[#0d1117] flex flex-wrap items-center justify-between text-xs text-[#8b949e] gap-2">
+          <span className="text-[11px] truncate">Full fidelity suite conforming strictly to pixel specifications</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-[#238636] hover:bg-[#2ea043] text-white font-medium transition-colors"
+            className="px-4 py-1.5 rounded-lg bg-[#238636] hover:bg-[#2ea043] text-white font-medium transition-colors text-xs"
           >
             Close Viewer
           </button>
