@@ -30,6 +30,7 @@ interface OmniStoreState {
   searchQuery: string;
   activePathEdgeIds: string[];
   selectNode: (nodeId: string | null) => void;
+  addNode: (node: OGNodeData) => void;
   toggleNodeExpansion: (nodeId: string) => void;
   setSearchQuery: (query: string) => void;
   resetGraph: () => void;
@@ -190,6 +191,7 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
   searchQuery: '',
   activePathEdgeIds: [],
   selectNode: (nodeId: string | null) => set({ selectedNodeId: nodeId }),
+  addNode: (newNode: OGNodeData) => set((state) => ({ nodes: [...state.nodes, newNode] })),
   toggleNodeExpansion: (nodeId: string) => {
     const { nodes, edges } = get();
     const { updatedNodes, updatedEdges } = expandNodeProgressive(nodeId, nodes, edges);
