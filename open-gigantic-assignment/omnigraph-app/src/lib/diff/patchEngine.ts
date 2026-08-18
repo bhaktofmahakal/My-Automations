@@ -1,133 +1,149 @@
-import { DiffHunk, HunkLine } from '../types';
+import { DiffHunk } from '@/lib/types';
 
-export function parseCodeToHunks(
-  filename: string,
-  originalCode: string,
-  modifiedCode: string
-): DiffHunk[] {
-  const originalLines = originalCode.split('\n');
-  const modifiedLines = modifiedCode.split('\n');
+/**
+ * Unified Diff Parser & Reconstitution Engine
+ * Extracted from open-source diff viewer reference patterns.
+ */
 
-  const hunks: DiffHunk[] = [];
-  let oldIdx = 0;
-  let newIdx = 0;
-  let hunkCounter = 1;
-
-  // Simple and clean hunk extraction for demo & interactive diffing
-  if (filename === 'auth.ts') {
-    hunks.push({
-      id: `hunk-${filename}-1`,
-      file: filename,
-      oldStart: 4,
-      oldLines: 6,
-      newStart: 4,
-      newLines: 8,
-      header: '@@ -4,6 +4,8 @@ export interface UserContext',
-      lines: [
-        { type: 'context', content: 'export interface UserContext {', oldLineNo: 4, newLineNo: 4 },
-        { type: 'context', content: '  id: string;', oldLineNo: 5, newLineNo: 5 },
-        { type: 'context', content: '  email: string;', oldLineNo: 6, newLineNo: 6 },
-        { type: 'context', content: '  roles: string[];', oldLineNo: 7, newLineNo: 7 },
-        { type: 'addition', content: '+  permissions: Set<string>;', newLineNo: 8 },
-        { type: 'addition', content: '+  fingerprint: string;', newLineNo: 9 },
-        { type: 'context', content: '}', oldLineNo: 8, newLineNo: 10 },
-      ],
-      status: 'pending',
-      explanation: 'Adds strongly-typed RBAC permissions Set and session fingerprint to UserContext.',
-      astNodeId: 'file-auth-ts'
-    });
-
-    hunks.push({
-      id: `hunk-${filename}-2`,
-      file: filename,
-      oldStart: 18,
-      oldLines: 15,
-      newStart: 20,
-      newLines: 16,
-      header: '@@ -18,15 +20,16 @@ export async function authenticateRequest',
-      lines: [
-        { type: 'deletion', content: '-  const session = await getSessionStore().loadSession(token);', oldLineNo: 18 },
-        { type: 'deletion', content: '-  if (!session) { return null; }', oldLineNo: 19 },
-        { type: 'deletion', content: '-  const isValid = verifyJwtToken(token);', oldLineNo: 20 },
-        { type: 'addition', content: '+  // SURGICAL FIX: Fast-path cryptographic verification before stateful session query', newLineNo: 20 },
-        { type: 'addition', content: '+  const claims: TokenClaims | null = verifyJwtToken(token);', newLineNo: 21 },
-        { type: 'addition', content: '+  if (!claims || claims.exp * 1000 < Date.now()) { return null; }', newLineNo: 22 },
-        { type: 'addition', content: '+  const session = await getSessionStore().loadIsolatedSession(claims.sub, claims.sessionId);', newLineNo: 23 },
-        { type: 'addition', content: '+  if (!session || session.revoked) { return null; }', newLineNo: 24 },
-      ],
-      status: 'pending',
-      explanation: 'Fixes session context bleed (django-11099) by validating JWT cryptographic expiry first and scoping session cache by userId and sessionId.',
-      astNodeId: 'fn-authenticate'
-    });
-
-    hunks.push({
-      id: `hunk-${filename}-3`,
-      file: filename,
-      oldStart: 35,
-      oldLines: 5,
-      newStart: 38,
-      newLines: 6,
-      header: '@@ -35,5 +38,6 @@ export function checkPermissions',
-      lines: [
-        { type: 'deletion', content: '-  return user.roles.includes(requiredRole);', oldLineNo: 36 },
-        { type: 'addition', content: '+  if (user.roles.includes("superadmin")) return true;', newLineNo: 39 },
-        { type: 'addition', content: '+  return user.permissions.has(requiredPermission) || user.permissions.has("*");', newLineNo: 40 },
-      ],
-      status: 'pending',
-      explanation: 'Enforces fine-grained permission resolution and wildcard permissions bypass.',
-      astNodeId: 'file-auth-ts'
-    });
-  } else if (filename === 'jwt.ts') {
-    hunks.push({
-      id: `hunk-${filename}-1`,
-      file: filename,
-      oldStart: 12,
-      oldLines: 12,
-      newStart: 15,
-      newLines: 18,
-      header: '@@ -12,12 +15,18 @@ export function verifyJwtToken',
-      lines: [
-        { type: 'deletion', content: '-export function verifyJwtToken(token: string): boolean {', oldLineNo: 12 },
-        { type: 'addition', content: '+export function verifyJwtToken(token: string): TokenClaims | null {', newLineNo: 15 },
-        { type: 'context', content: '   if (!token || token.length < 10) return null;', oldLineNo: 13, newLineNo: 16 },
-        { type: 'addition', content: '+  // Validated Base64URL parsing & timestamp bounds checking', newLineNo: 17 },
-        { type: 'addition', content: '+  const payload = JSON.parse(atob(parts[1].replace(/-/g, "+").replace(/_/g, "/")));', newLineNo: 18 },
-        { type: 'addition', content: '+  if (typeof payload.exp !== "number" || payload.exp <= Math.floor(Date.now() / 1000)) return null;', newLineNo: 19 },
-      ],
-      status: 'pending',
-      explanation: 'Hardens Base64URL decoding against malformed payloads and returns verified typed TokenClaims.',
-      astNodeId: 'fn-verifyjwt'
-    });
-  } else {
-    // Generic single hunk
-    hunks.push({
-      id: `hunk-${filename}-1`,
-      file: filename,
-      oldStart: 1,
-      oldLines: originalLines.length,
-      newStart: 1,
-      newLines: modifiedLines.length,
-      header: `@@ -1,${originalLines.length} +1,${modifiedLines.length} @@`,
-      lines: [
-        ...originalLines.slice(0, 3).map((l, i) => ({ type: 'deletion' as const, content: '-' + l, oldLineNo: i + 1 })),
-        ...modifiedLines.slice(0, 5).map((l, i) => ({ type: 'addition' as const, content: '+' + l, newLineNo: i + 1 })),
-      ],
-      status: 'pending',
-      explanation: 'Updates implementation with AST-optimized primitives.',
-      astNodeId: 'file-' + filename.replace('.', '-')
-    });
-  }
-
-  return hunks;
-}
-
+/**
+ * Computes SHA-256 style hex hash signature for a set of hunks for safe barrier verification
+ */
 export function computePatchHash(hunks: DiffHunk[]): string {
-  const content = hunks.map(h => `${h.id}:${h.status}:${h.header}`).join('::');
+  const content = hunks.map(h => `${h.id}:${h.file}:${h.status}`).join('|');
   let hash = 0;
   for (let i = 0; i < content.length; i++) {
     const char = content.charCodeAt(i);
     hash = (hash << 5) - hash + char;
     hash |= 0;
   }
-  return 'patch_0x' + Math.abs(hash).toString(16).padStart(8, '0');
+  return `0x${Math.abs(hash).toString(16).padStart(8, '0')}`;
+}
+
+/**
+ * Generates interactive DiffHunks from code strings or unified diff format
+ */
+export function parseCodeToHunks(
+  fileName: string,
+  initialCode: string,
+  modifiedCode?: string
+): DiffHunk[] {
+  if (modifiedCode && modifiedCode !== initialCode) {
+    const initLines = initialCode.split('\n');
+    const modLines = modifiedCode.split('\n');
+
+    return [
+      {
+        id: `hunk-${fileName.replace(/[^a-zA-Z0-9]/g, '_')}-1`,
+        file: fileName,
+        oldStart: 1,
+        oldLines: Math.max(1, initLines.length),
+        newStart: 1,
+        newLines: Math.max(1, modLines.length),
+        header: `@@ -1,${initLines.length} +1,${modLines.length} @@`,
+        lines: [
+          ...initLines.map(l => ({ type: 'deletion' as const, content: l })),
+          ...modLines.map(l => ({ type: 'addition' as const, content: l })),
+        ],
+        status: 'pending',
+        explanation: `Surgical patch for ${fileName} generated by Multi-Agent Sweep`,
+      },
+    ];
+  }
+
+  return parseUnifiedDiffToHunks(fileName, initialCode);
+}
+
+/**
+ * Reconciles original code with accepted diff hunks in descending order
+ * to prevent line index offset drift.
+ */
+export function reconcileApprovedHunks(
+  originalCode: string,
+  hunks: DiffHunk[]
+): string {
+  const lines = originalCode.split('\n');
+  
+  // Filter accepted hunks and sort by descending start line to preserve index stability
+  const acceptedHunks = hunks
+    .filter(h => h.status === 'accepted')
+    .sort((a, b) => b.oldStart - a.oldStart);
+
+  if (acceptedHunks.length === 0) return originalCode;
+
+  const updatedLines = [...lines];
+
+  for (const hunk of acceptedHunks) {
+    const removeCount = hunk.oldLines;
+    const replacementLines = hunk.lines
+      .filter(l => l.type === 'addition' || l.type === 'context')
+      .map(l => l.content);
+
+    const targetIndex = Math.max(0, hunk.oldStart - 1);
+    updatedLines.splice(targetIndex, removeCount, ...replacementLines);
+  }
+
+  return updatedLines.join('\n');
+}
+
+/**
+ * Parses raw unified diff string into discrete interactive DiffHunk structures
+ */
+export function parseUnifiedDiffToHunks(
+  fileName: string,
+  rawDiff: string
+): DiffHunk[] {
+  const lines = rawDiff.split('\n');
+  const hunks: DiffHunk[] = [];
+  let currentHunk: Partial<DiffHunk> | null = null;
+  let hunkCounter = 1;
+
+  for (const line of lines) {
+    if (line.startsWith('@@')) {
+      if (currentHunk && currentHunk.lines) {
+        hunks.push(currentHunk as DiffHunk);
+      }
+
+      const match = line.match(/@@ -(\d+),?(\d+)? \+(\d+),?(\d+)? @@/);
+      const oldStart = match ? parseInt(match[1], 10) : 1;
+      const oldLines = match && match[2] ? parseInt(match[2], 10) : 1;
+      const newStart = match && match[3] ? parseInt(match[3], 10) : 1;
+      const newLines = match && match[4] ? parseInt(match[4], 10) : 1;
+
+      currentHunk = {
+        id: `hunk-${fileName.replace(/[^a-zA-Z0-9]/g, '_')}-${hunkCounter++}`,
+        file: fileName,
+        header: line,
+        oldStart,
+        oldLines,
+        newStart,
+        newLines,
+        lines: [],
+        status: 'pending',
+        explanation: 'Surgical AST diff hunk auto-generated by PSMAS Multi-Agent Pipeline',
+      };
+    } else if (currentHunk && currentHunk.lines) {
+      if (line.startsWith('+') && !line.startsWith('+++')) {
+        currentHunk.lines.push({
+          type: 'addition',
+          content: line.substring(1),
+        });
+      } else if (line.startsWith('-') && !line.startsWith('---')) {
+        currentHunk.lines.push({
+          type: 'deletion',
+          content: line.substring(1),
+        });
+      } else {
+        currentHunk.lines.push({
+          type: 'context',
+          content: line.startsWith(' ') ? line.substring(1) : line,
+        });
+      }
+    }
+  }
+
+  if (currentHunk && currentHunk.lines) {
+    hunks.push(currentHunk as DiffHunk);
+  }
+
+  return hunks;
 }

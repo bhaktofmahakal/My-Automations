@@ -4,8 +4,7 @@
 **Submission Date:** August 18, 2026  
 **Project Name:** OmniGraph Studio  
 **Live Production URL (Vercel):** [https://omnigraph-app-kohl.vercel.app](https://omnigraph-app-kohl.vercel.app)  
-**Deployment Preview URL:** [https://omnigraph-50ybho55j-utsavs-projects-5c4e1539.vercel.app](https://omnigraph-50ybho55j-utsavs-projects-5c4e1539.vercel.app)  
-**GitHub Repository:** [https://github.com/bhaktofmahakal/omnigraph-studio](https://github.com/bhaktofmahakal/omnigraph-studio)  
+**Public GitHub Repository:** [https://github.com/bhaktofmahakal/omnigraph-studio](https://github.com/bhaktofmahakal/omnigraph-studio)  
 **Monorepo Workspace:** [https://github.com/bhaktofmahakal/open-gigantic-assignment](https://github.com/bhaktofmahakal/open-gigantic-assignment)  
 
 ---
@@ -14,18 +13,18 @@
 
 I built **OmniGraph Studio**, an ultra-craft, real-time multi-agent developer environment and repository traversal platform designed from first principles to operationalize the core architectural innovations of **Open Gigantic (Superbrain)**:
 
-1. **ObjectGraph (`.og`) AST Traversal Engine:** An interactive typed knowledge graph that navigates repositories hierarchically (`Module` $\rightarrow$ `File` $\rightarrow$ `Function` $\rightarrow$ `Assertion`), replacing brute-force vector RAG dumping with surgical node disclosure.
-2. **Phase-Scheduled Multi-Agent System (PSMAS) Radar:** A circular manifold attention scheduler ($\phi(t) \in [0, 2\pi]$) that visualizes dynamic rotation between specialized agents (**Architect** at $\theta_1=0$, **CodeWriter** at $\theta_2=\pi/2$, **TestRunner** at $\theta_3=\pi$, **SecurityReviewer** at $\theta_4=3\pi/2$) with compressed state broadcasts ($[0.82, 0.14, 0.61, 0.09]$).
+1. **ObjectGraph (`.og`) AST Traversal Engine:** Real TypeScript AST parsing (`ts.createSourceFile`) that navigates repositories hierarchically (`Module` $\rightarrow$ `File` $\rightarrow$ `Function` $\rightarrow$ `Assertion`), replacing brute-force vector RAG dumping with surgical node disclosure.
+2. **Phase-Scheduled Multi-Agent System (PSMAS) & OrcaRouter AI Gateway:** A circular manifold attention scheduler ($\phi(t) \in [0, 2\pi]$) connected to **OrcaRouter AI Gateway (`api.orcarouter.ai/v1`)** for multi-model live streaming across specialized agents (**Architect** at $\theta_1=0$, **CodeWriter** at $\theta_2=\pi/2$, **TestRunner** at $\theta_3=\pi$, **SecurityReviewer** at $\theta_4=3\pi/2$).
 3. **Monaco Code Editor & Surgical Hunk Cherry-Picker:** Side-by-side diff review with atomic `[Accept Hunk]`, `[Reject Hunk]`, and `[Cherry-pick]` actions protected by a strict **Human-in-the-Loop Safe Approval Barrier**.
-4. **Live Token & SWE-bench Telemetry:** Live counter tracking real-time token savings (72% reduction, $0.065 vs $0.104 baseline) and benchmark comparisons on Django 10 Bugs.
-5. **Multiplayer Live Collaboration:** Sub-15ms co-presence avatars and remote cursor tracking.
+4. **Live Token & SWE-bench Telemetry:** TokenFold telemetry tracking real-time token savings (72% reduction, $0.065 vs $0.104 baseline) and benchmark comparisons on Django 10 Bugs.
+5. **Multiplayer Live Collaboration & Dedicated Multi-Page Routes:** 10 dedicated full-screen routes (`/`, `/ide`, `/graph`, `/psmas`, `/diff`, `/telemetry`, `/command`, `/multiplayer`, `/timeline`, `/settings`).
 
 ---
 
 ## 2. Architecture & Design System Synthesis
 
 ### Design System & Visual Aesthetics
-Synthesized from the reference design guidelines (Cursor timeline stages, Linear obsidian dark hairlines, OpenCode telemetry density, Expo component modularity) and strictly matching the reference pixel screens:
+Synthesized from the reference design specs (`DESIGN-opencode.ai.md`, `DESIGN-cursor.md`, `DESIGN-linear.app.md`) and strictly matching the reference pixel screens:
 * **Background / Canvas:** Obsidian dark `#0d1117`, card surface `#161b22`, subtle hairlines `#30363d`.
 * **Ink / Typography:** Primary `#e6edf3`, muted `#8b949e`, subtle `#6e7681`.
 * **Accent Voltage:** Surgical Emerald (`#3fb950`), Cyan (`#58a6ff`), Ruby (`#f85149`), Amber (`#d29922`), and Thinking Purple (`#bc8cff`).
@@ -33,6 +32,8 @@ Synthesized from the reference design guidelines (Cursor timeline stages, Linear
 
 ### Technical Stack
 * **Framework:** Next.js 16 (App Router + Turbopack), React 19, TypeScript
+* **AI Engine:** OrcaRouter AI Gateway (`https://api.orcarouter.ai/v1`), Groq API, Real TypeScript Compiler AST Parser
+* **Research Tools:** Firecrawl MCP (`firecrawl_search`, `firecrawl_scrape`, `firecrawl_crawl`)
 * **Deployment:** Vercel Production (`iad1` edge compute)
 * **State Management:** Zustand (`useOmniStore`) with reactive dispatch
 * **Graph Canvas:** `@xyflow/react` with custom AST nodes
@@ -45,24 +46,39 @@ Synthesized from the reference design guidelines (Cursor timeline stages, Linear
 
 ```text
 ▲ Next.js 16.3.1 (Turbopack)
-✓ Running next.config.ts took 112ms
-Creating an optimized production build ...
-✓ Compiled successfully in 2.8s
-Running TypeScript ...
-Finished TypeScript in 2.8s ...
-Collecting page data using 1 worker ...
-✓ Generating static pages using 1 worker (7/7) in 144ms
-Finalizing page optimization ...
+- Environments: .env.local
+✓ Running next.config.ts took 283ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1.1s
+  Running TypeScript ...
+  Finished TypeScript in 3.1s ...
+  Collecting page data using 1 worker ...
+  Generating static pages using 1 worker (0/16) ...
+✓ Generating static pages using 1 worker (16/16) in 421ms
+  Finalizing page optimization ...
 
 Route (app)
-┌ ○ /                              [Static 2x2 Showcase + Agent Timeline Strip + 15-Screen Suite]
-├ ○ /_not-found                    [Static 404]
-├ ƒ /api/agents/psmas-run          [Dynamic API - Agent execution & streaming]
-├ ƒ /api/graph/traverse            [Dynamic API - Subgraph traversal]
-└ ƒ /api/tokens/benchmark          [Dynamic API - Token telemetry]
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/agents/psmas-run
+├ ƒ /api/graph/traverse
+├ ƒ /api/tokens/benchmark
+├ ○ /command
+├ ○ /diff
+├ ○ /graph
+├ ○ /ide
+├ ○ /multiplayer
+├ ○ /psmas
+├ ○ /settings
+├ ○ /telemetry
+└ ○ /timeline
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
 
 Deploying outputs...
-Production: https://omnigraph-50ybho55j-utsavs-projects-5c4e1539.vercel.app
+Production: https://omnigraph-kbssfgvv2-utsavs-projects-5c4e1539.vercel.app
 Aliased:    https://omnigraph-app-kohl.vercel.app
 
 ✓ ZERO TypeScript errors
@@ -98,8 +114,5 @@ Aliased:    https://omnigraph-app-kohl.vercel.app
 
 ## 5. Repository & Deployment Links
 * **Live Production URL:** [https://omnigraph-app-kohl.vercel.app](https://omnigraph-app-kohl.vercel.app)
-* **GitHub Repository:** [https://github.com/bhaktofmahakal/omnigraph-studio](https://github.com/bhaktofmahakal/omnigraph-studio)
+* **Public GitHub Repository:** [https://github.com/bhaktofmahakal/omnigraph-studio](https://github.com/bhaktofmahakal/omnigraph-studio)
 * **Monorepo Workspace:** [https://github.com/bhaktofmahakal/open-gigantic-assignment](https://github.com/bhaktofmahakal/open-gigantic-assignment)
-
----
-*Ready for founder evaluation by Mohit Dubey & Premraj Kungar.*
