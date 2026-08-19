@@ -1,17 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { CodeEditor } from '@/components/editor/CodeEditor';
 import { DiffViewer } from '@/components/editor/DiffViewer';
+import { ExportPRModal } from '@/components/diff/ExportPRModal';
 import { useOmniStore } from '@/lib/store/useOmniStore';
-import { Code, Split } from 'lucide-react';
+import { Code, Split, Share2 } from 'lucide-react';
 
 export default function IDEPage() {
   const activeViewMode = useOmniStore(state => state.activeViewMode);
   const setActiveViewMode = useOmniStore(state => state.setActiveViewMode);
+  const [isExportOpen, setIsExportOpen] = useState(false);
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#0d1117] text-[#e6edf3] p-2 sm:p-3 font-sans select-none space-y-2 overflow-hidden min-w-0">
+    <div className="flex flex-col h-full w-full bg-[#0d1117] text-[#e6edf3] p-2.5 sm:p-3 font-sans select-none space-y-2 overflow-hidden min-w-0">
       {/* Top Controls Subheader */}
       <div className="min-h-9 py-1.5 sm:py-0 flex flex-wrap items-center justify-between px-2.5 sm:px-3 bg-[#161b22] border border-[#30363d] rounded-xl font-mono text-xs shrink-0 gap-2">
         <div className="flex items-center gap-2 min-w-0">
@@ -22,31 +24,41 @@ export default function IDEPage() {
           <span className="text-[10px] text-[#8b949e] hidden sm:inline shrink-0">Screen 2</span>
         </div>
 
-        {/* View Mode Toggle */}
-        <div className="flex items-center gap-1 bg-[#0d1117] p-0.5 sm:p-1 rounded-lg border border-[#30363d] shrink-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-1 bg-[#0d1117] p-0.5 sm:p-1 rounded-lg border border-[#30363d] shrink-0">
+            <button
+              onClick={() => setActiveViewMode('editor')}
+              className={`px-2 sm:px-3 py-1 rounded text-[11px] sm:text-xs font-semibold transition-all ${
+                activeViewMode === 'editor' ? 'bg-[#30363d] text-[#58a6ff]' : 'text-[#8b949e] hover:text-[#e6edf3]'
+              }`}
+            >
+              Editor
+            </button>
+            <button
+              onClick={() => setActiveViewMode('diff')}
+              className={`px-2 sm:px-3 py-1 rounded text-[11px] sm:text-xs font-semibold transition-all ${
+                activeViewMode === 'diff' ? 'bg-[#30363d] text-[#3fb950]' : 'text-[#8b949e] hover:text-[#e6edf3]'
+              }`}
+            >
+              Diff
+            </button>
+            <button
+              onClick={() => setActiveViewMode('split')}
+              className={`px-2 sm:px-3 py-1 rounded text-[11px] sm:text-xs font-semibold transition-all ${
+                activeViewMode === 'split' ? 'bg-[#30363d] text-[#bc8cff]' : 'text-[#8b949e] hover:text-[#e6edf3]'
+              }`}
+            >
+              Split
+            </button>
+          </div>
+
           <button
-            onClick={() => setActiveViewMode('editor')}
-            className={`px-2 sm:px-3 py-1 rounded text-[11px] sm:text-xs font-semibold transition-all ${
-              activeViewMode === 'editor' ? 'bg-[#30363d] text-[#58a6ff]' : 'text-[#8b949e] hover:text-[#e6edf3]'
-            }`}
+            onClick={() => setIsExportOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#238636] hover:bg-[#2ea043] text-white font-bold rounded-lg text-xs transition-all shadow shrink-0"
           >
-            Editor
-          </button>
-          <button
-            onClick={() => setActiveViewMode('diff')}
-            className={`px-2 sm:px-3 py-1 rounded text-[11px] sm:text-xs font-semibold transition-all ${
-              activeViewMode === 'diff' ? 'bg-[#30363d] text-[#3fb950]' : 'text-[#8b949e] hover:text-[#e6edf3]'
-            }`}
-          >
-            Diff
-          </button>
-          <button
-            onClick={() => setActiveViewMode('split')}
-            className={`px-2 sm:px-3 py-1 rounded text-[11px] sm:text-xs font-semibold transition-all ${
-              activeViewMode === 'split' ? 'bg-[#30363d] text-[#bc8cff]' : 'text-[#8b949e] hover:text-[#e6edf3]'
-            }`}
-          >
-            Split
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Export PR</span>
           </button>
         </div>
       </div>
@@ -66,6 +78,9 @@ export default function IDEPage() {
           </div>
         )}
       </div>
+
+      {/* Export PR Modal */}
+      <ExportPRModal isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
     </div>
   );
 }

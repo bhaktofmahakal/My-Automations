@@ -48,6 +48,33 @@ export interface OGEdgeData {
 }
 
 export type AgentRoleId = 'architect' | 'codewriter' | 'testrunner' | 'security';
+export type OperationalRole = 'mayor' | 'polecat' | 'witness' | 'refinery';
+
+export type BeadDependencyType = 'blocks' | 'related' | 'parent-child' | 'discovered-from';
+export type BeadStatus = 'pending' | 'in_progress' | 'blocked' | 'completed' | 'failed';
+
+export interface BeadTask {
+  id: string;
+  title: string;
+  description: string;
+  status: BeadStatus;
+  dependencyType: BeadDependencyType;
+  dependencies: string[];
+  targetNodeId?: string;
+  targetFile?: string;
+  diffHunkId?: string;
+  assignedRole: OperationalRole;
+  tokenCost: number;
+  createdAt: string;
+  completedAt?: string;
+  toolCallsExecuted: {
+    tool: string;
+    params: Record<string, any>;
+    resultSummary: string;
+    timestamp: string;
+  }[];
+  reflexionAttempts: number;
+}
 
 export interface PSMASAgent {
   id: AgentRoleId;
@@ -99,7 +126,7 @@ export interface DiffHunk {
   newLines: number;
   header: string;
   lines: HunkLine[];
-  status: 'pending' | 'accepted' | 'rejected';
+  status: 'pending' | 'accepted' | 'rejected' | 'applied';
   explanation: string;
   astNodeId?: string;
 }
@@ -123,7 +150,7 @@ export interface SWEBenchItem {
   rawClaudeCost: number;
   superbrainCost: number;
   reductionPercentage: number;
-  status: 'RESOLVED' | 'VERIFIED' | 'PASSING';
+  status: 'RESOLVED' | 'VERIFIED' | 'PASSING' | 'PENDING';
   testAssertionsPassed: number;
   testAssertionsTotal: number;
 }
@@ -159,6 +186,7 @@ export interface Scenario {
   title: string;
   category: string;
   description: string;
+  taskDirective?: string;
   benchmarkTarget: string;
   files: {
     name: string;

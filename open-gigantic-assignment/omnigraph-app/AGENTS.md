@@ -70,13 +70,14 @@ Idle agents receive compressed state vector broadcasts $[0.82, 0.14, 0.61, 0.09]
    - Supports direct integration with Anthropic (`claude-3-7-sonnet`), OpenAI (`gpt-4o`), and Groq (`llama-3.3-70b`).
    - Keys are evaluated client-side or securely forwarded to `/api/agents/psmas-run/`.
 
-2. **Instant Zero-Friction Demo Mode:**
-   - Pre-computed SWE-bench Django 10 Bugs evaluation traces execute with realistic token-by-token streaming even when external API keys are omitted.
-   - Guarantees 100% demo reliability during executive reviews.
+2. **Live Run Mode (No Stored Demo Traces):**
+   - Runs execute live against the configured model provider (Anthropic, OpenAI, or Groq).
+   - If no API key is configured, the run surfaces an honest configuration prompt instead of replaying pre-computed traces.
+   - No fake telemetry is ever injected: any numbers shown on the dashboard are derived from real measurement state (zero-filled until a live run produces data).
 
 ---
 
 ## 📊 5. Telemetry & Cost Benchmarks
-- **Token Reduction:** 60%–80% vs linear document injection.
-- **Cost per Task:** **$0.065** (OmniGraph Studio) vs. **$0.104** (Claude Code Baseline).
-- **SWE-bench Lite Resolve Rate:** 70% (7/10 bugs resolved).
+- **Token Reduction:** Measured live per run (raw vs. TokenFold-compressed) — no hardcoded baseline percentages.
+- **Cost per Task:** Computed from real token usage × current provider pricing (shown as 0 / `—` until a live run has data).
+- **SWE-bench Resolve Rate:** Displayed only from actual run results; no pre-canned pass rates.

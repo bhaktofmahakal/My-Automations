@@ -6,17 +6,19 @@ import { DiffHunk } from '@/lib/types';
  */
 
 /**
- * Computes SHA-256 style hex hash signature for a set of hunks for safe barrier verification
+ * Computes a real SHA-256 digest (Web Crypto) over the accepted hunk set,
+ * truncated to 16 hex chars for display. Used for safe barrier verification.
  */
-export function computePatchHash(hunks: DiffHunk[]): string {
-  const content = hunks.map(h => `${h.id}:${h.file}:${h.status}`).join('|');
-  let hash = 0;
-  for (let i = 0; i < content.length; i++) {
-    const char = content.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0;
-  }
-  return `0x${Math.abs(hash).toString(16).padStart(8, '0')}`;
+export async function computePatchHash(hunks: DiffHunk[]): Promise<string> {
+  const content = hunks
+    .map(h => `${h.id}:${h.file}:${h.status}:${h.oldStart}-${h.newStart}`)
+    .join('|');
+  const data = new TextEncoder().encode(content);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(digest))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .slice(0, 16);
 }
 
 /**

@@ -36,6 +36,7 @@ import {
   Info,
   Play,
   Move,
+  Code,
 } from 'lucide-react';
 
 const nodeTypes = {
@@ -419,23 +420,23 @@ function GraphCanvasInner() {
 
       {/* Selected Node Inspector Drawer */}
       {selectedNode && (
-        <div className="absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 z-20 w-[94%] sm:w-[90%] max-w-xl bg-[#0e1017]/95 backdrop-blur-md border border-cyan-500/40 rounded-xl p-3 sm:p-3.5 shadow-2xl transition-all">
+        <div className="absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 z-20 w-[96%] sm:w-[90%] max-w-2xl bg-[#0e1017]/95 backdrop-blur-md border border-cyan-500/40 rounded-xl p-3 sm:p-4 shadow-2xl transition-all font-mono">
           <div className="flex items-center justify-between pb-2 border-b border-[#222638]">
             <div className="flex items-center gap-2 truncate">
               <Info className="w-4 h-4 text-cyan-400 shrink-0" />
-              <span className="font-mono text-xs font-semibold text-zinc-100 truncate">
+              <span className="text-xs font-semibold text-zinc-100 truncate">
                 {selectedNode.label} ({selectedNode.path})
               </span>
             </div>
             <button
               onClick={() => selectNode(null)}
-              className="text-xs text-zinc-500 hover:text-zinc-300 font-mono p-1"
+              className="text-xs text-zinc-500 hover:text-zinc-300 p-1"
             >
               ✕
             </button>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 mt-2.5 font-mono text-[10px] sm:text-[11px]">
+          <div className="grid grid-cols-3 gap-2 mt-2.5 text-[10px] sm:text-[11px]">
             <div className="bg-[#161b22] p-1.5 sm:p-2 rounded border border-[#30363d]">
               <span className="text-zinc-500 block text-[9px]">Type</span>
               <span className="text-cyan-400 font-bold capitalize truncate">{selectedNode.type}</span>
@@ -448,6 +449,38 @@ function GraphCanvasInner() {
               <span className="text-zinc-500 block text-[9px]">TokenFold</span>
               <span className="text-purple-400 font-bold">{selectedNode.compressedTokens} (5x)</span>
             </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-3 pt-2.5 border-t border-[#222638] flex items-center justify-between gap-2 flex-wrap text-xs">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  startPSMASSweep(`Analyze and optimize AST node ${selectedNode.label} in ${selectedNode.path}`);
+                  window.location.href = '/psmas';
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#238636] hover:bg-[#2ea043] text-white font-bold transition-all shadow"
+              >
+                <Play className="w-3.5 h-3.5" />
+                <span>Dispatch Swarm</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const filename = selectedNode.path.split('/').pop() || selectedNode.path;
+                  useOmniStore.getState().setActiveFileTab(filename);
+                  window.location.href = '/ide';
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#21262d] hover:bg-[#30363d] text-[#58a6ff] border border-[#58a6ff]/30 font-semibold transition-all"
+              >
+                <Code className="w-3.5 h-3.5" />
+                <span>Open in Monaco IDE</span>
+              </button>
+            </div>
+
+            <span className="text-[10px] text-zinc-500">
+              Signatures: {selectedNode.signatures?.length || 0}
+            </span>
           </div>
         </div>
       )}

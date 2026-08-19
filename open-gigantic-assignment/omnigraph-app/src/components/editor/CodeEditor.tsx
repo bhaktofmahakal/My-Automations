@@ -3,7 +3,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { useOmniStore } from '@/lib/store/useOmniStore';
-import { FileCode, Split, Code, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { FileCode, FileCode2, Split, Code, CheckCircle2, ShieldAlert } from 'lucide-react';
 
 // Dynamically import Monaco Editor to prevent SSR window issues
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
@@ -115,7 +115,7 @@ export const CodeEditor: React.FC = () => {
 
       {/* Editor Surface */}
       <div className="flex-1 w-full h-full min-h-[220px] relative">
-        {activeFile && (
+        {activeFile ? (
           <MonacoEditor
             height="100%"
             language={activeFile.language}
@@ -138,19 +138,27 @@ export const CodeEditor: React.FC = () => {
               wordWrap: 'on',
             }}
           />
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full w-full text-center gap-2 select-none">
+            <FileCode2 className="w-8 h-8 text-zinc-600" />
+            <p className="text-xs font-mono text-zinc-500">No file selected</p>
+            <p className="text-[10px] text-zinc-600 font-mono max-w-xs">
+              Ingest a repository (or open a file from the explorer) to start editing.
+            </p>
+          </div>
         )}
       </div>
 
       {/* Bottom Editor Status Bar */}
       <div className="flex flex-wrap items-center justify-between px-3 py-1 bg-[#0e1017] border-t border-[#222638] font-mono text-[10px] text-zinc-500 gap-2 shrink-0">
         <div className="flex items-center gap-2 sm:gap-3 truncate min-w-0">
-          <span className="truncate">PATH: {activeFile?.path}</span>
-          <span className="shrink-0">LANG: {activeFile?.language.toUpperCase()}</span>
-          <span className="hidden sm:inline shrink-0">LINES: {activeFile?.currentCode.split('\n').length}</span>
+          <span className="truncate">PATH: {activeFile?.path || '—'}</span>
+          <span className="shrink-0">LANG: {activeFile?.language.toUpperCase() || '—'}</span>
+          <span className="hidden sm:inline shrink-0">LINES: {activeFile?.currentCode ? activeFile.currentCode.split('\n').length : 0}</span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <span className="flex items-center gap-1 text-emerald-400">
-            <CheckCircle2 className="w-2.5 h-2.5" /> AST Synced
+          <span className={`flex items-center gap-1 ${activeFile ? 'text-emerald-400' : 'text-zinc-600'}`}>
+            <CheckCircle2 className="w-2.5 h-2.5" /> {activeFile ? 'AST Synced' : 'Idle'}
           </span>
           <span className="text-zinc-600 hidden xs:inline">UTF-8</span>
         </div>

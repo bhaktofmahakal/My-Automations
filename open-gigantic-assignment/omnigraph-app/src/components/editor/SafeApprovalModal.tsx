@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOmniStore } from '@/lib/store/useOmniStore';
 import { computePatchHash } from '@/lib/diff/patchEngine';
 import { ShieldCheck, X, FileCode, AlertTriangle } from 'lucide-react';
@@ -13,11 +13,27 @@ export const SafeApprovalModal: React.FC = () => {
   const applyApprovedPatches = useOmniStore(state => state.applyApprovedPatches);
   const telemetry = useOmniStore(state => state.telemetry);
 
+  const [patchHash, setPatchHash] = useState('—');
+  useEffect(() => {
+    let cancelled = false;
+    const deriveHash = async () => {
+      if (diffHunks.length > 0) {
+        const h = await computePatchHash(diffHunks);
+        if (!cancelled) setPatchHash(h);
+      } else {
+        if (!cancelled) setPatchHash('—');
+      }
+    };
+    deriveHash();
+    return () => {
+      cancelled = true;
+    };
+  }, [diffHunks]);
+
   if (!isApprovalModalOpen) return null;
 
   const acceptedHunks = diffHunks.filter(h => h.status === 'accepted');
   const pendingHunks = diffHunks.filter(h => h.status === 'pending');
-  const patchHash = computePatchHash(diffHunks);
 
   const handleConfirmAndApply = () => {
     applyApprovedPatches();

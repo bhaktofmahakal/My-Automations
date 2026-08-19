@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useOmniStore } from '@/lib/store/useOmniStore';
 import { Terminal, Trash2, Filter, Copy, Check, Radio, Cpu, Sparkles, Download, ArrowDown } from 'lucide-react';
 import { LogLevel } from '@/lib/types';
+import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
 
 const LEVEL_COLORS: Record<LogLevel, { badge: string; text: string }> = {
   info: { badge: 'bg-zinc-800 text-zinc-300 border-zinc-700', text: 'text-zinc-300' },
@@ -179,10 +180,27 @@ export const TerminalLogs: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Message Content */}
-                <div className={`mt-1.5 text-xs whitespace-pre-wrap break-words leading-relaxed ${styles.text}`}>
-                  {log.message}
-                </div>
+                {/* Message Content with ToolCall Detection */}
+                {log.message.startsWith('[ToolCall:') ? (
+                  <div className="mt-1.5 p-1.5 rounded bg-[#161b22] border border-[#58a6ff]/30 text-xs text-[#58a6ff] font-mono">
+                    <span className="font-bold text-[#79c0ff]">🛠 Tool Call:</span>{' '}
+                    <code className="text-[#e6edf3]">{log.message.replace('[ToolCall:', '').replace(']', '')}</code>
+                  </div>
+                ) : log.message.startsWith('[ToolResult:') ? (
+                  <div className="mt-1.5 p-1.5 rounded bg-[#16291e] border border-[#3fb950]/30 text-xs text-[#3fb950] font-mono">
+                    <span className="font-bold text-[#7ee787]">✓ Tool Result:</span>{' '}
+                    <span className="text-[#e6edf3]">{log.message.replace('[ToolResult:', '').replace(']', '')}</span>
+                  </div>
+                ) : log.message.includes('[SAFE_BARRIER:') ? (
+                  <div className="mt-1.5 p-2 rounded bg-rose-950/20 border border-rose-500/40 text-xs text-rose-300 font-mono flex items-center justify-between">
+                    <span className="font-bold text-rose-400">🛡 Cryptographic Safe Barrier:</span>
+                    <span className="text-[10px] bg-rose-500/20 px-2 py-0.5 rounded border border-rose-500/40 font-bold">SHA-256 VERIFIED</span>
+                  </div>
+                ) : (
+                  <div className={`mt-1.5 text-xs whitespace-pre-wrap break-words leading-relaxed ${styles.text}`}>
+                    <MarkdownRenderer content={log.message} />
+                  </div>
+                )}
 
                 {/* Subgraph Node tag if applicable */}
                 {log.subgraphNodeId && (

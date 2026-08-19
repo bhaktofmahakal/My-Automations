@@ -35,20 +35,31 @@ export const AppHeader: React.FC = () => {
           </button>
 
           {/* Scenario Switcher Dropdown */}
-          <div className="flex items-center gap-1 sm:gap-2 bg-[#0d1117] px-2 sm:px-2.5 py-1 rounded-lg border border-[#30363d] font-mono text-xs max-w-[130px] xs:max-w-[180px] sm:max-w-[240px] md:max-w-none truncate">
-            <Layers className="w-3.5 h-3.5 text-[#58a6ff] shrink-0" />
-            <span className="text-[#8b949e] font-medium hidden md:inline shrink-0">Codebase:</span>
+          <div className="flex items-center gap-1 sm:gap-2 bg-[#0d1117] px-2 sm:px-2.5 py-1 rounded-lg border border-[#30363d] font-mono text-xs max-w-[160px] xs:max-w-[220px] sm:max-w-[320px] md:max-w-[380px] truncate">
+            <FolderGit2 className="w-3.5 h-3.5 text-[#58a6ff] shrink-0" />
+            <span className="text-[#8b949e] font-medium hidden md:inline shrink-0">Repo:</span>
             <select
               value={activeScenarioId}
               onChange={(e) => setScenario(e.target.value)}
               className="bg-transparent text-[#e6edf3] font-semibold focus:outline-none cursor-pointer text-xs truncate max-w-full"
-              aria-label="Select active scenario"
+              aria-label="Select active codebase"
             >
-              {scenarios.map((s) => (
-                <option key={s.id} value={s.id} className="bg-[#161b22] text-[#e6edf3]">
-                  {s.title} ({s.category})
-                </option>
-              ))}
+              {scenarios.some(s => s.id.startsWith('custom-')) && (
+                <optgroup label="Imported Repositories" className="bg-[#161b22] text-[#58a6ff] font-bold">
+                  {scenarios.filter(s => s.id.startsWith('custom-')).map((s) => (
+                    <option key={s.id} value={s.id} className="bg-[#161b22] text-[#e6edf3]">
+                      {s.title}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              <optgroup label="Active Codebases" className="bg-[#161b22] text-[#8b949e] font-bold">
+                {scenarios.filter(s => !s.id.startsWith('custom-')).map((s) => (
+                  <option key={s.id} value={s.id} className="bg-[#161b22] text-[#e6edf3]">
+                    {s.title}
+                  </option>
+                ))}
+              </optgroup>
             </select>
           </div>
 
@@ -67,7 +78,7 @@ export const AppHeader: React.FC = () => {
       {/* Center: Global RUN PSMAS SWEEP Action Button */}
       <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <button
-          onClick={isAgentRunning ? pausePSMASSweep : startPSMASSweep}
+          onClick={() => (isAgentRunning ? pausePSMASSweep() : startPSMASSweep())}
           className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 rounded-lg text-xs font-mono font-bold transition-all min-h-[34px] sm:min-h-[36px] shadow-md ${
             isAgentRunning
               ? 'bg-[#d29922] text-[#0d1117] shadow-[0_0_12px_rgba(210,153,34,0.4)]'

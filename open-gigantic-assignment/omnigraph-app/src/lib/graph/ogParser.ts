@@ -494,6 +494,30 @@ export function parseCodeToGraph(
 // REAL SCENARIO GENERATOR — Uses actual AST parsing, not hardcoded templates
 // =============================================================================
 
+/** Infers a parser language from the file extension, falling back to the scenario default */
+function detectLanguage(fileName: string, fallback: string): string {
+  const ext = fileName.split('.').pop()?.toLowerCase() || '';
+  switch (ext) {
+    case 'ts':
+    case 'tsx':
+      return 'typescript';
+    case 'js':
+      return 'javascript';
+    case 'jsx':
+      return 'jsx';
+    case 'py':
+      return 'python';
+    case 'go':
+      return 'go';
+    case 'rs':
+      return 'rust';
+    case 'java':
+      return 'java';
+    default:
+      return fallback;
+  }
+}
+
 export function generateCustomScenario(params: {
   repoName: string;
   repoUrl?: string;
@@ -521,7 +545,8 @@ export function generateCustomScenario(params: {
   let totalRawTokens = 0;
 
   for (const file of inputFiles) {
-    const { nodes, edges } = parseCodeToGraph(file.name, file.path, file.content, lang);
+    const fileLang = detectLanguage(file.name, lang);
+    const { nodes, edges } = parseCodeToGraph(file.name, file.path, file.content, fileLang);
     allNodes.push(...nodes);
     allEdges.push(...edges);
     totalRawTokens += nodes.reduce((sum, n) => sum + n.tokenCount, 0);
@@ -566,13 +591,13 @@ export function generateCustomScenario(params: {
   // Compute real token savings
   const totalCompressed = finalNodes.reduce((s, n) => s + n.compressedTokens, 0);
   const rawBaseline = totalRawTokens * 4; // naive full-file dump baseline
-  const reductionPct = rawBaseline > 0 ? Number((((rawBaseline - totalCompressed) / rawBaseline) * 100).toFixed(1)) : 65.0;
+  const reductionPct = rawBaseline > 0 ? Number((((rawBaseline - totalCompressed) / rawBaseline) * 100).toFixed(1)) : 0;
 
   // Build scenario files for Monaco editor
   const scenarioFiles = inputFiles.map(f => ({
     name: f.name,
     path: f.path,
-    language: lang,
+    language: detectLanguage(f.name, lang),
     initialCode: f.content,
     modifiedCode: f.content, // Will be replaced by real AI diffs later
   }));
@@ -595,9 +620,9 @@ export function generateCustomScenario(params: {
       rawClaudeCost: Number((rawBaseline / 1000000 * 0.70).toFixed(3)),
       superbrainCost: Number((totalCompressed / 1000000 * 0.70).toFixed(3)),
       reductionPercentage: reductionPct,
-      status: 'VERIFIED' as const,
-      testAssertionsPassed: finalNodes.filter(n => n.type === 'assertion').length,
-      testAssertionsTotal: Math.max(1, finalNodes.filter(n => n.type === 'assertion').length),
+      status: 'PENDING' as const,
+      testAssertionsPassed: 0,
+      testAssertionsTotal: Math.max(0, finalNodes.filter(n => n.type === 'assertion').length),
     }
   };
 }

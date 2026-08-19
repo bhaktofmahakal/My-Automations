@@ -14,12 +14,12 @@ export const TokenTelemetry: React.FC = () => {
   const center = size / 2;
   const radius = center - strokeWidth;
   const circumference = 2 * Math.PI * radius;
-  const percentage = Math.round(telemetry.savingsPercentage || 72);
+  const percentage = Math.round(telemetry.savingsPercentage || 0);
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   // Dynamic cost calculations based on slider
-  const baselineCostPerPR = telemetry.baselineCostUSD || 0.104;
-  const optimizedCostPerPR = telemetry.currentCostUSD || 0.065;
+  const baselineCostPerPR = telemetry.baselineCostUSD || 0;
+  const optimizedCostPerPR = telemetry.currentCostUSD || 0;
   const monthlySavings = ((baselineCostPerPR - optimizedCostPerPR) * monthlyPRs);
   const annualSavings = monthlySavings * 12;
 

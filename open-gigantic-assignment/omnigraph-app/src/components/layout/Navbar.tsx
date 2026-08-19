@@ -69,7 +69,7 @@ export const Navbar: React.FC = () => {
       {/* Center Primary Action Buttons */}
       <div className="flex items-center gap-2.5">
         <button
-          onClick={isAgentRunning ? pausePSMASSweep : startPSMASSweep}
+          onClick={() => (isAgentRunning ? pausePSMASSweep() : startPSMASSweep())}
           className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
             isAgentRunning
               ? 'bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
