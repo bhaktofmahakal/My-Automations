@@ -1,0 +1,9 @@
+node_modules
+.next
+.data
+.env
+.env.local
+*.db
+*.db-shm
+*.db-wal
+.artifacts

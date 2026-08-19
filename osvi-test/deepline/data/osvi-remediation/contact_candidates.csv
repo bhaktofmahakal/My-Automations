@@ -1,0 +1,20 @@
+company,person,title_or_role,buying_role,evidence_url,enrichment_status
+Georgia Foods LLC,Ash Dinakaran,President and CEO / owner,Economic buyer,https://www.bojangles.com/foundation/,Publicly verified; email not enriched
+Georgia Foods LLC,Rajiv Dinakaran,President and COO / operations leader,Operations buyer,https://eatbojangles.com/about/,Publicly verified; email not enriched
+Georgia Foods LLC,Stephanie Merrick,CFO,Finance buyer,https://www.restaurant365.com/case-studies/how-georgia-foods-saved-up-to-140k-and-cut-70-hour-workweeks-with-r365-accounting/,Publicly verified; email not enriched
+Georgia Foods LLC,Tiffany Carter,Staff Accountant,Finance influencer,https://www.restaurant365.com/case-studies/how-georgia-foods-saved-up-to-140k-and-cut-70-hour-workweeks-with-r365-accounting/,Publicly verified; email not enriched
+MAS Restaurant Group,Chad Motsinger,CEO,Economic buyer,https://masrestaurantgroup.com/team/,Publicly verified; Apollo people API blocked; ContactOut failed
+MAS Restaurant Group,Ben Walsh,CFO,Finance buyer,https://masrestaurantgroup.com/team/,Publicly verified; Apollo people API blocked; ContactOut failed
+MAS Restaurant Group,Kay Bassett,Senior Director of HR,Labor stakeholder,https://masrestaurantgroup.com/team/,Publicly verified; email not enriched
+MAS Restaurant Group,Shonda Guerin,Administrative Director,Operations support stakeholder,https://masrestaurantgroup.com/team/,Publicly verified; email not enriched
+ES-O-EN Management LLC,Carl Nicolaysen,CEO,Economic buyer,https://www.esoen.com/orientation1,Publicly verified; email not enriched
+ES-O-EN Management LLC,Stan Nicolaysen,Co-President and COO,Operations buyer,https://www.esoen.com/orientation1,Publicly verified; email not enriched
+ES-O-EN Management LLC,Stephen Nicolaysen,Co-President and CFO,Finance buyer,https://www.esoen.com/orientation1,Publicly verified; email not enriched
+ES-O-EN Management LLC,Bret Nicolaysen,Loss Prevention and AP,Back-office influencer,https://www.esoen.com/orientation1,Publicly verified; email not enriched
+BDE Florida LLC,Brian Ellerson,Manager / authorized person,Economic buyer,https://search.sunbiz.org/Inquiry/corporationsearch/SearchResultDetail?aggregateId=forl-m13000003737-413f2052-95be-4e25-97d1-db14f2912cd6&directionType=ForwardList&inquirytype=EntityName&listNameOrder=BDEFFRONASSOCIATES+3920880&searchNameOrder=BDEFLORIDA+M130000037370&searchTerm=BDE+FLORIDA+LLC,Publicly verified; email not enriched
+BDE Florida LLC,Kathy Watkins,Manager,Operations stakeholder,https://www.bbb.org/us/fl/tampa/profile/restaurants/taco-bell-0653-90404704,Publicly verified; email not enriched
+BDE Florida LLC,Laura Martinez,Director of Operations,Operations buyer,https://www.monaire.ai/customers/taco-bell,Publicly verified; email not enriched
+Paxton Keiser Enterprises,Brad Paxton,Partner / co-founder,Economic buyer,https://www.restaurant365.com/case-studies/taco-johns-franchisee-saves-2-5-on-food-costs-in-first-year-with-r365/,Publicly verified; email not enriched
+Paxton Keiser Enterprises,Matthew Keiser,Partner / co-founder,Economic buyer,https://www.restaurant365.com/case-studies/taco-johns-franchisee-saves-2-5-on-food-costs-in-first-year-with-r365/,Publicly verified; email not enriched
+Paxton Keiser Enterprises,Tina Braam,Chief Operating Officer,Operations buyer,https://www.restaurant365.com/case-studies/taco-johns-franchisee-saves-2-5-on-food-costs-in-first-year-with-r365/,Publicly verified; email not enriched
+Paxton Keiser Enterprises,Anna Pool,Financial Controller,Finance buyer,https://www.restaurant365.com/case-studies/taco-johns-franchisee-saves-2-5-on-food-costs-in-first-year-with-r365/,Publicly verified; email not enriched

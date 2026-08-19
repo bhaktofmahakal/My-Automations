@@ -1,0 +1,10 @@
+{
+  "search_param": {
+    "category": "restaurant",
+    "min_num_stores": 5,
+    "max_num_stores": 50
+  },
+  "pagination": {
+    "page_size": 10
+  }
+}

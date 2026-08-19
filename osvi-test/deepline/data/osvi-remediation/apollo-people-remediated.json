@@ -1,0 +1,37 @@
+{
+  "page": 1,
+  "per_page": 50,
+  "q_organization_domains_list": [
+    "esoen.com",
+    "eatbojangles.com",
+    "gvcs.com",
+    "mmbrands.com",
+    "servehg.com",
+    "masrestaurantgroup.com",
+    "clcrestaurants.org"
+  ],
+  "person_seniorities": [
+    "owner",
+    "founder",
+    "c_suite",
+    "partner",
+    "vp",
+    "head",
+    "director"
+  ],
+  "person_titles": [
+    "CEO",
+    "Founder",
+    "Owner",
+    "President",
+    "Chief Operating Officer",
+    "COO",
+    "Chief Financial Officer",
+    "CFO",
+    "VP Operations",
+    "Director of Operations",
+    "Director of HR",
+    "Director of People"
+  ],
+  "include_similar_titles": true
+}

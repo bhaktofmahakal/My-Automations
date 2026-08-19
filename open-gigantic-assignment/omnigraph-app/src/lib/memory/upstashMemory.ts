@@ -270,11 +270,10 @@ export async function searchSemanticAstNodes(
 
   if (vector) {
     try {
-      const results = await vector.query({
+      const results = await vector.namespace('omnigraph-app').query({
         data: query,
         topK,
         includeMetadata: true,
-        namespace: 'omnigraph-app',
       });
 
       if (results && results.length > 0) {

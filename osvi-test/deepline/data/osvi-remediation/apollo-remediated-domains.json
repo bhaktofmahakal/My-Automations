@@ -1,0 +1,13 @@
+{
+  "page": 1,
+  "per_page": 10,
+  "q_organization_domains_list": [
+    "esoen.com",
+    "eatbojangles.com",
+    "gvcs.com",
+    "mmbrands.com",
+    "servehg.com",
+    "masrestaurantgroup.com",
+    "clcrestaurants.org"
+  ]
+}

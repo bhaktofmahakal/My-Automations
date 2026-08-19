@@ -1,0 +1,201 @@
+%-------------------------
+% Tailored GTM Engineer & AI Operations Resume in LaTeX
+% Base Template: Jake Gutierrez (MIT License)
+% Target Roles: GTM Engineer, RevOps Architect, Founder's Associate, AI Solutions Engineer
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fontawesome5}
+\usepackage{multicol}
+\setlength{\multicolsep}{-3.0pt}
+\setlength{\columnsep}{-1pt}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins for high data-density 1-page layout
+\addtolength{\oddsidemargin}{-0.6in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1.19in}
+\addtolength{\topmargin}{-.7in}
+\addtolength{\textheight}{1.4in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generated pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{\small #2} \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{1.001\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \textbf{\small #2}\\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    {\Huge \scshape Utsav Mishra} \\ \vspace{2pt}
+    \small Lucknow, India (Open to Remote / Relocation) \\ \vspace{2pt}
+    \small \raisebox{-0.1\height}\faPhone\ +91 9721607720 ~|~ 
+    \href{mailto:utsavmishraa005@gmail.com}{\raisebox{-0.2\height}\faEnvelope\ \underline{utsavmishraa005@gmail.com}} ~|~ 
+    \href{https://www.linkedin.com/in/utsav-mishra1/}{\raisebox{-0.2\height}\faLinkedin\ \underline{linkedin.com/in/utsav-mishra1}} ~|~ 
+    \href{https://github.com/bhaktofmahakal/My-Automations}{\raisebox{-0.2\height}\faGithub\ \underline{github.com/bhaktofmahakal/My-Automations}} ~|~ 
+    \href{https://www.utsavmishra.me/}{\raisebox{-0.2\height}\faGlobe\ \underline{utsavmishra.me}}
+    \vspace{-8pt}
+\end{center}
+
+%-----------SUMMARY-----------
+\section{Summary}
+\small{High-agency GTM Engineer, RevOps Architect, and Founder's Associate with a proven track record of designing signal-led outbound engines, automating CRM pipelines, and building custom developer/AI integrations. Expert in Clay, n8n, HubSpot/Salesforce APIs, and Model Context Protocol (MCP) server architectures. Deployed 25+ production workflows automating lead capture, multi-intent enrichment, and sales operations to drive qualified meetings and system efficiency.}
+
+%-----------SKILLS-----------
+\section{Technical \& GTM Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{GTM \& RevOps Engineering}{: Signal-Led ABM, Outbound Engine Architecture, Multi-Inbox Deliverability (SPF/DKIM/DMARC), Automated Sourcing \& Lead Enrichment, Buyer Committee Account Mapping, Pipeline Funnel Instrumentation} \\
+     \textbf{GTM Tooling \& Stack}{: Clay (Advanced/Waterfall tables), HubSpot CRM, Salesforce, Smartlead, Plusvibe, Apollo, ZoomInfo, CommonRoom, Snov.io, Findymail, PhantomBuster} \\
+     \textbf{AI \& Automation Infrastructure}{: n8n (Production Workflows), Claude Code, OpenAI API, LangChain, Model Context Protocol (MCP), Vector RAG Databases, Retell AI, VAPI, Webhooks, GCP Service Accounts} \\
+     \textbf{Software Development}{: Python (Pandas/data wrangling), JavaScript/TypeScript (Node.js), Next.js, FastAPI, SQL, REST/GraphQL APIs, Git/GitHub, Cloudflare DNS, Linux}
+    }}
+ \end{itemize}
+ \vspace{-16pt}
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Gaprio Labs}{Jun. 2026 -- Present}
+      {Applied AI Engineer}{Remote}
+      \resumeItemListStart
+        \resumeItem{\textbf{AI Agent Tooling}: Architecting custom GTM AI agent infrastructures and signal-led account intelligence pipelines using Claude Code, n8n, and Composio tool routing.}
+        \resumeItem{\textbf{Enterprise Orchestration}: Designing automated RAG pipelines and tool-calling agent flows combining LLMs (Claude/OpenAI), vector stores, and custom HubSpot CRM endpoint triggers.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {PPR Capital}{Nov. 2025 -- Feb. 2026}
+      {Founder's Office Associate -- Growth \& GTM Execution}{Remote (Melbourne, AU)}
+      \resumeItemListStart
+        \resumeItem{\textbf{Outbound Engine Architecture}: Built and operated the GTM stack for the founder across 15+ active domain workspaces simultaneously using Smartlead, Plusvibe, Apollo, Clay, and Findymail.}
+        \resumeItem{\textbf{Signal-Led Pipeline Generation}: Automated outreach targeted at high-value decision-makers (\$2M--\$10M+ ARR/AUM) across AIMA Australia, CFANY, New Statesman, and Becker's Healthcare, driving meeting bookings from week one.}
+        \resumeItem{\textbf{Clay \& n8n Automation}: Engineered 20+ production n8n workflows for lead enrichment, contact waterfall lookup, and CRM data sync processing 1,000+ leads/week with zero manual coordination.}
+        \resumeItem{\textbf{CRM \& Data Hygiene}: Cleaned, parsed, and normalized 4,000+ fragmented records using Python (Pandas) into a structured HubSpot CRM database, instrumenting custom lead scoring and routing properties.}
+        \resumeItem{\textbf{Technical Operations}: Configured Cloudflare DNS parameters (SPF, DKIM, DMARC) to achieve a 45\% increase in inbox deliverability; triaged founder inbox and calendar cadences across GMT and AEST timezones.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {SM Infotech Solutions}{Mar. 2024 -- Jun. 2025}
+      {Full Stack Engineer / Systems \& Automation}{Hybrid}
+      \resumeItemListStart
+        \resumeItem{\textbf{Client Workflows}: Delivered 8+ custom web applications, internal tools, and client automation systems using Next.js, Node.js, and Python.}
+        \resumeItem{\textbf{API Integrations}: Engineered real-time data sync webhooks and database schemas (PostgreSQL/Supabase) to automate client operations, reducing administrative overhead by 40\%.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Bluestock Fintech}{Jun. 2025 -- Aug. 2025}
+      {Software Development Intern}{Remote, India}
+      \resumeItemListStart
+        \resumeItem{\textbf{Performance Optimization}: Optimized critical API endpoints and modular UI components serving 500K+ users, reducing load latency and improving code maintainability.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+\vspace{-14pt}
+
+%-----------PROJECTS-----------
+\section{Featured Projects}
+    \vspace{-5pt}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{GTM Skills \& HubSpot MCP Server} $|$ \emph{TypeScript, Node.js, HubSpot API v3, Model Context Protocol}}{github.com/bhaktofmahakal/My-Automations}
+          \resumeItemListStart
+            \resumeItem{Developed an open-source Model Context Protocol (MCP) server that exposes HubSpot contact and deal management tools directly to Claude Desktop and Cursor, enabling autonomous lead qualification and CRM updates.}
+            \resumeItem{Defined robust Zod schemas for tools like `research\_company` and `log\_engagement` to ensure clean, structured payload responses.}
+          \resumeItemListEnd
+          \vspace{-13pt}
+
+      \resumeProjectHeading
+          {\textbf{My-Automations (Production GTM \& AI Engine)} $|$ \emph{n8n, Clay, Groq/Llama 3.1, Meta Graph API, Webhooks}}{github.com/bhaktofmahakal/My-Automations}
+          \resumeItemListStart
+            \resumeItem{Curated and maintained 23+ production-grade automations covering Meta comment/DM triage, LinkedIn outreach sequences synced to Notion, and customer support ticket classification.}
+            \resumeItem{Designed a comment classifier in n8n deflecting 70\% of routine support queries and routing high-intent leads to WhatsApp.}
+          \resumeItemListEnd
+          \resumeProjectHeading
+          {\textbf{DevDocsAI (Developer RAG \& MCP Server)} $|$ \emph{Next.js, Tavily, Gemini API, RAG, Model Context Protocol}}{devdocsai-teal.vercel.app}
+          \resumeItemListStart
+            \resumeItem{Developed a developer documentation assistant featuring live library retrieval, citation memory, and custom MCP integrations.}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+\vspace{-14pt}
+
+%-----------EDUCATION & ACHIEVEMENTS-----------
+\section{Education \& Achievements}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Dr. Ram Manohar Lohia Avadh University}{2023 -- 2026}
+      {Bachelor of Computer Applications (BCA)}{Faizabad, UP, India}
+  \resumeSubHeadingListEnd
+  \vspace{-12pt}
+  \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{AI Training \& Evaluation}{: Conducted LLM evaluation and RLHF alignment work on Mercor, Mindrift, and Scale AI.} \\
+     \textbf{Ecosystem Recognition}{: Technical automation work shared organically across Forbes 30 Under 30 founder networks.} \\
+     \textbf{Hackathons}{: Competing in 5+ national/international hackathons; secured 2nd Place / Finalist at IIT-organized events.}
+    }}
+  \end{itemize}
+  \vspace{-16pt}
+
+\end{document}
