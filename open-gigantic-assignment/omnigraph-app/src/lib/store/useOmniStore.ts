@@ -365,6 +365,11 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
       security: 'openai/gpt-4.1-nano',
     };
     const KNOWN_LIVE_MODELS = new Set<string>([
+      'orcarouter/auto',
+      'orcarouter/fusion',
+      'orcarouter/fusion-mini',
+      'orcarouter/fusion-flash',
+      'orcarouter/free',
       'deepseek/deepseek-v4-flash',
       'deepseek/deepseek-v4-pro',
       'deepseek/deepseek-chat',
@@ -392,10 +397,11 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
       'minimax/minimax-m3',
       'meta/muse-spark-1.1',
       'meta/muse-spark-1.2',
-      'orcarouter/fusion',
-      'orcarouter/fusion-mini',
-      'orcarouter/fusion-flash',
-      'orcarouter/free',
+      'groq/qwen/qwen3.6-27b',
+      'groq/openai/gpt-oss-120b',
+      'groq/openai/gpt-oss-20b',
+      'groq/groq/compound',
+      'groq/groq/compound-mini',
     ]);
     const parsedStoredModels: Record<string, string> = storedAgentModels
       ? (() => {

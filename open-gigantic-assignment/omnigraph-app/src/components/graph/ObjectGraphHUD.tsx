@@ -7,7 +7,31 @@ import { useOmniStore } from '@/lib/store/useOmniStore';
 export const ObjectGraphHUD: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<string>('function');
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const nodes = useOmniStore(state => state.nodes);
+  const selectedNodeId = useOmniStore(state => state.selectedNodeId);
   const telemetry = useOmniStore(state => state.telemetry);
+  const selectNode = useOmniStore(state => state.selectNode);
+  const toggleNodeExpansion = useOmniStore(state => state.toggleNodeExpansion);
+
+  const focusTarget = () => selectedNodeId ?? nodes.find(n => n.isLoaded)?.id ?? null;
+
+  const handleExpandChildren = () => {
+    const target = focusTarget() ?? nodes[0]?.id ?? null;
+    if (target) {
+      toggleNodeExpansion(target);
+    }
+  };
+
+  const handleFocusNode = () => {
+    const target = focusTarget() ?? nodes[0]?.id ?? selectedNode;
+    selectNode(target);
+    requestAnimationFrame(() => {
+      document.getElementById(`og-node-${target}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  };
+
+  const activeNode = nodes.find(n => n.id === selectedNodeId);
+  const activePath = activeNode?.path ?? 'Repository Root';
 
   return (
     <div className="flex flex-col h-full w-full bg-[#161b22] text-[#e6edf3] font-sans overflow-hidden select-none min-w-0">
@@ -32,11 +56,11 @@ export const ObjectGraphHUD: React.FC = () => {
       <div className="flex flex-wrap items-center justify-between px-3 sm:px-5 pt-3 pb-2 gap-2 shrink-0">
         <div>
           <span className="text-[11px] sm:text-xs text-[#8b949e] font-medium block">AST Traversal</span>
-          <span className="text-xs font-mono text-[#e6edf3]">src/engine/runner.ts</span>
+          <span className="text-xs font-mono text-[#e6edf3]">{activePath}</span>
         </div>
 
         <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#16291e] border border-[#238636]/60 text-[#3fb950] text-xs font-mono font-medium shrink-0">
-          <span>{telemetry.totalInputTokens > 0 ? (18420).toLocaleString() : '18,420'} tokens saved</span>
+          <span>{telemetry.tokensSaved > 0 ? telemetry.tokensSaved.toLocaleString() : '0'} tokens saved</span>
           <span className="text-[13px] font-bold">↗</span>
         </div>
       </div>
@@ -48,7 +72,8 @@ export const ObjectGraphHUD: React.FC = () => {
 
           {/* Node 1: Module */}
           <div
-            onClick={() => setSelectedNode('module')}
+            id="og-node-module"
+            onClick={() => { setSelectedNode('module'); selectNode(nodes.find(n => n.type === 'module')?.id ?? 'module'); }}
             className={`cursor-pointer flex flex-col items-center justify-center w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-[#0d1117] transition-all shrink-0 ${
               selectedNode === 'module'
                 ? 'border-2 border-[#3fb950] shadow-[0_0_16px_rgba(63,185,80,0.35)]'
@@ -68,7 +93,8 @@ export const ObjectGraphHUD: React.FC = () => {
 
           {/* Node 2: File */}
           <div
-            onClick={() => setSelectedNode('file')}
+            id="og-node-file"
+            onClick={() => { setSelectedNode('file'); selectNode(nodes.find(n => n.type === 'file')?.id ?? 'file'); }}
             className={`cursor-pointer flex flex-col items-center justify-center w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-[#0d1117] transition-all shrink-0 ${
               selectedNode === 'file'
                 ? 'border-2 border-[#3fb950] shadow-[0_0_16px_rgba(63,185,80,0.35)]'
@@ -77,7 +103,7 @@ export const ObjectGraphHUD: React.FC = () => {
           >
             <FileCode className="w-5 h-5 sm:w-6 sm:h-6 text-[#3fb950] mb-1" />
             <span className="text-xs font-semibold text-[#e6edf3]">File</span>
-            <span className="text-[9px] sm:text-[10px] font-mono text-[#8b949e]">runner.ts</span>
+            <span className="text-[9px] sm:text-[10px] font-mono text-[#8b949e]">{nodes.find(n => n.type === 'file')?.label ?? 'runner.ts'}</span>
           </div>
 
           {/* Connector 2 */}
@@ -88,7 +114,8 @@ export const ObjectGraphHUD: React.FC = () => {
 
           {/* Node 3: Function */}
           <div
-            onClick={() => setSelectedNode('function')}
+            id="og-node-function"
+            onClick={() => { setSelectedNode('function'); selectNode(nodes.find(n => n.type === 'function')?.id ?? 'function'); }}
             className={`cursor-pointer flex flex-col items-center justify-center w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-[#0d1117] transition-all shrink-0 ${
               selectedNode === 'function'
                 ? 'border-2 border-[#3fb950] shadow-[0_0_20px_rgba(63,185,80,0.4)] ring-1 ring-[#3fb950]'
@@ -97,7 +124,7 @@ export const ObjectGraphHUD: React.FC = () => {
           >
             <Code2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#3fb950] mb-1" />
             <span className="text-xs font-semibold text-[#e6edf3]">Function</span>
-            <span className="text-[9px] sm:text-[10px] font-mono text-[#8b949e]">executeTask</span>
+            <span className="text-[9px] sm:text-[10px] font-mono text-[#8b949e]">{nodes.find(n => n.type === 'function')?.label ?? 'executeTask'}</span>
           </div>
 
           {/* Connector 3 */}
@@ -108,7 +135,8 @@ export const ObjectGraphHUD: React.FC = () => {
 
           {/* Node 4: Assertion */}
           <div
-            onClick={() => setSelectedNode('assertion')}
+            id="og-node-assertion"
+            onClick={() => { setSelectedNode('assertion'); selectNode(nodes.find(n => n.type === 'assertion')?.id ?? 'assertion'); }}
             className={`cursor-pointer flex flex-col items-center justify-center w-24 h-20 sm:w-28 sm:h-24 rounded-xl bg-[#0d1117] border transition-all shrink-0 ${
               selectedNode === 'assertion'
                 ? 'border-2 border-[#58a6ff] shadow-[0_0_16px_rgba(88,166,255,0.3)]'
@@ -117,7 +145,7 @@ export const ObjectGraphHUD: React.FC = () => {
           >
             <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-[#8b949e] mb-1" />
             <span className="text-xs font-semibold text-[#e6edf3]">Assertion</span>
-            <span className="text-[8px] sm:text-[9px] font-mono text-[#8b949e]">expect(result)</span>
+            <span className="text-[8px] sm:text-[9px] font-mono text-[#8b949e]">{nodes.find(n => n.type === 'assertion')?.label ?? 'expect(result)'}</span>
           </div>
         </div>
       </div>
@@ -148,11 +176,17 @@ export const ObjectGraphHUD: React.FC = () => {
 
         {/* Right Action Buttons */}
         <div className="flex items-center gap-2 flex-wrap">
-          <button className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-[#e6edf3] font-medium transition-colors text-xs min-h-[32px]">
+          <button
+            onClick={handleExpandChildren}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-[#e6edf3] font-medium transition-colors text-xs min-h-[32px]"
+          >
             <ChevronDown className="w-3.5 h-3.5 text-[#8b949e]" />
             <span>Expand Children</span>
           </button>
-          <button className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-[#e6edf3] font-medium transition-colors text-xs min-h-[32px]">
+          <button
+            onClick={handleFocusNode}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-[#e6edf3] font-medium transition-colors text-xs min-h-[32px]"
+          >
             <Crosshair className="w-3.5 h-3.5 text-[#8b949e]" />
             <span>Focus Node</span>
           </button>

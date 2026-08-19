@@ -102,6 +102,8 @@ export async function POST(req: Request) {
       'openai/gpt-5-mini': 'GPT-5 Mini does not exist on the gateway. Use openai/gpt-5.6-luna instead.',
       'qwen/qwen-2.5-coder-32b-instruct': 'Qwen 2.5 Coder was retired. Use qwen/qwen3.7-flash or qwen/qwen3.8-max.',
       'google/gemini-2.5-flash': 'Use google/gemini-2.5-flash-lite or google/gemini-3.6-flash.',
+      'qwen3.6-27b': 'Invalid Groq model id. Use groq/qwen/qwen3.6-27b.',
+      'groq/qwen3.6-27b': 'Invalid Groq model id. Use groq/qwen/qwen3.6-27b.',
     };
     if (DEPRECATED_MODELS[selectedModel]) {
       return NextResponse.json({ error: DEPRECATED_MODELS[selectedModel] }, { status: 400 });
@@ -127,12 +129,22 @@ export async function POST(req: Request) {
       );
     }
 
-    let endpoint = baseUrl || 'https://api.orcarouter.ai/v1/chat/completions';
+    let endpoint = baseUrl
+      ? baseUrl.replace(/\/$/, '') + '/chat/completions'
+      : 'https://api.orcarouter.ai/v1/chat/completions';
     let targetModel = selectedModel;
+    let fallbackChain: string[] | null = null;
 
     if (shouldUseGroq || (effectiveApiKey && effectiveApiKey.startsWith('gsk_'))) {
       endpoint = 'https://api.groq.com/openai/v1/chat/completions';
-      targetModel = selectedModel.replace(/^groq\//, '') || 'llama-3.3-70b-versatile';
+      targetModel = selectedModel.replace(/^groq\//, '') || 'groq/compound';
+    } else {
+      // OrcaRouter path: chain live models so the gateway fails over automatically
+      fallbackChain = [
+        selectedModel,
+        'orcarouter/auto',
+        ...(selectedModel === 'orcarouter/auto' ? [] : [selectedModel]),
+      ].slice(0, 3);
     }
 
     // Construct Agentic System Prompt with AST Grounding
@@ -203,6 +215,7 @@ Provide a concise 1-sentence explanation for each hunk.`
           ],
           stream: true,
           temperature: 0.2,
+          ...(fallbackChain ? { extra_body: { models: fallbackChain, route: 'fallback' } } : {}),
         }),
       });
     } catch (err: any) {

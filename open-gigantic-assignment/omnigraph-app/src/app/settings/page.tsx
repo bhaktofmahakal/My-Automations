@@ -27,6 +27,7 @@ import {
 type ConnectionStatus = 'idle' | 'testing' | 'connected' | 'failed';
 
 const ORCA_MODEL_OPTIONS = [
+  { value: 'orcarouter/auto', label: 'OrcaRouter Auto (Recommended - auto-picks cheapest live model with failover)' },
   { value: 'deepseek/deepseek-v4-flash', label: 'DeepSeek V4 Flash (OrcaRouter - Reasoning, $0.147/M)' },
   { value: 'deepseek/deepseek-v4-pro', label: 'DeepSeek V4 Pro (OrcaRouter - Reasoning, $0.442/M)' },
   { value: 'qwen/qwen3.7-flash', label: 'Qwen3.7 Flash (OrcaRouter - Vision/Code, $0.03/M)' },
@@ -43,10 +44,11 @@ const ORCA_MODEL_OPTIONS = [
 ];
 
 const GROQ_MODEL_OPTIONS = [
-  { value: 'groq/qwen3.6-27b', label: 'Qwen3.6 27B (Groq - fast inference)' },
+  { value: 'groq/qwen/qwen3.6-27b', label: 'Qwen3.6 27B (Groq - fast inference)' },
   { value: 'groq/openai/gpt-oss-120b', label: 'GPT-OSS 120B (Groq - open frontier)' },
   { value: 'groq/groq/compound', label: 'Compound (Groq - reasoning)' },
   { value: 'groq/groq/compound-mini', label: 'Compound Mini (Groq - fast reasoning)' },
+  { value: 'groq/openai/gpt-oss-20b', label: 'GPT-OSS 20B (Groq - fast)' },
 ];
 
 const AVAILABLE_MODELS = [

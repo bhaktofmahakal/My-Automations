@@ -274,6 +274,7 @@ export async function searchSemanticAstNodes(
         data: query,
         topK,
         includeMetadata: true,
+        namespace: 'omnigraph-app',
       });
 
       if (results && results.length > 0) {
