@@ -12,6 +12,7 @@
     "@monaco-editor/react": "^4.7.0",
     "@upstash/redis": "^1.38.2",
     "@upstash/vector": "^1.2.3",
+    "@vercel/analytics": "^2.0.1",
     "@xyflow/react": "^12.11.3",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
