@@ -94,6 +94,19 @@ export async function POST(req: Request) {
     const spec = AGENT_SPECIFICATIONS[agentRole] || AGENT_SPECIFICATIONS.architect;
     const selectedModel = model || spec.modelDefault;
 
+    // Guard: reject known-deprecated model IDs with a clear 400 instead of a confusing 502
+    const DEPRECATED_MODELS: Record<string, string> = {
+      'anthropic/claude-3.5-sonnet': 'Claude 3.5 Sonnet was retired. Pick a live model from Settings (e.g. anthropic/claude-sonnet-5).',
+      'deepseek/deepseek-r1': 'DeepSeek R1 was retired. Use deepseek/deepseek-v4-flash or deepseek/deepseek-v4-pro.',
+      'openai/gpt-4o': 'GPT-4o was retired. Use openai/gpt-4.1-nano, openai/gpt-5.4, or openai/gpt-5.6-luna.',
+      'openai/gpt-5-mini': 'GPT-5 Mini does not exist on the gateway. Use openai/gpt-5.6-luna instead.',
+      'qwen/qwen-2.5-coder-32b-instruct': 'Qwen 2.5 Coder was retired. Use qwen/qwen3.7-flash or qwen/qwen3.8-max.',
+      'google/gemini-2.5-flash': 'Use google/gemini-2.5-flash-lite or google/gemini-3.6-flash.',
+    };
+    if (DEPRECATED_MODELS[selectedModel]) {
+      return NextResponse.json({ error: DEPRECATED_MODELS[selectedModel] }, { status: 400 });
+    }
+
     // Detect if this model should route to Groq LPU or OrcaRouter
     const isGroqModel = selectedModel.startsWith('groq/');
     const isGroqKey = apiKey && apiKey.startsWith('gsk_');

@@ -32,7 +32,7 @@ const ORCA_MODEL_OPTIONS = [
   { value: 'qwen/qwen3.7-flash', label: 'Qwen3.7 Flash (OrcaRouter - Vision/Code, $0.03/M)' },
   { value: 'qwen/qwen3.8-max', label: 'Qwen3.8 Max (OrcaRouter - Frontier, $2/M)' },
   { value: 'openai/gpt-4.1-nano', label: 'GPT-4.1 Nano (OrcaRouter - Fast, $0.10/M)' },
-  { value: 'openai/gpt-5-mini', label: 'GPT-5 Mini (OrcaRouter - Frontier Mini)' },
+  { value: 'openai/gpt-5.6-luna', label: 'GPT-5.6 Luna (OrcaRouter - Frontier, $0.20/M)' },
   { value: 'openai/gpt-5.4', label: 'GPT-5.4 (OrcaRouter - Frontier, $5/M)' },
   { value: 'google/gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite (OrcaRouter - $0.10/M)' },
   { value: 'google/gemini-3.6-flash', label: 'Gemini 3.6 Flash (OrcaRouter - Vision, $1.50/M)' },
@@ -58,12 +58,12 @@ const PRESETS = [
   {
     id: 'frontier-balanced',
     name: '⚖️ Frontier Balanced Swarm (Recommended)',
-    desc: 'DeepSeek V4 Pro (Architect) + Qwen3.8 Max (CodeWriter) + DeepSeek V4 Pro (Witness) + GPT-5 Mini (Security)',
+    desc: 'DeepSeek V4 Pro (Architect) + Qwen3.8 Max (CodeWriter) + DeepSeek V4 Pro (Witness) + GPT-5.6 Luna (Security)',
     models: {
       architect: 'deepseek/deepseek-v4-pro',
       codewriter: 'qwen/qwen3.8-max',
       testrunner: 'deepseek/deepseek-v4-pro',
-      security: 'openai/gpt-5-mini',
+      security: 'openai/gpt-5.6-luna',
     },
   },
   {
@@ -80,12 +80,12 @@ const PRESETS = [
   {
     id: 'deep-reasoning',
     name: '🧠 Deep Reasoning & Verification Swarm',
-    desc: 'GLM 5.3 (Architect) + Claude Sonnet 5 (CodeWriter) + DeepSeek V4 Pro (Witness) + GPT-5 Mini (Security)',
+    desc: 'GLM 5.3 (Architect) + Claude Sonnet 5 (CodeWriter) + DeepSeek V4 Pro (Witness) + GPT-5.6 Luna (Security)',
     models: {
       architect: 'z-ai/glm-5.3',
       codewriter: 'anthropic/claude-sonnet-5',
       testrunner: 'deepseek/deepseek-v4-pro',
-      security: 'openai/gpt-5-mini',
+      security: 'openai/gpt-5.6-luna',
     },
   },
 ];
@@ -325,6 +325,7 @@ export default function SettingsPage() {
             </span>
             <span className="text-[9px] text-[#8b949e] block">θ = 0 rad · DAG Planning & Traversal</span>
             <select
+              form="omni-settings-form"
               value={agentModels.architect}
               onChange={(e) => setAgentModels((prev) => ({ ...prev, architect: e.target.value }))}
               className="w-full bg-[#161b22] border border-[#30363d] rounded p-1.5 text-xs text-[#e6edf3] focus:outline-none focus:border-[#58a6ff]"
@@ -345,6 +346,7 @@ export default function SettingsPage() {
             </span>
             <span className="text-[9px] text-[#8b949e] block">θ = π/2 rad · Surgical Diff Synthesis</span>
             <select
+              form="omni-settings-form"
               value={agentModels.codewriter}
               onChange={(e) => setAgentModels((prev) => ({ ...prev, codewriter: e.target.value }))}
               className="w-full bg-[#161b22] border border-[#30363d] rounded p-1.5 text-xs text-[#e6edf3] focus:outline-none focus:border-[#58a6ff]"
@@ -365,6 +367,7 @@ export default function SettingsPage() {
             </span>
             <span className="text-[9px] text-[#8b949e] block">θ = π rad · Invariant Assertion Verification</span>
             <select
+              form="omni-settings-form"
               value={agentModels.testrunner}
               onChange={(e) => setAgentModels((prev) => ({ ...prev, testrunner: e.target.value }))}
               className="w-full bg-[#161b22] border border-[#30363d] rounded p-1.5 text-xs text-[#e6edf3] focus:outline-none focus:border-[#58a6ff]"
@@ -385,6 +388,7 @@ export default function SettingsPage() {
             </span>
             <span className="text-[9px] text-[#8b949e] block">θ = 3π/2 rad · SAST & Safe Barrier</span>
             <select
+              form="omni-settings-form"
               value={agentModels.security}
               onChange={(e) => setAgentModels((prev) => ({ ...prev, security: e.target.value }))}
               className="w-full bg-[#161b22] border border-[#30363d] rounded p-1.5 text-xs text-[#e6edf3] focus:outline-none focus:border-[#58a6ff]"
@@ -406,6 +410,7 @@ export default function SettingsPage() {
           handleSave();
         }}
         className="p-3 sm:p-4 rounded-xl bg-[#161b22] border border-[#30363d] space-y-3.5 shadow-xl font-mono text-xs"
+        id="omni-settings-form"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

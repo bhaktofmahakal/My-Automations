@@ -358,12 +358,61 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
     const groqKey = typeof window !== 'undefined' ? localStorage.getItem('omnigraph_groq_key') || '' : '';
     const effectiveKey = providerMode === 'byok' ? (orcaKey || groqKey) : undefined;
     const storedAgentModels = typeof window !== 'undefined' ? localStorage.getItem('omnigraph_agent_models') : null;
-    const agentModels: Record<string, string> = storedAgentModels ? JSON.parse(storedAgentModels) : {
+    const LIVE_DEFAULT_MODELS: Record<string, string> = {
       architect: 'deepseek/deepseek-v4-flash',
       codewriter: 'qwen/qwen3.7-flash',
       testrunner: 'deepseek/deepseek-v4-flash',
       security: 'openai/gpt-4.1-nano',
     };
+    const KNOWN_LIVE_MODELS = new Set<string>([
+      'deepseek/deepseek-v4-flash',
+      'deepseek/deepseek-v4-pro',
+      'deepseek/deepseek-chat',
+      'qwen/qwen3.7-flash',
+      'qwen/qwen3.8-max',
+      'qwen/qwen3.6-flash',
+      'qwen/qwen3.6-plus',
+      'openai/gpt-4.1-nano',
+      'openai/gpt-4.1-mini',
+      'openai/gpt-4.1',
+      'openai/gpt-5.4',
+      'openai/gpt-5.6-luna',
+      'openai/gpt-5.6-terra',
+      'openai/gpt-5.6-sol',
+      'google/gemini-2.5-flash',
+      'google/gemini-2.5-flash-lite',
+      'google/gemini-3.6-flash',
+      'google/gemini-3.5-flash-lite',
+      'z-ai/glm-5.2',
+      'z-ai/glm-5.3',
+      'anthropic/claude-sonnet-5',
+      'anthropic/claude-opus-4.7',
+      'anthropic/claude-opus-5',
+      'kimi/kimi-k3',
+      'minimax/minimax-m3',
+      'meta/muse-spark-1.1',
+      'meta/muse-spark-1.2',
+      'orcarouter/fusion',
+      'orcarouter/fusion-mini',
+      'orcarouter/fusion-flash',
+      'orcarouter/free',
+    ]);
+    const parsedStoredModels: Record<string, string> = storedAgentModels
+      ? (() => {
+          try {
+            const parsed = JSON.parse(storedAgentModels);
+            const cleaned: Record<string, string> = {};
+            for (const role of Object.keys(LIVE_DEFAULT_MODELS)) {
+              const stored = parsed[role];
+              cleaned[role] = stored && KNOWN_LIVE_MODELS.has(stored) ? stored : LIVE_DEFAULT_MODELS[role];
+            }
+            return cleaned;
+          } catch {
+            return LIVE_DEFAULT_MODELS;
+          }
+        })()
+      : LIVE_DEFAULT_MODELS;
+    const agentModels: Record<string, string> = parsedStoredModels;
 
     // Agent execution order (circular manifold sweep)
     const agentPhases: { id: AgentRoleId; angle: number; angleDeg: number }[] = [
