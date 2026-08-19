@@ -24,6 +24,13 @@ export async function GET(req: Request) {
   const redis = getUpstashRedis(customRedisUrl, customRedisToken);
   const vector = getUpstashVector(customVectorUrl, customVectorToken);
 
+  if (!redis && !vector) {
+    return NextResponse.json(
+      { error: 'No Upstash Redis or Vector configured. Set UPSTASH_REDIS_REST_URL/TOKEN and UPSTASH_VECTOR_REST_URL/TOKEN.' },
+      { status: 503 }
+    );
+  }
+
   let redisPing = 'unconfigured';
   let vectorPing = 'unconfigured';
 
@@ -31,8 +38,8 @@ export async function GET(req: Request) {
     try {
       await redis.ping();
       redisPing = 'Connected';
-    } catch {
-      redisPing = 'Error';
+    } catch (e: any) {
+      redisPing = `Error: ${e.message}`;
     }
   }
 
@@ -40,22 +47,26 @@ export async function GET(req: Request) {
     try {
       await vector.info();
       vectorPing = 'Connected';
-    } catch {
-      vectorPing = 'Error';
+    } catch (e: any) {
+      vectorPing = `Error: ${e.message}`;
     }
+  }
+
+  const redisOk = redis && redisPing === 'Connected';
+  const vectorOk = vector && vectorPing === 'Connected';
+
+  if (!redisOk && !vectorOk) {
+    return NextResponse.json(
+      { error: `Upstash unavailable: Redis=${redisPing}, Vector=${vectorPing}` },
+      { status: 503 }
+    );
   }
 
   return NextResponse.json({
     status: 'success',
     layer: 'Upstash Serverless Memory & Vector Layer v1.0',
-    redis: {
-      status: redis ? (redisPing.includes('Connected') ? 'online' : 'error') : 'fallback_in_memory',
-      ping: redisPing,
-    },
-    vector: {
-      status: vector ? (vectorPing.includes('Connected') ? 'online' : 'error') : 'fallback_ast_index',
-      ping: vectorPing,
-    },
+    redis: redis ? { status: redisOk ? 'online' : 'error', ping: redisPing } : null,
+    vector: vector ? { status: vectorOk ? 'online' : 'error', ping: vectorPing } : null,
   });
 }
 

@@ -190,7 +190,9 @@ export async function POST(req: Request) {
         const contentRes = await fetch(rawUrl, {
           headers: { 'User-Agent': 'OmniGraph-Studio/1.0' },
         });
-        if (!contentRes.ok) return null;
+        if (!contentRes.ok) {
+          throw new Error(`GitHub raw fetch failed: ${contentRes.status} ${contentRes.statusText}`);
+        }
         const content = await contentRes.text();
         return {
           name: file.path.split('/').pop() || file.path,
@@ -198,18 +200,20 @@ export async function POST(req: Request) {
           content,
           size: content.length,
         };
-      } catch {
-        return null;
+      } catch (e: any) {
+        return { error: e.message, path: file.path };
       }
     });
 
     const downloadedResults = await Promise.all(downloadPromises);
-    const validFiles = downloadedResults.filter(Boolean) as {
-      name: string;
-      path: string;
-      content: string;
-      size: number;
-    }[];
+    const validFiles = downloadedResults.filter((f): f is { name: string; path: string; content: string; size: number } => !('error' in f));
+    const failedFiles = downloadedResults.filter((f): f is { error: string; path: string } => 'error' in f);
+    
+    if (validFiles.length === 0 && failedFiles.length > 0) {
+      return NextResponse.json({
+        error: `Failed to download any files: ${failedFiles.map(f => `${f.path}: ${f.error}`).join('; ')}`,
+      }, { status: 500 });
+    }
 
     return NextResponse.json({
       status: 'success',
