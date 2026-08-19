@@ -12,6 +12,8 @@ import {
   Database,
   Clock,
   Activity,
+  ExternalLink,
+  AlertCircle,
 } from 'lucide-react';
 import { useOmniStore } from '@/lib/store/useOmniStore';
 
@@ -26,6 +28,35 @@ export default function MultiplayerPage() {
   const updateUserProfile = useOmniStore((state) => state.updateUserProfile);
   const addLog = useOmniStore((state) => state.addLog);
   const nodes = useOmniStore((state) => state.nodes);
+  const activeScenario = useOmniStore(state => state.activeScenario);
+  const openIngestModal = useOmniStore(state => state.openIngestModal);
+
+  const isRealRepoIngested = nodes.length > 0 || activeScenario?.id !== 'empty';
+
+  if (!isRealRepoIngested) {
+    return (
+      <div className="flex flex-col h-full w-full bg-[#0d1117] text-[#e6edf3] p-2.5 sm:p-4 font-sans select-none space-y-3 sm:space-y-4 overflow-y-auto custom-scrollbar min-w-0 items-center justify-center">
+        <div className="text-center space-y-4 max-w-md">
+          <Users className="w-16 h-16 text-[#f85149]/50 mx-auto" />
+          <h2 className="text-xl font-bold text-[#e6edf3]">No Repository Ingested</h2>
+          <p className="text-[#8b949e] text-sm leading-relaxed">
+            Multiplayer collaboration syncs real-time on shared AST nodes.
+            Connect a GitHub repository to enable distributed locks and team events.
+          </p>
+          <button
+            onClick={openIngestModal}
+            className="flex items-center gap-2 mx-auto px-5 py-2.5 bg-[#38bdf8] hover:bg-[#0284c7] text-[#0d1117] font-bold rounded-xl transition-colors"
+          >
+            <ExternalLink className="w-4 h-4" />
+            <span>Ingest GitHub Repository</span>
+          </button>
+          <p className="text-[10px] text-[#6e7681]">
+            Supports any public GitHub repo — enter URL, scan tree, select files, ingest.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const [activeLocks, setActiveLocks] = useState<LiveLockData[]>([]);
   const [redisStatus, setRedisStatus] = useState<'online' | 'fallback' | 'checking'>('checking');
