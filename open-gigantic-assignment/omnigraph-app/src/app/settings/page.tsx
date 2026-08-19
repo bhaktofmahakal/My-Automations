@@ -475,11 +475,12 @@ export default function SettingsPage() {
               <span>Save Configuration</span>
             </button>
 
-            <button
-              onClick={handleTestConnection}
-              disabled={connectionStatus === 'testing'}
-              className="flex items-center gap-1.5 px-3 py-2 bg-[#21262d] hover:bg-[#30363d] text-[#58a6ff] border border-[#30363d] rounded-lg font-semibold transition-all"
-            >
+<button
+                type="button"
+                onClick={handleTestConnection}
+                disabled={connectionStatus === 'testing'}
+                className="flex items-center gap-1.5 px-3 py-2 bg-[#21262d] hover:bg-[#30363d] text-[#58a6ff] border border-[#30363d] rounded-lg font-semibold transition-all"
+              >
               {connectionStatus === 'testing' ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -495,6 +496,7 @@ export default function SettingsPage() {
           </div>
 
           <button
+            type="button"
             onClick={handleClearKeys}
             className="flex items-center gap-1 px-3 py-2 text-[#8b949e] hover:text-[#f85149] rounded-lg hover:bg-[#21262d] transition-colors"
           >
