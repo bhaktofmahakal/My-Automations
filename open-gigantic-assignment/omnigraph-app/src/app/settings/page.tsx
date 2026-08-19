@@ -400,7 +400,13 @@ export default function SettingsPage() {
       </div>
 
       {/* BYOK Gateway Key Configuration */}
-      <div className="p-3 sm:p-4 rounded-xl bg-[#161b22] border border-[#30363d] space-y-3.5 shadow-xl font-mono text-xs">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSave();
+        }}
+        className="p-3 sm:p-4 rounded-xl bg-[#161b22] border border-[#30363d] space-y-3.5 shadow-xl font-mono text-xs"
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Key className="w-4 h-4 text-[#d2a8ff]" />
@@ -418,6 +424,7 @@ export default function SettingsPage() {
             </label>
             <input
               type="password"
+              autoComplete="off"
               placeholder="orca_..."
               value={orcaKey}
               onChange={(e) => setOrcaKey(e.target.value)}
@@ -441,6 +448,7 @@ export default function SettingsPage() {
             </label>
             <input
               type="password"
+              autoComplete="off"
               placeholder="gsk_..."
               value={groqKey}
               onChange={(e) => setGroqKey(e.target.value)}
@@ -453,7 +461,7 @@ export default function SettingsPage() {
         <div className="pt-2 border-t border-[#30363d] flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <button
-              onClick={handleSave}
+              type="submit"
               className="flex items-center gap-1.5 px-4 py-2 bg-[#238636] hover:bg-[#2ea043] text-white font-bold rounded-lg transition-all shadow"
             >
               <Check className="w-3.5 h-3.5" />
@@ -468,7 +476,7 @@ export default function SettingsPage() {
               {connectionStatus === 'testing' ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Probing Latency...</span>
+                  <span>Testing...</span>
                 </>
               ) : (
                 <>
@@ -505,7 +513,7 @@ export default function SettingsPage() {
             ✗ Connection test failed: {connectionError}
           </div>
         )}
-      </div>
+      </form>
     </div>
   );
 }

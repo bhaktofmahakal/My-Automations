@@ -359,10 +359,10 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
     const effectiveKey = providerMode === 'byok' ? (orcaKey || groqKey) : undefined;
     const storedAgentModels = typeof window !== 'undefined' ? localStorage.getItem('omnigraph_agent_models') : null;
     const agentModels: Record<string, string> = storedAgentModels ? JSON.parse(storedAgentModels) : {
-      architect: 'anthropic/claude-3.5-sonnet',
-      codewriter: 'qwen/qwen-2.5-coder-32b-instruct',
-      testrunner: 'deepseek/deepseek-r1',
-      security: 'openai/gpt-4o',
+      architect: 'deepseek/deepseek-v4-flash',
+      codewriter: 'qwen/qwen3.7-flash',
+      testrunner: 'deepseek/deepseek-v4-flash',
+      security: 'openai/gpt-4.1-nano',
     };
 
     // Agent execution order (circular manifold sweep)
@@ -495,7 +495,7 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
           body: JSON.stringify({
             activeAgent: phase.id,
             nodeContext: selectedNode ? { label: selectedNode.label, path: selectedNode.path, tokenCount: selectedNode.tokenCount, compressedTokens: selectedNode.compressedTokens } : undefined,
-            model: agentModels[phase.id] || 'anthropic/claude-3.5-sonnet',
+            model: agentModels[phase.id] || 'deepseek/deepseek-v4-flash',
             apiKey: effectiveKey,
             baseUrl: orcaBaseUrl,
             prompt,

@@ -38,7 +38,7 @@ const OPERATIONAL_ROLES: Record<
     name: 'Mayor',
     opTitle: 'AST DAG Orchestrator & Task Planner',
     color: '#58a6ff',
-    model: 'groq/llama-3.3-70b-versatile',
+    model: 'deepseek/deepseek-v4-flash',
     theta: '0 rad (0°)',
     icon: Compass,
     description:
@@ -48,7 +48,7 @@ const OPERATIONAL_ROLES: Record<
     name: 'Polecat-1',
     opTitle: 'Surgical AST Code Synthesizer',
     color: '#3fb950',
-    model: 'groq/llama-3.3-70b-versatile',
+    model: 'qwen/qwen3.7-flash',
     theta: 'π/2 rad (90°)',
     icon: Code2,
     description:
@@ -58,7 +58,7 @@ const OPERATIONAL_ROLES: Record<
     name: 'Witness',
     opTitle: 'SWE-bench Invariant & Sandbox Verifier',
     color: '#d29922',
-    model: 'deepseek/deepseek-chat',
+    model: 'deepseek/deepseek-v4-flash',
     theta: 'π rad (180°)',
     icon: FlaskConical,
     description:
@@ -68,7 +68,7 @@ const OPERATIONAL_ROLES: Record<
     name: 'Refinery',
     opTitle: 'Safe Barrier Reconciler & SHA-256 Gate',
     color: '#f85149',
-    model: 'google/gemini-2.5-flash',
+    model: 'openai/gpt-4.1-nano',
     theta: '3π/2 rad (270°)',
     icon: ShieldCheck,
     description:

@@ -68,10 +68,10 @@ export async function GET() {
       },
     },
     defaultModels: {
-      architect: 'anthropic/claude-3.5-sonnet',
-      codewriter: 'qwen/qwen-2.5-coder-32b-instruct',
-      testrunner: 'deepseek/deepseek-r1',
-      security: 'openai/gpt-4o',
+      architect: 'deepseek/deepseek-v4-flash',
+      codewriter: 'qwen/qwen3.7-flash',
+      testrunner: 'deepseek/deepseek-v4-flash',
+      security: 'openai/gpt-4.1-nano',
     },
   });
 }
