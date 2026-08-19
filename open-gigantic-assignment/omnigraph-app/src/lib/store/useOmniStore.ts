@@ -445,11 +445,13 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
 
     // 1. Live Upstash Vector Semantic Search for Code Context Grounding
     const targetGoal = promptOverride || get().activeScenario.description;
+    const scope = get().activeScenario.id;
     try {
       const vectorRes = await fetch('/api/memory', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          scope,
           action: 'vector_search',
           query: targetGoal,
           nodes: get().nodes,
@@ -505,6 +507,7 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          scope: get().activeScenario.id,
           action: 'persist_beads',
           sessionId: 'active-session',
           beads: updatedBeads,

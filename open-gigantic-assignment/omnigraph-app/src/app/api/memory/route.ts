@@ -62,40 +62,40 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { action, nodeId, holderId, sessionId, beads, query, nodes, ttlSec = 30, event, credentials } = body;
+    const { action, scope, nodeId, holderId, sessionId, beads, query, nodes, ttlSec = 30, event, credentials } = body;
 
     switch (action) {
       case 'acquire_lock': {
-        const res = await acquireNodeLock(nodeId, holderId, ttlSec, credentials);
+        const res = await acquireNodeLock(scope, nodeId, holderId, ttlSec, credentials);
         return NextResponse.json({ status: 'success', ...res });
       }
       case 'release_lock': {
-        const res = await releaseNodeLock(nodeId, holderId, credentials);
+        const res = await releaseNodeLock(scope, nodeId, holderId, credentials);
         return NextResponse.json({ status: 'success', ...res });
       }
       case 'get_locks':
       case 'get_locks_with_ttl': {
-        const res = await getAllNodeLocksWithTTL(credentials);
+        const res = await getAllNodeLocksWithTTL(scope, credentials);
         return NextResponse.json({ status: 'success', ...res });
       }
       case 'persist_beads': {
-        const res = await persistBeadsTaskGraph(sessionId || 'default', beads || [], credentials);
+        const res = await persistBeadsTaskGraph(scope, sessionId || 'default', beads || [], credentials);
         return NextResponse.json({ status: 'success', ...res });
       }
       case 'fetch_beads': {
-        const res = await fetchBeadsTaskGraph(sessionId || 'default', credentials);
+        const res = await fetchBeadsTaskGraph(scope, sessionId || 'default', credentials);
         return NextResponse.json({ status: 'success', ...res });
       }
       case 'vector_search': {
-        const res = await searchSemanticAstNodes(query || '', nodes || [], 3, credentials);
+        const res = await searchSemanticAstNodes(scope, query || '', nodes || [], 3, credentials);
         return NextResponse.json({ status: 'success', ...res });
       }
       case 'post_team_event': {
-        const res = await pushTeamBroadcastEvent(event, credentials);
+        const res = await pushTeamBroadcastEvent(scope, event, credentials);
         return NextResponse.json({ status: 'success', ...res });
       }
       case 'get_team_events': {
-        const res = await fetchTeamBroadcastEvents(credentials);
+        const res = await fetchTeamBroadcastEvents(scope, credentials);
         return NextResponse.json({ status: 'success', ...res });
       }
       default:

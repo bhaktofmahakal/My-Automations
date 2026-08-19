@@ -74,17 +74,18 @@ export default function MultiplayerPage() {
 
   // Poll Upstash Redis for active distributed locks and team events
   const syncWithRedis = async () => {
+    const scope = activeScenario.id;
     try {
       const [locksRes, eventsRes] = await Promise.all([
         fetch('/api/memory', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'get_locks_with_ttl' }),
+          body: JSON.stringify({ scope, action: 'get_locks_with_ttl' }),
         }),
         fetch('/api/memory', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'get_team_events' }),
+          body: JSON.stringify({ scope, action: 'get_team_events' }),
         }),
       ]);
 
@@ -112,6 +113,7 @@ export default function MultiplayerPage() {
   }, []);
 
   const toggleNodeLock = async (nodeId: string, collaboratorId: string) => {
+    const scope = activeScenario.id;
     const existingLock = activeLocks.find((l) => l.nodeId === nodeId);
     const isCurrentlyLocked = existingLock?.holderId === collaboratorId;
 
@@ -119,7 +121,7 @@ export default function MultiplayerPage() {
       await fetch('/api/memory', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'release_lock', nodeId, holderId: collaboratorId }),
+        body: JSON.stringify({ scope, action: 'release_lock', nodeId, holderId: collaboratorId }),
       });
 
       // Post release event
@@ -127,6 +129,7 @@ export default function MultiplayerPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          scope,
           action: 'post_team_event',
           event: {
             id: `evt-${Date.now()}`,
@@ -145,7 +148,7 @@ export default function MultiplayerPage() {
       await fetch('/api/memory', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'acquire_lock', nodeId, holderId: collaboratorId, ttlSec: 45 }),
+        body: JSON.stringify({ scope, action: 'acquire_lock', nodeId, holderId: collaboratorId, ttlSec: 45 }),
       });
 
       // Post acquire event
@@ -153,6 +156,7 @@ export default function MultiplayerPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          scope,
           action: 'post_team_event',
           event: {
             id: `evt-${Date.now()}`,
@@ -172,6 +176,7 @@ export default function MultiplayerPage() {
 
   const sendSwarmPing = async () => {
     if (!pingMessage.trim()) return;
+    const scope = activeScenario.id;
 
     const event = {
       id: `ping-${Date.now()}`,
@@ -185,7 +190,7 @@ export default function MultiplayerPage() {
     await fetch('/api/memory', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'post_team_event', event }),
+      body: JSON.stringify({ scope, action: 'post_team_event', event }),
     });
 
     addLog({
