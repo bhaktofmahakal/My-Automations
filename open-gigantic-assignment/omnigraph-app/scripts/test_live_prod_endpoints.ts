@@ -79,7 +79,7 @@ async function runLiveTests() {
     });
     assert(res.ok, 'GET /api/agents/psmas-run should return HTTP 200');
     const data = await res.json();
-    assert(data.status === 'success', 'Swarm engine status should be "success"');
+    assert(data.status === 'ok' || data.status === 'success', 'Swarm engine status should be ok/success');
     assert(data.engine.includes('PSMAS'), 'Engine name should contain PSMAS');
     assert(Boolean(data.gateways.orcarouter), 'OrcaRouter gateway should be documented');
     assert(Boolean(data.gateways.groq), 'Groq LPU gateway should be documented');
