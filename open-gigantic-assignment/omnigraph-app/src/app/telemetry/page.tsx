@@ -16,20 +16,28 @@ import {
   ArrowRight,
   ShieldCheck,
   Download,
+  ExternalLink,
+  AlertCircle,
 } from 'lucide-react';
 import { useOmniStore } from '@/lib/store/useOmniStore';
 
 export default function TelemetryPage() {
   const files = useOmniStore((state) => state.files);
   const activeScenario = useOmniStore((state) => state.activeScenario);
+  const nodes = useOmniStore((state) => state.nodes);
+  const openIngestModal = useOmniStore((state) => state.openIngestModal);
   
+  // Real repo ingested = has files OR has graph nodes OR scenario is not the empty default
+  const isRealRepoIngested = files.length > 0 || nodes.length > 0 || activeScenario?.id !== 'empty';
+  const repoName = isRealRepoIngested ? (activeScenario?.title || 'Ingested Repository') : null;
+
   const [isRunningBenchmark, setIsRunningBenchmark] = useState(false);
   const [benchmarkData, setBenchmarkData] = useState<any | null>(null);
   const [monthlyPRVolume, setMonthlyPRVolume] = useState(500);
 
-  // Auto-run benchmark on mount or when files change
+  // Auto-run benchmark on mount or when files change (only if real repo)
   const runLiveBenchmark = async () => {
-    if (files.length === 0) return;
+    if (!isRealRepoIngested || files.length === 0) return;
     setIsRunningBenchmark(true);
 
     try {
@@ -52,11 +60,38 @@ export default function TelemetryPage() {
 
   useEffect(() => {
     runLiveBenchmark();
-  }, [files.length]);
+  }, [files.length, isRealRepoIngested]);
 
   const agg = benchmarkData?.aggregate;
   const monthlySavingsUSD = agg ? (agg.netSavingsPerSweep * monthlyPRVolume) : 0;
   const annualSavingsUSD = monthlySavingsUSD * 12;
+
+  // Empty state: require repo ingest
+  if (!isRealRepoIngested) {
+    return (
+      <div className="flex flex-col h-full w-full bg-[#0d1117] text-[#e6edf3] p-2.5 sm:p-4 font-sans select-none space-y-3 sm:space-y-4 overflow-y-auto custom-scrollbar min-w-0 items-center justify-center">
+        <div className="text-center space-y-4 max-w-md">
+          <AlertCircle className="w-16 h-16 text-[#f85149]/50 mx-auto" />
+          <h2 className="text-xl font-bold text-[#e6edf3]">No Repository Ingested</h2>
+          <p className="text-[#8b949e] text-sm leading-relaxed">
+            Telemetry and benchmarks require a real codebase to analyze. 
+            Connect a GitHub repository to generate live token metrics, 
+            SWE-bench projections, and per-file breakdowns.
+          </p>
+          <button
+            onClick={openIngestModal}
+            className="flex items-center gap-2 mx-auto px-5 py-2.5 bg-[#38bdf8] hover:bg-[#0284c7] text-[#0d1117] font-bold rounded-xl transition-colors"
+          >
+            <ExternalLink className="w-4 h-4" />
+            <span>Ingest GitHub Repository</span>
+          </button>
+          <p className="text-[10px] text-[#6e7681]">
+            Supports any public GitHub repo — enter URL, scan tree, select files, ingest.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full w-full bg-[#0d1117] text-[#e6edf3] p-2.5 sm:p-4 font-sans select-none space-y-3 sm:space-y-4 overflow-y-auto custom-scrollbar min-w-0">

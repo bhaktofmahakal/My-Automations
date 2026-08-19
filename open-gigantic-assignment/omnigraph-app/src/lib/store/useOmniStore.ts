@@ -61,6 +61,7 @@ interface OmniStoreState {
   isAgentRunning: boolean;
   currentStepIndex: number;
   playbackSpeed: number;
+  previousAgentOutput: string | undefined;
   startPSMASSweep: (promptOverride?: string) => Promise<void>;
   pausePSMASSweep: () => void;
   resetPSMASSweep: () => void;
@@ -228,6 +229,7 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
       activeAgentId: null,
       isAgentRunning: false,
       currentStepIndex: 0,
+      previousAgentOutput: undefined,
       activePathEdgeIds: [],
       telemetry: {
         ...emptyTelemetry,
@@ -332,6 +334,7 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
   isAgentRunning: false,
   currentStepIndex: 0,
   playbackSpeed: 1,
+  previousAgentOutput: undefined,
   startPSMASSweep: async (promptOverride?: string) => {
     if (get().isAgentRunning) return;
 
@@ -349,7 +352,7 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
       return;
     }
 
-    set({ isAgentRunning: true });
+    set({ isAgentRunning: true, previousAgentOutput: undefined });
 
     // Retrieve client BYOK keys & per-agent heterogeneous models from OrcaRouter & Groq
     const providerMode = typeof window !== 'undefined' ? localStorage.getItem('omnigraph_provider_mode') || 'platform' : 'platform';
@@ -534,7 +537,13 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
 
       // Build prompt with real code context
       const phaseGoal = promptOverride || get().activeScenario.description;
-      const prompt = `You are the ${agent.name} (${agent.role}). User Request: "${phaseGoal}"\n\nFile: ${activeFile?.path || 'unknown'}\nNode: ${selectedNode?.label || 'root'}\n\nCode:\n\`\`\`\n${codeContext}\n\`\`\`\n\n${phase.id === 'codewriter' ? 'Generate a minimal, surgical unified diff (with @@ hunk headers) for any fixes you recommend.' : phase.id === 'testrunner' ? 'List specific unit test assertions that should pass.' : phase.id === 'security' ? 'List any security vulnerabilities or boundary checks found.' : 'Analyze the architecture and identify key dependencies and potential issues.'}`;
+      const previousOutput = i > 0 ? get().previousAgentOutput : undefined;
+      const prompt = `You are the ${agent.name} (${agent.role}). User Request: "${phaseGoal}"\n\nFile: ${activeFile?.path || 'unknown'}\nNode: ${selectedNode?.label || 'root'}\n\nCode:\n\`\`\`\n${codeContext}\n\`\`\`\n\n${
+        previousOutput
+          ? `Previous Agent Phase Handoff (from S^1 manifold):\n"""${previousOutput.slice(0, 1500)}"""\n\n`
+          : ''
+      }${phase.id === 'codewriter' ? 'Generate a minimal, surgical unified diff (with @@ hunk headers) for any fixes you recommend.' : phase.id === 'testrunner' ? 'List specific unit test assertions that should pass.' : phase.id === 'security' ? 'List any security vulnerabilities or boundary checks found.' : 'Analyze the architecture and identify key dependencies and potential issues.'}
+4. Conclude with a compressed handoff summary for the next agent along the manifold.`;
 
       // Estimate input tokens
       const inputTokenEstimate = Math.ceil(prompt.length / 4);
@@ -554,6 +563,7 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
             apiKey: effectiveKey,
             baseUrl: orcaBaseUrl,
             prompt,
+            previousAgentOutput: get().previousAgentOutput,
           }),
         });
 
@@ -637,6 +647,11 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
                 await new Promise(r => setTimeout(r, 80 / get().playbackSpeed));
               }
 
+              // Store full response for next agent's context
+              if (fullResponse.trim()) {
+                set({ previousAgentOutput: fullResponse });
+              }
+
               // If codewriter: try to parse diff hunks from the response
               if (phase.id === 'codewriter' && fullResponse.includes('@@')) {
                 const { parseUnifiedDiffToHunks } = await import('../diff/patchEngine');
@@ -675,6 +690,9 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
             const json = await res.json();
             const responseText = json.response?.thought || json.response?.action || JSON.stringify(json.response || json);
             totalOutputTokens += Math.ceil(responseText.length / 4);
+            if (responseText.trim()) {
+              set({ previousAgentOutput: responseText });
+            }
 
             get().addLog({
               id: `log-${Date.now()}-json`,
