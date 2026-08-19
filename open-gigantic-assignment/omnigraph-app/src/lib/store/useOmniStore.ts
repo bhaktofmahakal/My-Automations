@@ -17,6 +17,7 @@ import { INITIAL_AGENTS } from '../agents/psmasEngine';
 import { createDynamicBeadsForRepo } from '../agents/beadsEngine';
 import { calculateGraphTokenMetrics, expandNodeProgressive } from '../graph/ogParser';
 import { parseCodeToHunks, reconcileApprovedHunks } from '../diff/patchEngine';
+import { computeBenchmark, BenchmarkResult } from '../benchmark';
 
 interface OmniStoreState {
   // Beads Task Graph (2026 Operational Architecture)
@@ -102,6 +103,8 @@ interface OmniStoreState {
   // Telemetry & Metrics
   telemetry: TelemetryMetrics;
   addTokenUsage: (inputTokens: number, outputTokens: number) => void;
+  runBenchmark: () => void;
+  benchmarkData: BenchmarkResult | null;
 
   // Multiplayer Collaborators
   collaborators: Collaborator[];
@@ -872,6 +875,13 @@ export const useOmniStore = create<OmniStoreState>((set, get) => ({
 
   // Telemetry
   telemetry: emptyTelemetry,
+  benchmarkData: null,
+  runBenchmark: () => {
+    const files = get().files;
+    if (files.length === 0) return;
+    const result = computeBenchmark(files);
+    set({ benchmarkData: result });
+  },
   addTokenUsage: (inputTokens: number, outputTokens: number) => {
     const current = get().telemetry;
     const totalInput = current.totalInputTokens + inputTokens;

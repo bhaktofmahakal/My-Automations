@@ -25,32 +25,23 @@ export default function TelemetryPage() {
   const files = useOmniStore((state) => state.files);
   const activeScenario = useOmniStore((state) => state.activeScenario);
   const nodes = useOmniStore((state) => state.nodes);
+  const benchmarkData = useOmniStore((state) => state.benchmarkData);
+  const runBenchmark = useOmniStore((state) => state.runBenchmark);
   const openIngestModal = useOmniStore((state) => state.openIngestModal);
   
-  // Real repo ingested = has files OR has graph nodes OR scenario is not the empty default
   const isRealRepoIngested = files.length > 0 || nodes.length > 0 || activeScenario?.id !== 'empty';
   const repoName = isRealRepoIngested ? (activeScenario?.title || 'Ingested Repository') : null;
 
   const [isRunningBenchmark, setIsRunningBenchmark] = useState(false);
-  const [benchmarkData, setBenchmarkData] = useState<any | null>(null);
   const [monthlyPRVolume, setMonthlyPRVolume] = useState(500);
 
-  // Auto-run benchmark on mount or when files change (only if real repo)
+  // Run benchmark on mount or when files change (only if real repo)
   const runLiveBenchmark = async () => {
     if (!isRealRepoIngested || files.length === 0) return;
     setIsRunningBenchmark(true);
 
     try {
-      const res = await fetch('/api/tokens/benchmark', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ files }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setBenchmarkData(data);
-      }
+      runBenchmark();
     } catch {
       // Fallback
     } finally {
@@ -60,7 +51,7 @@ export default function TelemetryPage() {
 
   useEffect(() => {
     runLiveBenchmark();
-  }, [files.length, isRealRepoIngested]);
+  }, [files.length, isRealRepoIngested, runBenchmark]);
 
   const agg = benchmarkData?.aggregate;
   const monthlySavingsUSD = agg ? (agg.netSavingsPerSweep * monthlyPRVolume) : 0;
